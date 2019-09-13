@@ -147,7 +147,7 @@ def callback_new_detection(result_cnn, pub_result):
                 except CvBridgeError, e:
                     print(e)
 
-                result.belief = result_cnn.scores[i]
+                result.accuracy_estimation = result_cnn.scores[i]
                 result.id = result_cnn.class_names[i]
 
                 if len(mask) == 0:

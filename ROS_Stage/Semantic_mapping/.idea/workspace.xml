@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cfce24e8-b122-4a93-baf2-01328523c855" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../../.gitmodules" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mask_rcnn_ros" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Mask_rcnn_ros" beforeDir="false" afterPath="$PROJECT_DIR$/../Mask_rcnn_ros" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/node_semantic_mapping_rcnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/node_semantic_mapping_rcnn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mask_rcnn_ros" beforeDir="false" afterPath="$PROJECT_DIR$/../mask_rcnn_ros" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,7 +15,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/node_semantic_mapping_rcnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="497">
+            <state relative-caret-position="888">
               <caret line="51" column="68" selection-start-line="51" selection-start-column="68" selection-end-line="51" selection-end-column="68" />
             </state>
           </provider>
@@ -41,7 +37,7 @@
         <entry file="file://$PROJECT_DIR$/launch/Semantic_mapping.launch">
           <provider selected="true" editor-type-id="text-editor">
             <state>
-              <caret column="25" lean-forward="true" selection-start-column="25" selection-end-column="25" />
+              <caret column="25" selection-start-column="25" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -248,13 +244,7 @@
     <entry file="file:///opt/ros/kinetic/lib/python2.7/dist-packages/geometry_msgs/msg/_Pose.py" />
     <entry file="file:///opt/ros/kinetic/lib/python2.7/dist-packages/geometry_msgs/msg/_Quaternion.py" />
     <entry file="file:///opt/ros/kinetic/lib/python2.7/dist-packages/tf/listener.py" />
-    <entry file="file://$PROJECT_DIR$/src/node_semantic_mapping_yolo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
-          <caret line="224" column="20" selection-start-line="224" selection-start-column="20" selection-end-line="224" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/node_semantic_mapping_yolo.py" />
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="168">
@@ -279,24 +269,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/msg/SemanticObject.msg">
+    <entry file="file://$PROJECT_DIR$/src/node_semantic_mapping_rcnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="48">
-          <caret line="2" column="14" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="14" />
+        <state relative-caret-position="888">
+          <caret line="51" column="68" selection-start-line="51" selection-start-column="68" selection-end-line="51" selection-end-column="68" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/launch/Semantic_mapping.launch">
       <provider selected="true" editor-type-id="text-editor">
         <state>
-          <caret column="25" lean-forward="true" selection-start-column="25" selection-end-column="25" />
+          <caret column="25" selection-start-column="25" selection-end-column="25" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/node_semantic_mapping_rcnn.py">
+    <entry file="file://$PROJECT_DIR$/msg/SemanticObject.msg">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="497">
-          <caret line="51" column="68" selection-start-line="51" selection-start-column="68" selection-end-line="51" selection-end-column="68" />
+        <state relative-caret-position="48">
+          <caret line="2" column="14" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="14" />
         </state>
       </provider>
     </entry>

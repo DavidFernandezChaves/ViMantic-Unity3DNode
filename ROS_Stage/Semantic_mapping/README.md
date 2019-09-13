@@ -14,7 +14,7 @@ Parameters
         #Topic name of CNN results
         <param name="topic_cnn" value="mask_rcnn/result"/>
         
-        #Threshold of belief to publish a detected object        
+        #Threshold of accuracy_estimation to publish a detected object        
         <param name="threshold" value="0.95"/>
         
         #Angle of the input image
