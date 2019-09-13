@@ -49,7 +49,7 @@ def semantic_mapping_rcnn(self):
     # Publisher
     pub_result = rospy.Publisher(rospy.get_param('~topic_result', 'semantic_mapping/semantic_object'), SemanticObject,
                                  queue_size=10)
-    pub_repub = rospy.Publisher(rospy.get_param('~topic_republic', 'semantic_mapping/RGB'), Image,
+    pub_repub = rospy.Publisher('semantic_mapping/RGB_image_detected', Image,
                                 queue_size=10)
     pub_pose = rospy.Publisher('semantic_mapping/point', PoseStamped, queue_size=10)
 
@@ -67,7 +67,7 @@ def semantic_mapping_rcnn(self):
 
 
 def callback_newImage(depth_data, rgb_data, arg):
-    global image, img_angle, waiting_answer, time_stamp, transform, threshold, stamp
+    global image, img_angle, waiting_answer, time_stamp, transform, threshold, stamp, debug
 
     pub_repub = arg[0]
     tfBuffer = arg[1]
@@ -84,7 +84,10 @@ def callback_newImage(depth_data, rgb_data, arg):
                                               rospy.Time(0),  # get the tf at first available time
                                               rospy.Duration(5))
         img_rgb = rotate_image(img_rgb, img_angle)
-        pub_repub.publish(CvBridge().cv2_to_imgmsg(img_rgb, 'rgb8'))
+
+        if debug :
+            pub_repub.publish(CvBridge().cv2_to_imgmsg(img_rgb, 'rgb8'))
+
         # Save the time stamp
         stamp = depth_data.header.stamp
         image = [img_rgb, depth_data]
@@ -94,7 +97,7 @@ def callback_newImage(depth_data, rgb_data, arg):
 
 
 def callback_new_detection(result_cnn, pub_result):
-    global image, img_angle, waiting_answer, transform, time_stamp, pub_pose
+    global image, img_angle, waiting_answer, transform, time_stamp, pub_pose, debug
 
     # The detected objects are processed
     if (not result_cnn is None) and len(result_cnn.class_names) > 0:

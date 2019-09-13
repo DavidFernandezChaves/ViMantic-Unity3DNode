@@ -2,25 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cfce24e8-b122-4a93-baf2-01328523c855" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../Mask_rcnn_ros" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/semantic_mapping.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/YoloVersion/CATKIN_IGNORE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/YoloVersion/CMakeLists.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/YoloVersion/node_semantic_mapping_yolo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/YoloVersion/package.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/launch/Semantic_mapping.launch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/launch/Semantic_mapping_config_rviz.rviz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/msg/SemanticObject.msg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/node_semantic_mapping_rcnn.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../.gitmodules" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mask_rcnn_ros" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Mask_rcnn_ros" beforeDir="false" afterPath="$PROJECT_DIR$/../Mask_rcnn_ros" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/node_semantic_mapping_rcnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/node_semantic_mapping_rcnn.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -33,17 +19,19 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/node_semantic_mapping_rcnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="311">
-              <caret line="27" column="19" lean-forward="true" selection-start-line="27" selection-start-column="19" selection-end-line="27" selection-end-column="19" />
+            <state relative-caret-position="497">
+              <caret line="51" column="68" selection-start-line="51" selection-start-column="68" selection-end-line="51" selection-end-column="68" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/YoloVersion/README.md">
+        <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor />
+              <first_editor>
+                <caret column="2" selection-start-column="2" selection-end-column="2" />
+              </first_editor>
               <second_editor />
             </state>
           </provider>
@@ -52,8 +40,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/launch/Semantic_mapping.launch">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="703">
-              <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
+            <state>
+              <caret column="25" lean-forward="true" selection-start-column="25" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -92,6 +80,9 @@
       <find>maping</find>
       <find>be</find>
       <find>Dete</find>
+      <find>point_cloud</find>
+      <find>pub_repub</find>
+      <find>debug</find>
     </findStrings>
     <replaceStrings>
       <replace>semantic_maping</replace>
@@ -122,7 +113,9 @@
         <option value="$PROJECT_DIR$/package.xml" />
         <option value="$PROJECT_DIR$/msg/SemanticObject.msg" />
         <option value="$PROJECT_DIR$/launch/Semantic_mapping.launch" />
+        <option value="$PROJECT_DIR$/YoloVersion/README.md" />
         <option value="$PROJECT_DIR$/src/node_semantic_mapping_rcnn.py" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -159,11 +152,6 @@
               <item name="semantic_mapping" type="b2602c69:ProjectViewProjectNode" />
               <item name="Semantic_mapping" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="semantic_mapping" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Semantic_mapping" type="462c0819:PsiDirectoryNode" />
-              <item name="YoloVersion" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -232,9 +220,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="30" width="1920" height="1050" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19135477" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12862414" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -282,10 +269,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/launch/Semantic_mapping.launch">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="703">
-          <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
+    <entry file="file://$PROJECT_DIR$/YoloVersion/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor>
+            <caret column="45" lean-forward="true" selection-start-column="45" selection-end-column="45" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>
@@ -296,17 +286,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/node_semantic_mapping_rcnn.py">
+    <entry file="file://$PROJECT_DIR$/launch/Semantic_mapping.launch">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="311">
-          <caret line="27" column="19" lean-forward="true" selection-start-line="27" selection-start-column="19" selection-end-line="27" selection-end-column="19" />
+        <state>
+          <caret column="25" lean-forward="true" selection-start-column="25" selection-end-column="25" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/YoloVersion/README.md">
+    <entry file="file://$PROJECT_DIR$/src/node_semantic_mapping_rcnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="497">
+          <caret line="51" column="68" selection-start-line="51" selection-start-column="68" selection-end-line="51" selection-end-column="68" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor />
+          <first_editor>
+            <caret column="2" selection-start-column="2" selection-end-column="2" />
+          </first_editor>
           <second_editor />
         </state>
       </provider>

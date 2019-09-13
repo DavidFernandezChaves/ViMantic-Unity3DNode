@@ -1,0 +1,3 @@
+[submodule "ROS_Stage/mask_rcnn_ros"]
+	path = ROS_Stage/mask_rcnn_ros
+	url = https://github.com/akio/mask_rcnn_ros.git
