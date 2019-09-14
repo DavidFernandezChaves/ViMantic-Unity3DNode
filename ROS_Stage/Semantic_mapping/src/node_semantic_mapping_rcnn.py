@@ -49,7 +49,7 @@ def semantic_mapping_rcnn(self):
     # Publisher
     pub_result = rospy.Publisher(rospy.get_param('~topic_result', 'semantic_mapping/semantic_object'), SemanticObject,
                                  queue_size=10)
-    pub_repub = rospy.Publisher('semantic_mapping/RGB_image_detected', Image,
+    pub_repub = rospy.Publisher(rospy.get_param('~topic_republic', 'semantic_mapping/RGB'), Image,
                                 queue_size=10)
     pub_pose = rospy.Publisher('semantic_mapping/point', PoseStamped, queue_size=10)
 
@@ -85,8 +85,7 @@ def callback_newImage(depth_data, rgb_data, arg):
                                               rospy.Duration(5))
         img_rgb = rotate_image(img_rgb, img_angle)
 
-        if debug :
-            pub_repub.publish(CvBridge().cv2_to_imgmsg(img_rgb, 'rgb8'))
+        pub_repub.publish(CvBridge().cv2_to_imgmsg(img_rgb, 'rgb8'))
 
         # Save the time stamp
         stamp = depth_data.header.stamp

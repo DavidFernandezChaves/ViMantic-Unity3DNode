@@ -3,13 +3,16 @@
 Parameters
 
         #Name of the topic where the results are published
-        <param name="topic_result" value="semantic_mapping/semantic_object"/>
+        <param name="topic_result" value="semantic_mapping/SemanticObject"/>
         
         #Topic name where the RGB image is obtained
 	    <param name="topic_intensity" value="RGBD_4_intensity"/>
 	    
         #Topic name where the depth image is obtained
         <param name="topic_depth" value="RGBD_4_depth"/>
+        
+        #Topic name of CNN input
+        <param name="topic_republic" value="semantic_mapping/RGB"/>
         
         #Topic name of CNN results
         <param name="topic_cnn" value="mask_rcnn/result"/>
