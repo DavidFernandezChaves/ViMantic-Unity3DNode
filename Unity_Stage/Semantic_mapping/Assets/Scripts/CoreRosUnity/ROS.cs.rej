@@ -1,0 +1,10 @@
+diff a/ROS.cs b/ROS.cs	(rejected hunks)
+@@ -32,8 +32,6 @@
+             _ros.AddSubscriber(typeof(Amcl_pose_sub));
+             _ros.AddSubscriber(typeof(Map_sub));
+             _ros.AddSubscriber(typeof(Goal_sub_topic));
+-            _ros.AddSubscriber(typeof(Move_base_local_costmap_costmap_sub));
+-            _ros.AddSubscriber(typeof(Move_base_global_costmap_costmap_sub));
+             _ros.AddPublisher(typeof(Goal_pub));
+             _ros.Connect();
+             conected = true;
