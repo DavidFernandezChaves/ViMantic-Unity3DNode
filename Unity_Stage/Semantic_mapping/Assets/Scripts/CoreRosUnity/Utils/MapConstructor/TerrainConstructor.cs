@@ -40,7 +40,6 @@ public class TerrainConstructor : MonoBehaviour {
 
         td.size = new Vector3(_width * _resolutionMap, _elevation, _height * _resolutionMap);
 
-        ////Alturas
         xRes = td.heightmapWidth;
         yRes = td.heightmapHeight;
         heights = td.GetHeights(0, 0, xRes, yRes);
@@ -55,40 +54,13 @@ public class TerrainConstructor : MonoBehaviour {
 
         td.SetHeights(0, 0, heights);
 
-        //Texturas
-        //SplatPrototype[] terrainTexture = new SplatPrototype[1];
-        //terrainTexture[0] = new SplatPrototype
-        //{
-        //    texture = texture,
-        //    tileSize = new Vector2(2, 2)
-        //};
-        //td.splatPrototypes = terrainTexture;
-
-
-        td.terrainLayers[0] = new TerrainLayer() { normalMapTexture = texture };
+        td.terrainLayers = new TerrainLayer[1] { new TerrainLayer { diffuseTexture = texture, tileSize = new Vector2(2, 2) } };
 
         t = Terrain.CreateTerrainGameObject(td).GetComponent<Terrain>();
         t.transform.position = _originPosition;
         t.gameObject.layer = 18;
 
         gameObject.SendMessage("MapLoaded",t, SendMessageOptions.DontRequireReceiver);
-
-        //// This creates a Grid Graph
-        //GridGraph gg = (GridGraph) AstarPath.active.graphs[0];
-        //// Updates internal size from the above values
-        //float w = (_width *_resolutionMap)/_resolution;
-        //float h = (_height * _resolutionMap) / _resolution;
-        //gg.SetDimensions((int)w,(int)h , _resolution);      
-        //gg.center = new Vector3(t.transform.position.x+(_width * _resolutionMap)/2, 0, t.transform.position.z+ (_height * _resolutionMap)/2);
-        //gg.erodeIterations = (int) Mathf.Ceil((_erode/2)/_resolution) ; 
-
-        //// Scans all graphs
-        //AstarPath.active.Scan();
-
-        //var texbox = FindObjectOfType<HeadManaguer>();
-        //if (texbox != null) {
-        //    texbox.Said("Estoy listo para la accion");
-        //}
        
     }
 
