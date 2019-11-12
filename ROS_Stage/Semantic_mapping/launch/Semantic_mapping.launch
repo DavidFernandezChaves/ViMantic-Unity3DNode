@@ -6,20 +6,20 @@
 
     ### Semantic_maping ###
     <node name="semantic_mapping" pkg="semantic_mapping" type="node_semantic_mapping_rcnn.py" output="screen">
-        <param name="topic_result" value="semantic_mapping/SemanticObject"/>
+        <param name="topic_result" value="semantic_mapping/SemanticObjects"/>
 	    <param name="topic_intensity" value="RGBD_4_intensity"/>
         <param name="topic_depth" value="RGBD_4_depth"/>
         <param name="topic_republic" value="semantic_mapping/RGB"/>
         <param name="topic_cnn" value="mask_rcnn/result"/>
-        <param name="threshold" value="0.95"/>
+        <param name="threshold" value="0.5"/>
         <param name="input_angle" value="90"/>
         <param name="point_cloud" value="false"/>
 	    <param name="debug" value="true"/>
     </node>-->
 
 
-    ### R-CNN ###
-    <node name="mask_rcnn" pkg="mask_rcnn_ros" type="mask_rcnn_node" output="log">
+<!--    ### R-CNN ### log-->
+    <node name="mask_rcnn" pkg="mask_rcnn_ros" type="mask_rcnn_node" output="screen">
         <remap from="~input" to="semantic_mapping/RGB" />
         <param name="~visualization" value="true" />
     </node>

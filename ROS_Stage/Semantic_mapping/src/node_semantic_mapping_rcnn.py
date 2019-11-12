@@ -10,10 +10,9 @@ import tf2_geometry_msgs
 import tf2_ros
 from cv_bridge import CvBridge, CvBridgeError
 from geometry_msgs.msg import Point32, PoseStamped, Point, Vector3
-from semantic_mapping.msg import SemanticObject
+from semantic_mapping.msg import SemanticObject, SemanticObjects
 from sensor_msgs.msg import Image
 from sensor_msgs.msg import PointCloud
-from sympy.printing.tests.test_tensorflow import tf
 
 bridge = CvBridge()
 image = []
@@ -33,10 +32,10 @@ pub_pose = None
 
 
 def semantic_mapping_rcnn(self):
-    global image, debug, point_cloud, img_angle, threshold, pub_pose
+    global image, debug, point_cloud, img_angle, threshold, pub_pose, U
 
     rospy.init_node('semantic_mapping', anonymous=True)
-
+    U = 0
     # Get Global Parameters
     img_angle = rospy.get_param('~input_angle', 0)
     threshold = rospy.get_param('~threshold', 0.5)
@@ -47,7 +46,7 @@ def semantic_mapping_rcnn(self):
     listener = tf2_ros.TransformListener(tfBuffer)
 
     # Publisher
-    pub_result = rospy.Publisher(rospy.get_param('~topic_result', 'semantic_mapping/semantic_object'), SemanticObject,
+    pub_result = rospy.Publisher(rospy.get_param('~topic_result', 'semantic_mapping/SemanticObjects'), SemanticObjects,
                                  queue_size=10)
     pub_repub = rospy.Publisher(rospy.get_param('~topic_republic', 'semantic_mapping/RGB'), Image,
                                 queue_size=10)
@@ -61,13 +60,14 @@ def semantic_mapping_rcnn(self):
     message_filter = message_filters.ApproximateTimeSynchronizer([sub_depth_image, sub_rgb_image], 10, 0.3)
     message_filter.registerCallback(callback_newImage, [pub_repub, tfBuffer])
 
-    tf.logging.set_verbosity(tf.logging.ERROR)
+    # ts=message_filters.TimeSynchronizer([sub_depth_image,sub_rgb_image],10)
+    # ts.registerCallback(callback_newImage,[pub_repub, tfBuffer])
 
     rospy.spin()
 
 
 def callback_newImage(depth_data, rgb_data, arg):
-    global image, img_angle, waiting_answer, time_stamp, transform, threshold, stamp, debug
+    global image, img_angle, waiting_answer, time_stamp, transform, threshold, stamp, debug, U
 
     pub_repub = arg[0]
     tfBuffer = arg[1]
@@ -75,15 +75,18 @@ def callback_newImage(depth_data, rgb_data, arg):
     # The corrected rgb image is obtained
     try:
         img_rgb = bridge.imgmsg_to_cv2(rgb_data, "rgb8")
-    except CvBridgeError, e:
+    except CvBridgeError as e:
         print(e)
 
-    if not waiting_answer or depth_data.header.stamp.secs > (time_stamp.secs + 5):
+    if not waiting_answer or depth_data.header.stamp.secs > (time_stamp.secs + 2):
         transform = tfBuffer.lookup_transform("map",
                                               rgb_data.header.frame_id,  # source frame
                                               rospy.Time(0),  # get the tf at first available time
                                               rospy.Duration(5))
         img_rgb = rotate_image(img_rgb, img_angle)
+
+        # cv2.imwrite('/home/omega100/Mask_RCNN/images/flow/' + str(U) + '.jpeg', img_rgb)
+        # U += 1
 
         pub_repub.publish(CvBridge().cv2_to_imgmsg(img_rgb, 'rgb8'))
 
@@ -107,7 +110,7 @@ def callback_new_detection(result_cnn, pub_result):
         # The corrected depth image and pose transformation are obtained
         try:
             data_depth = bridge.imgmsg_to_cv2(img_depth, "16UC1")
-        except CvBridgeError, e:
+        except CvBridgeError as e:
             print(e)
 
         # I transform the value of each px to m by acquiring a cloud of points
@@ -124,30 +127,28 @@ def callback_new_detection(result_cnn, pub_result):
         y = ((cy - r) * z / fy)
 
         # Cut out every object from the point cloud and build the result.
-        result = SemanticObject()
-        pointCloud = PointCloud()
+        result = SemanticObjects()
+
         result.header = std_msgs.msg.Header()
         result.header.stamp = time_stamp
         result.header.frame_id = "/map"
-        pointCloud.header = std_msgs.msg.Header()
-        pointCloud.header.stamp = time_stamp
-        pointCloud.header.frame_id = img_depth.header.frame_id
 
         for i in range(len(result_cnn.class_names)):
-            if result_cnn.scores[i] > threshold:
 
-                # Debug----------------------------------------------------------------------------------------
-                if debug:
-                    print result_cnn.class_names[i] + ": " + str(result_cnn.scores[i])
-                # ---------------------------------------------------------------------------------------------
+            if result_cnn.scores[i] > threshold:
+                semanticObject = SemanticObject()
+                pointCloud = PointCloud()
+                pointCloud.header = std_msgs.msg.Header()
+                pointCloud.header.stamp = time_stamp
+                pointCloud.header.frame_id = img_depth.header.frame_id
 
                 try:
                     mask = (bridge.imgmsg_to_cv2(result_cnn.masks[i], "8UC1") == 255)
-                except CvBridgeError, e:
+                except CvBridgeError as e:
                     print(e)
 
-                result.accuracy_estimation = result_cnn.scores[i]
-                result.id = result_cnn.class_names[i]
+                semanticObject.score = result_cnn.scores[i]
+                semanticObject.id = result_cnn.class_names[i]
 
                 if len(mask) == 0:
                     return
@@ -180,7 +181,7 @@ def callback_new_detection(result_cnn, pub_result):
 
                 # z_.max() - z_.min()
 
-                result.scale = Vector3(scale_x, scale_y, scale_z)
+                semanticObject.scale = Vector3(scale_x, scale_y, scale_z)
 
                 # Calculate the center px
                 x_center = int(result_cnn.boxes[i].x_offset + result_cnn.boxes[i].width / 2)
@@ -196,7 +197,7 @@ def callback_new_detection(result_cnn, pub_result):
                 p1.pose.position = Point(-x[y_center, x_center], y[y_center, x_center], z_center)
                 p1.pose.orientation.w = 1.0  # Neutral orientation
                 pose = tf2_geometry_msgs.do_transform_pose(p1, transform)
-                result.pose = pose
+                semanticObject.pose = pose
 
                 pub_pose.publish(pose)
 
@@ -206,9 +207,15 @@ def callback_new_detection(result_cnn, pub_result):
                             Point32(-round(x_[j] - x_center, 4), round(y_[j] - y_center, 4),
                                     -round(z_[j] - z_center, 4)))
 
-                result.pointCloud = pointCloud
+                semanticObject.pointCloud = pointCloud
+                result.semanticObjects.append(semanticObject)
+        
+                # Debug----------------------------------------------------------------------------------------
+                if debug:
+                    print (result_cnn.class_names[i] + ": " + str(result_cnn.scores[i]))
+                # ---------------------------------------------------------------------------------------------
 
-                pub_result.publish(result)
+        pub_result.publish(result)
 
     waiting_answer = False
 

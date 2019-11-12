@@ -1,6 +1,5 @@
-Header header
 string id
-float64 accuracy_estimation
+float64 score
 sensor_msgs/PointCloud pointCloud
 geometry_msgs/PoseStamped pose
 geometry_msgs/Vector3 scale

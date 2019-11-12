@@ -20,6 +20,7 @@ find_package(mask_rcnn_ros QUIET)
 add_message_files(
   FILES
   SemanticObject.msg
+  SemanticObjects.msg
 )
 
 ## Generate added messages and services with any dependencies listed here
