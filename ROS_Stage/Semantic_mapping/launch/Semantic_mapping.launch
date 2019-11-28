@@ -5,12 +5,12 @@
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
 
     ### Semantic_maping ###
-    <node name="semantic_mapping" pkg="semantic_mapping" type="node_semantic_mapping_rcnn.py" output="screen">
+    <node name="semantic_mapping" pkg="semantic_mapping" type="node_semantic_mapping.py" output="screen">
         <param name="topic_result" value="semantic_mapping/SemanticObjects"/>
 	    <param name="topic_intensity" value="RGBD_4_intensity"/>
         <param name="topic_depth" value="RGBD_4_depth"/>
         <param name="topic_republic" value="semantic_mapping/RGB"/>
-        <param name="topic_cnn" value="mask_rcnn/result"/>
+        <param name="topic_cnn" value="detectron2_ros/result"/>
         <param name="threshold" value="0.5"/>
         <param name="input_angle" value="90"/>
         <param name="point_cloud" value="false"/>
@@ -19,16 +19,16 @@
 
 
 <!--    ### R-CNN ### log-->
-    <node name="mask_rcnn" pkg="mask_rcnn_ros" type="mask_rcnn_node" output="screen">
-        <remap from="~input" to="semantic_mapping/RGB" />
-        <param name="~visualization" value="true" />
-    </node>
+<!--    <node name="mask_rcnn" pkg="mask_rcnn_ros" type="mask_rcnn_node" output="screen">-->
+<!--        <remap from="~input" to="semantic_mapping/RGB" />-->
+<!--        <param name="~visualization" value="true" />-->
+<!--    </node>-->
 
 	
     ### RVIZ ###
     <node name="rviz_player" pkg="rviz" type="rviz" args="-d $(find semantic_mapping)/launch/Semantic_mapping_config_rviz.rviz"/>
 
--->
+
 
     ### simulation ###
     <node pkg="rosbag" type="play" name="player" output="log" args="--clock /home/omega100/Descargas/dataset/rosbagfile/anto-s1_fullhouse1_localization.bag"/>
