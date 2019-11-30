@@ -54,10 +54,91 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+<<<<<<< HEAD
+=======
+ 
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+Unity_Stage/Semantic_mapping/[Ee]xported[Oo]bj/
+Unity_Stage/Semantic_mapping/.vs/
+Unity_Stage/Semantic_mapping/*.userprefs
+Unity_Stage/Semantic_mapping/*.csproj
+Unity_Stage/Semantic_mapping/*.pidb
+Unity_Stage/Semantic_mapping/*.pidb.meta
+Unity_Stage/Semantic_mapping/*.suo
+Unity_Stage/Semantic_mapping/*.sln*
+Unity_Stage/Semantic_mapping/*.user
+Unity_Stage/Semantic_mapping/*.unityproj
+Unity_Stage/Semantic_mapping/*.booproj
+Unity_Stage/Semantic_mapping/.consulo/
+Unity_Stage/Semantic_mapping/*.tmp
+Unity_Stage/Semantic_mapping/*.svd
+ 
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store*
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+[Tt]humbs.db
+[Dd]esktop.ini
+Unity_Stage/Semantic_mapping/Corridor/Library/ShaderCache/
+Unity_Stage/Semantic_mapping/Corridor/Library/metadata/
+
+#Big file
+*.ply
+
+#Jidea Section
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+
+# User-specific stuff
+ROS_Stage/Semantic_mapping/.idea/**/workspace.xml
+ROS_Stage/Semantic_mapping/.idea/**/tasks.xml
+ROS_Stage/Semantic_mapping/.idea/**/usage.statistics.xml
+ROS_Stage/Semantic_mapping/.idea/**/dictionaries
+ROS_Stage/Semantic_mapping/.idea/**/shelf
+
+# Generated files
+ROS_Stage/Semantic_mapping/.idea/**/contentModel.xml
+
+# Sensitive or high-churn files
+ROS_Stage/Semantic_mapping/.idea/**/dataSources/
+ROS_Stage/Semantic_mapping/.idea/**/dataSources.ids
+ROS_Stage/Semantic_mapping/.idea/**/dataSources.local.xml
+ROS_Stage/Semantic_mapping/.idea/**/sqlDataSources.xml
+ROS_Stage/Semantic_mapping/.idea/**/dynamic.xml
+ROS_Stage/Semantic_mapping/.idea/**/uiDesigner.xml
+ROS_Stage/Semantic_mapping/.idea/**/dbnavigator.xml
+
+# Gradle
+ROS_Stage/Semantic_mapping/.idea/**/gradle.xml
+ROS_Stage/Semantic_mapping/.idea/**/libraries
+
+# Gradle and Maven with auto-import
+# When using Gradle or Maven with auto-import, you should exclude module files,
+# since they will be recreated, and may cause churn.  Uncomment if using
+# auto-import.
+ .idea/modules.xml
+ .idea/*.iml
+ .idea/modules
+ *.iml
+ *.ipr
+>>>>>>> cb7d54685aea5488b0515bab93f7468c96bc3563
 
 # Crashlytics generated file
 crashlytics-build.properties
 
 *.ply
 
+<<<<<<< HEAD
 /Releases and Packages/
+=======
+# Android studio 3.1+ serialized cache file
+ROS_Stage/Semantic_mapping/.idea/caches/build_file_checksums.ser
+
+>>>>>>> cb7d54685aea5488b0515bab93f7468c96bc3563
