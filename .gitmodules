@@ -1,0 +1,3 @@
+[submodule "Assets/Scripts/RosUnityCore"]
+	path = Assets/Scripts/RosUnityCore
+	url = https://github.com/DavidFernandezChaves/ROSUnity-Core.git
