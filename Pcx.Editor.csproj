@@ -294,6 +294,9 @@
     <Reference Include="System.Data.DataSetExtensions2">
       <HintPath>D:/Users/omega/Documents/Universidad/Doctorado/Semantic maping/Semantic-Mapping/Assets/Packages/System.Data.DataSetExtensions.4.5.0/ref/netstandard2.0/System.Data.DataSetExtensions2.dll</HintPath>
     </Reference>
+    <Reference Include="websocket-sharp">
+      <HintPath>D:/Users/omega/Documents/Universidad/Doctorado/Semantic maping/Semantic-Mapping/Assets/Scripts/RosUnityCore/websocket-sharp.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEditor.Advertisements">
       <HintPath>D:/Users/omega/Documents/Universidad/Doctorado/Semantic maping/Semantic-Mapping/Library/PackageCache/com.unity.ads@3.4.4/Editor/UnityEditor.Advertisements.dll</HintPath>
     </Reference>
@@ -308,9 +311,6 @@
     </Reference>
     <Reference Include="UnityEditor.Purchasing">
       <HintPath>D:/Users/omega/Documents/Universidad/Doctorado/Semantic maping/Semantic-Mapping/Library/PackageCache/com.unity.purchasing@2.0.6/Editor/UnityEditor.Purchasing.dll</HintPath>
-    </Reference>
-    <Reference Include="websocket-sharp">
-      <HintPath>D:/Users/omega/Documents/Universidad/Doctorado/Semantic maping/Semantic-Mapping/Assets/Scripts/RosUnityCore/websocket-sharp.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>D:/Users/omega/Documents/Universidad/Doctorado/Semantic maping/Semantic-Mapping/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
