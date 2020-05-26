@@ -1,2 +1,5 @@
-# Semantic-Mapping
-Hello world
+# ViMantic Server - Unity
+
+## Requirements
+
+## Method of use
