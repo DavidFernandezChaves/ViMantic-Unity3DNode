@@ -6,136 +6,146 @@ using UnityEngine;
 
 public class VirtualSemanticObject : MonoBehaviour
 {
-    public GameObject _canvasLabels;
-    public LinesManager _lineManager;
-    public Vector2 _heightCanvas;
-    public Transform _cube;
-    public SemanticObject _semanticObject;
 
-    public List<Transform> _associatedDetections;
+    public int verbose;
+    public float joiningDistance = 1;
+    public float erodeRate = 0.1f;
+    public CanvasLabelClass canvasLabel;
+    public LineRenderer lineRender;
+    public Vector2 heightCanvas;
+    public SemanticObject semanticObject;
 
-    private Transform _canvasLabel;
-    private CanvasLabelClass _cavasLabelCass;
-    private Transform _tfFrameID;
-    private OntologyManager _ontologyManager;
-    private DateTime _date;
+    public DateTime dateTime { get; private set; }
+    public List<SemanticObject> associatedDetections;
+    
+    private ObjectManager objectManager;
+    private OntologyManager ontologyManager;
+    private DateTime time;
 
-    void OnCollisionEnter (Collision collision)
-    {
-        if (_ontologyManager == null)
-        {
-            _ontologyManager = FindObjectOfType<OntologyManager>();
-        }
+    public List<GameObject> tocando;
 
-        if (collision.transform.tag.Equals("Object"))
-        {
-            _date = DateTime.Now;            
-            var vso = collision.gameObject.GetComponent<VirtualSemanticObject>();
-            if (transform.parent == _tfFrameID
-                && vso != null && vso._semanticObject._type.Equals(_semanticObject._type)
-                && collision.transform.parent != transform)
-            {
+    #region Unity Functions
+    private void OnTriggerStay(Collider other) {
+        VirtualSemanticObject vso = other.gameObject.GetComponent<VirtualSemanticObject>();
+        tocando.Add(other.gameObject);
 
-                if (collision.transform.parent.parent == transform.parent)
-                {
-                    vso = collision.transform.parent.GetComponent<VirtualSemanticObject>();
+        if (vso != null && vso.semanticObject.type.Equals(semanticObject.type) && dateTime <= vso.dateTime && null == associatedDetections.Find(O=>O.ontologyID.Equals(vso.semanticObject.ontologyID)) && vso.semanticObject.semanticRoom == semanticObject.semanticRoom) {
+            if(dateTime == vso.dateTime && semanticObject.confidenceScore < vso.semanticObject.confidenceScore) {
+                dateTime.AddMilliseconds(1);
+                return;
+            }
+            
+            time = DateTime.Now;
+            associatedDetections.Add(vso.semanticObject);
+            ontologyManager.JoinSemanticObject(semanticObject, vso.semanticObject);
+            semanticObject.nDetections++;
+
+            double score = 0;
+            foreach (SemanticObject so in associatedDetections) {
+                score += so.confidenceScore;
+            }
+            semanticObject.confidenceScore = score / associatedDetections.Count;
+
+            transform.parent.rotation = Quaternion.identity;
+            vso.transform.parent.rotation = Quaternion.identity;
+
+            Bounds bounds = GetComponent<MeshRenderer>().bounds;
+            //Debug.Log(semanticObject.pose+"/"+semanticObject.size+"/"+bounds.center + "/" + bounds.size);
+            bounds.Encapsulate(vso.GetComponent<MeshRenderer>().bounds);
+            //bounds.Encapsulate(vso.semanticObject.pose);
+
+            semanticObject.pose = bounds.center;
+            semanticObject.size = bounds.size*(1-erodeRate);
+            UpdateObject();
+            Destroy(vso.transform.parent.gameObject);
+
+            if (semanticObject.semanticRoom == null) {
+                semanticObject.semanticRoom = UpdateRoom();
+                if (semanticObject.semanticRoom != null) {
+                    ontologyManager.ObjectInRoom(semanticObject);
                 }
-
-                //Join all equal objects
-                Bounds bounds = _cube.GetComponent<Renderer>().bounds;
-
-                foreach (Transform v in vso._associatedDetections)
-                {
-                    NewObjectPart(v);
-
-                    var child = v.GetComponent<VirtualSemanticObject>();
-                    _ontologyManager.RemoveSemanticObjectUnion(vso._semanticObject, child._semanticObject);
-                    _ontologyManager.JoinSemanticObject(_semanticObject, child._semanticObject);
-
-                    var bounds_child = v.GetComponentInChildren<Renderer>().bounds;
-                    bounds_child.center += v.localPosition;
-                    bounds.Encapsulate(bounds_child);
-                }
-                NewObjectPart(vso.transform);
-                _ontologyManager.JoinSemanticObject(_semanticObject, vso._semanticObject);
-
-                var bounds_2 = vso._cube.GetComponent<Renderer>().bounds;
-                bounds_2.center += vso._cube.localPosition;
-                bounds.Encapsulate(bounds_2);
-
-                //Calculate the rotation and score mean
-                var rotation = transform.rotation.eulerAngles;
-                var score = _semanticObject._confidenceScore;
-                VirtualSemanticObject[] objs = GetComponentsInChildren<VirtualSemanticObject>();
-                foreach (VirtualSemanticObject so in objs)
-                {
-                    rotation += so._semanticObject._rotation.eulerAngles;
-                    score += so._semanticObject._confidenceScore;
-                }
-
-                Vector3 pose = bounds.center;
-                Vector3 size = bounds.size;
-                rotation /= objs.Length + 1;
-                score /= objs.Length + 1;
-
-                //Debug.Log(name + "-"+ pose + "/" + size + "/"+ rotation + "/"+bounds);
-
-                _semanticObject = _ontologyManager.UpdateObject(_semanticObject, pose, rotation, size, score, _semanticObject._nDetections + vso._semanticObject._nDetections);
-                vso._semanticObject = _ontologyManager.UpdateNDetections(vso._semanticObject, 1);
-
-                Destroy(vso._lineManager);
-                Destroy(vso.GetComponent<LineRenderer>());
-
-                if (vso._canvasLabel != null)
-                    Destroy(vso._canvasLabel.gameObject);
-                FindObjectOfType<ObjectManager>().AddTimeUnion((DateTime.Now - _date).Milliseconds);
             }
 
-        }else if (collision.transform.tag.Equals("Room") && _semanticObject._semanticRoom == null)
-        {
-            var room = collision.gameObject.GetComponent<SemanticRoom>();
-            if (room.PointInside(transform.position)){
-                _semanticObject._semanticRoom = room;
-                _ontologyManager.ObjectInRoom(_semanticObject);
+            if (objectManager == null) {
+                objectManager = FindObjectOfType<ObjectManager>();
             }
+            objectManager.AddTimeUnion((DateTime.Now - time).Milliseconds);
         }
     }
 
-    public void NewObjectPart(Transform newPart) {
-        _associatedDetections.Add(newPart);
-        newPart.parent = transform;
-        _lineManager.AddGameobjectLine(newPart.position);
-    }
 
-
-    public void Load(SemanticObject semanticObject, Transform tfFrameID, float joiningDistance)
-    {
-        _tfFrameID = tfFrameID;
-        _semanticObject = semanticObject;
-        transform.name = _semanticObject._ontologyID;
-        transform.position = _semanticObject._pose;
-        _cube.localScale = _semanticObject._size;
-        transform.rotation = _semanticObject._rotation;
-        GetComponent<BoxCollider>().size = _semanticObject._size + Vector3.one * joiningDistance;
-        LoadCanvasLabel();
-    }
-
-    private void LoadCanvasLabel() {
-        if (_canvasLabel == null)
-        {
-            _canvasLabel = Instantiate(_canvasLabels, transform).transform;
-            _cavasLabelCass = _canvasLabel.GetComponent<CanvasLabelClass>();
-            _lineManager.AddGameobjectLine(transform.position);
+    private void OnDestroy() {
+        if (associatedDetections.Count > 1) {
+            ontologyManager.UpdateObject(semanticObject, semanticObject.pose, semanticObject.rotation, semanticObject.size, semanticObject.confidenceScore, semanticObject.nDetections);
         }
-        _canvasLabel.position = _semanticObject._pose + new Vector3(0, UnityEngine.Random.Range(_heightCanvas.x, _heightCanvas.y), 0);
-        _cavasLabelCass.LoadLabel(_semanticObject._type, _semanticObject._confidenceScore);
-        _lineManager.CanvasLine(_canvasLabel.position, _semanticObject._pose);
     }
 
-    public void RemoveThisSemanticObject()
+    #endregion
+
+    #region Public Functions
+    public void InitializeObject(SemanticObject _semanticObject)
+    {        
+        ontologyManager = FindObjectOfType<OntologyManager>();
+        tocando = new List<GameObject>();
+        dateTime = DateTime.Now;
+        semanticObject = _semanticObject;
+        associatedDetections.Add(semanticObject);
+        GetComponent<BoxCollider>().size = Vector3.one * joiningDistance;
+        transform.parent.name = semanticObject.ontologyID;
+
+        //transform.parent.rotation = Quaternion.identity;
+
+        UpdateObject();
+
+        semanticObject.semanticRoom = UpdateRoom();
+        if (semanticObject.semanticRoom != null) {
+            ontologyManager.ObjectInRoom(semanticObject);
+        }     
+    }
+
+    public void UpdateObject() {
+        //Load Object
+        transform.parent.position = semanticObject.pose;
+        transform.localScale = semanticObject.size;
+        Vector3 rotation = semanticObject.rotation.eulerAngles;
+        transform.parent.rotation = Quaternion.Euler(0, rotation.y, 0);
+        //transform.parent.rotation = semanticObject.rotation;
+
+        //Load Canvas
+        canvasLabel.transform.position = semanticObject.pose + new Vector3(0, UnityEngine.Random.Range(heightCanvas.x, heightCanvas.y), 0);
+        canvasLabel.LoadLabel(semanticObject.type, semanticObject.confidenceScore);
+
+        lineRender.SetPosition(0, canvasLabel.transform.position - new Vector3(0, 0.2f, 0));
+        lineRender.SetPosition(1, transform.parent.position);
+    }
+
+    public void RemoveSemanticObject()
     {
-        FindObjectOfType<OntologyManager>().RemoveSemanticObject(_semanticObject);
+        FindObjectOfType<OntologyManager>().RemoveSemanticObject(semanticObject);
         Destroy(gameObject);
     }
+
+    public SemanticRoom UpdateRoom() {
+        RaycastHit hit;
+        Vector3 position = transform.parent.position;
+        position.y = -100;
+        if (Physics.Raycast(position, transform.TransformDirection(Vector3.up), out hit)) {
+            return hit.transform.GetComponent<SemanticRoom>();            
+        }
+        return null;
+    }
+    #endregion
+
+    #region Private Functions
+    private void Log(string _msg) {
+        if (verbose > 1)
+            Debug.Log("[Object Manager]: " + _msg);
+    }
+
+    private void LogWarning(string _msg) {
+        if (verbose > 0)
+            Debug.LogWarning("[Object Manager]: " + _msg);
+    }
+    #endregion
 
 }

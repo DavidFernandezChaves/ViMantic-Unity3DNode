@@ -14,14 +14,17 @@ public class CanvasLabelClass : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        user = GameObject.Find("User").transform;
+        try {
+            user = GameObject.Find("User").transform;
+        } catch { }
+        
         Colors();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Time.frameCount % 2 == 0)
+        if (user != null && Time.frameCount % 2 == 0)
         {
             transform.rotation = Quaternion.LookRotation(transform.position - user.transform.position);
         }
@@ -50,7 +53,7 @@ public class CanvasLabelClass : MonoBehaviour
 
     public void RemoveThisSemanticObject()
     {
-        transform.parent.GetComponent<VirtualSemanticObject>().RemoveThisSemanticObject();
+        transform.parent.GetComponent<VirtualSemanticObject>().RemoveSemanticObject();
     }
 
     private void Colors()

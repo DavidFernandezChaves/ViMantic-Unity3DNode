@@ -4,9 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Room
-  - Object
   - Robot
+  - VirtualObject
+  - Object
   layers:
   - Default
   - TransparentFX
@@ -16,9 +16,9 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
+  - NavMesh
+  - Post-processing
+  - BoundingBox
   - 
   - 
   - 
