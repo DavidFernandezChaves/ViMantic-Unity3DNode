@@ -1,4 +1,8 @@
-﻿using System.Collections;
+﻿using ROSUnityCore;
+using ROSUnityCore.ROSBridgeLib.geometry_msgs;
+using ROSUnityCore.ROSBridgeLib.nav_msgs;
+using ROSUnityCore.ROSBridgeLib.std_msgs;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -23,10 +27,14 @@ namespace RobotAtVirtualHome {
         public List<Vector3> VisitPoints { get; private set; }
         public string currentRoom { get; private set; }
 
-        public bool RGBRecord;
-        public bool DepthRecord;
-        public bool MaskRecord;
+        public bool captureRGB;
+        public bool captureDepth;
+        public bool captureSemanticMask;
 
+        public bool sendPathToROS;
+        public float ROSFrecuency = 1;
+
+        private ROS ros;
         private SmartCamera smartCamera;
         private NavMeshAgent agent;
         private string path;
@@ -74,6 +82,15 @@ namespace RobotAtVirtualHome {
             agent.SetDestination(VisitPoints[0]);
             agent.isStopped = false;
             State = StatusMode.Walking;
+
+            ros = transform.root.GetComponentInChildren<ROS>();
+            if (sendPathToROS && ros != null) {
+                Log("Send path to ros: Ok");
+                ros.RegisterPublishPackage("Path_pub");
+                StartCoroutine(SendPathToROS());
+            } else {
+                Log("Send path to ros: False");
+            }
         }
 
         void Update() {
@@ -126,6 +143,30 @@ namespace RobotAtVirtualHome {
         #endregion
 
         #region Private Functions
+        private IEnumerator SendPathToROS() {
+            while (Application.isPlaying) {
+                if (ros.IsConnected()) {
+                    Vector3[] points = agent.path.corners;
+                    PoseStampedMsg[] poses = new PoseStampedMsg[points.Length];
+                    HeaderMsg head = new HeaderMsg(0, new TimeMsg(ros.epochStart.Second, 0), "map");
+                    Quaternion rotation = transform.rotation;
+                    for (int i = 0; i < points.Length; i++) {
+                        head.SetSeq(i);
+                        if (i > 0) {
+                            rotation = Quaternion.FromToRotation(points[i - 1], points[i]);
+                        }
+
+                        poses[i] = new PoseStampedMsg(head, new PoseMsg(points[i], rotation, true));
+                    }
+
+                    HeaderMsg globalHead = new HeaderMsg(0, new TimeMsg(ros.epochStart.Second, 0), "map");
+                    PathMsg pathmsg = new PathMsg(globalHead, poses);
+                    ros.Publish(Path_pub.GetMessageTopic(), pathmsg);
+                }
+                yield return new WaitForSeconds(ROSFrecuency);
+            }
+        }
+
         private bool GetNextGoal(out Vector3 result) {
             result = Vector3.zero;
             if (!loop) {
@@ -155,14 +196,14 @@ namespace RobotAtVirtualHome {
                 agent.isStopped = true;
                 yield return new WaitForSeconds(0.1f);
                 byte[] itemBGBytes;
-                if (MaskRecord) {
+                if (captureSemanticMask) {
                     writer.WriteLine(index2.ToString() + "_mask.png;" + transform.position + ";" + transform.rotation.eulerAngles + ";"
                         + smartCamera.transform.position + ";" + smartCamera.transform.rotation.eulerAngles + ";" + currentRoom);
                     itemBGBytes = smartCamera.GetImageMask().EncodeToPNG();
                     File.WriteAllBytes(path + "/" + index2.ToString() + "_mask.png", itemBGBytes);
                 }
 
-                if (RGBRecord) {
+                if (captureRGB) {
                     writer.WriteLine(index2.ToString() + "_rgb.png;" + transform.position + ";" + transform.rotation.eulerAngles + ";"
                         + smartCamera.transform.position + ";" + smartCamera.transform.rotation.eulerAngles + ";" + currentRoom);
                     itemBGBytes = smartCamera.ImageRGB.EncodeToPNG();
@@ -170,7 +211,7 @@ namespace RobotAtVirtualHome {
 
                 }
 
-                if (DepthRecord) {
+                if (captureDepth) {
                     writer.WriteLine(index2.ToString() + "_depth.png;" + transform.position + ";" + transform.rotation.eulerAngles + ";"
                         + smartCamera.transform.position + ";" + smartCamera.transform.rotation.eulerAngles + ";" + currentRoom);
                     itemBGBytes = smartCamera.ImageDepth.EncodeToPNG();

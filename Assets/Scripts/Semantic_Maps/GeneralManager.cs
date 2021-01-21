@@ -44,10 +44,10 @@ namespace Vimantic {
             _InFiSetting0.text = _semanticMapping.minimunConfidenceScore.ToString();
             _InFiSetting2.text = _semanticMapping.maxDistance.ToString();
             _ontologyManager = GetComponent<OntologyManager>();
-            _ontologyManager._pathToSave = PlayerPrefs.GetString("pathToSave", Application.dataPath);
-            _InFiSetting3.text = _ontologyManager._pathToSave;
+            _ontologyManager.path = PlayerPrefs.GetString("pathToSave", Application.dataPath);
+            _InFiSetting3.text = _ontologyManager.path;
             _semanticRoomManager = GetComponent<SemanticRoomManager>();
-            _ontologyManager.LoadOntology(_nameMap);
+            _ontologyManager.LoadOntology();
         }
 
         public void NewNameMap(string tx) {
@@ -55,7 +55,7 @@ namespace Vimantic {
             PlayerPrefs.SetString("nameMap", tx);
             PlayerPrefs.Save();
             Debug.Log("save");
-            _ontologyManager.LoadOntology(_nameMap);
+            _ontologyManager.LoadOntology();
         }
 
         public void NewConnection(Text TxIp) {
@@ -123,12 +123,12 @@ namespace Vimantic {
         public void SaveSetting() {
             _semanticMapping.maxDistance = float.Parse(_InFiSetting2.text);
             _semanticMapping.minimunConfidenceScore = float.Parse(_InFiSetting0.text);
-            _ontologyManager._pathToSave = _InFiSetting3.text;
+            _ontologyManager.path = _InFiSetting3.text;
             PlayerPrefs.SetFloat("maxDistanceZ", _semanticMapping.maxDistance);
             PlayerPrefs.SetFloat("minimunConfidenceScore", _semanticMapping.minimunConfidenceScore);
             PlayerPrefs.SetString("pathToSave", _InFiSetting3.text);
             PlayerPrefs.Save();
-            _ontologyManager.LoadOntology(_nameMap);
+            _ontologyManager.LoadOntology();
             SelectWindow(0);
         }
 

@@ -21,10 +21,8 @@ public class SmartCamera : MonoBehaviour
     public Texture2D ImageDepth { get; private set; }    
 
     public ROS ros;
-
     private Camera cameraRgb;
     private Camera cameraDepth;
-    private Texture2D imageSemanticMask;
     private VirtualEnvironment virtualEnvironment;
     private House house;
 
@@ -50,7 +48,6 @@ public class SmartCamera : MonoBehaviour
 
         ImageRGB = new Texture2D(imageSize.x, imageSize.y, TextureFormat.RGBA32, false);
         ImageDepth = new Texture2D(imageSize.x, imageSize.y, TextureFormat.Alpha8, false);
-        imageSemanticMask = new Texture2D(imageMaskSize.x, imageMaskSize.y, TextureFormat.RGBA32, false);
     }
 
     void Start() {
@@ -82,6 +79,7 @@ public class SmartCamera : MonoBehaviour
     }
 
     public Texture2D GetImageMask() {
+        Texture2D imageSemanticMask = new Texture2D(imageMaskSize.x, imageMaskSize.y, TextureFormat.RGBA32, false);
 
         for (int i = 0; i < imageMaskSize.x; i++) {
             for (int j = 0; j < imageMaskSize.y; j++) {

@@ -157,14 +157,14 @@ MonoBehaviour:
   houseSelected: 20
   virtualRobotPrefab: {fileID: 931527486158493203, guid: 60b6c9f65ab28894e907f78df833e023,
     type: 3}
-  recordHierarchy: 0
+  recordHierarchy: 1
   transparentRoof: 1
   initialStateDoor: 3
   initialStateGeneralLight: 0
   initialStateLights: 1
   wallPainting: 1
   floorPainting: 1
-  forceSeed: 3
+  forceSeed: 1
   seedForced: 0
   path: D:\RobotAtVirtualHouse
 --- !u!4 &238323567
@@ -483,8 +483,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verbose: 1
-  _nameMap: 
-  saveOntology: 0
 --- !u!114 &1701356813
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -497,10 +495,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52eecb07d2792884b8b5c5e53557d6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _prefix: MAPIR
-  _masterURI: http://mapir.isa.uma.es/
-  _pathToSave: D:\
-  _cateogiesOfRooms: []
+  verbose: 1
+  saveOntology: 0
+  prefix: MAPIR
+  masterURI: http://mapir.isa.uma.es/
+  path: D:\SemanticMap.owl
+  cateogiesOfRooms: []
 --- !u!114 &1701356814
 MonoBehaviour:
   m_ObjectHideFlags: 0

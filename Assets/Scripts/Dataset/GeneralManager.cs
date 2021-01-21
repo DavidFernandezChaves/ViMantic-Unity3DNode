@@ -10,9 +10,6 @@ namespace RobotAtVirtualHome {
     public class GeneralManager : MonoBehaviour {
 
         public int verbose;
-
-        public string _nameMap;
-        public bool saveOntology;
         private OntologyManager ontologyManager;
 
 
@@ -23,16 +20,8 @@ namespace RobotAtVirtualHome {
         }
 
         void Start() {
-            _nameMap = PlayerPrefs.GetString("nameMap", "Semantic map 1");
-            ontologyManager.LoadOntology(_nameMap);
-        }
-
-        private void OnDestroy() {
-            if (saveOntology) {
-                ontologyManager.SaveOntology();
-                PlayerPrefs.SetString("nameMap", _nameMap);
-            }
-        }
+            ontologyManager.LoadOntology();
+        }        
         #endregion
 
         #region Public Functions
