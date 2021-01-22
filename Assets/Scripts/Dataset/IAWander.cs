@@ -19,7 +19,7 @@ namespace RobotAtVirtualHome {
         public int verbose;
 
         public bool loop;
-        public bool randomRoom;
+        public bool randomSecuence;
         public bool record;
         public float frecuency;
         
@@ -67,11 +67,15 @@ namespace RobotAtVirtualHome {
 
             if (record) {
                 path = FindObjectOfType<VirtualEnvironment>().path;
-                path = Path.Combine(path, "Wandering");
-
-                if (!Directory.Exists(path)) {
-                    Directory.CreateDirectory(path);
+                string tempPath = Path.Combine(path, "Wandering");
+                int i = 0;
+                while (Directory.Exists(tempPath)) {
+                    i++;
+                    tempPath = Path.Combine(path, "Wandering"+i);
                 }
+
+                path = tempPath;
+                Directory.CreateDirectory(path);           
 
                 Log("The saving path is:" + path);
                 writer = new StreamWriter(path + "/Info.csv", true);
@@ -108,9 +112,12 @@ namespace RobotAtVirtualHome {
                             agent.SetDestination(nextGoal);
                             agent.isStopped = false;
                             Log("Next goal:" + nextGoal.ToString());
+                            State = StatusMode.Loading;
+                            StartCoroutine(DoOnGoal());
                         } else {
                             State = StatusMode.Finished;
                             Log("Finish");
+                            GetComponent<AudioSource>().Play();
                         }                        
                     }
                     break;               
@@ -143,6 +150,11 @@ namespace RobotAtVirtualHome {
         #endregion
 
         #region Private Functions
+        private IEnumerator DoOnGoal() {
+            yield return new WaitForSeconds(3);
+            State = StatusMode.Walking;
+        }
+
         private IEnumerator SendPathToROS() {
             while (Application.isPlaying) {
                 if (ros.IsConnected()) {
@@ -169,23 +181,28 @@ namespace RobotAtVirtualHome {
 
         private bool GetNextGoal(out Vector3 result) {
             result = Vector3.zero;
-            if (!loop) {
-                VisitPoints.RemoveAt(index);
-                if (VisitPoints.Count == 0) {
-                    return false;
-                }
-                result = VisitPoints[Random.Range(0, VisitPoints.Count)];
-            } else {
-                if (randomRoom) {
+            if (loop) {
+                if (randomSecuence) {
                     result = VisitPoints[Random.Range(0, VisitPoints.Count)];
                 } else {
                     index++;
-                    if(index >= VisitPoints.Count) {
+                    if (index >= VisitPoints.Count) {
                         index = 0;
                     }
                     result = VisitPoints[index];
                 }
-            }       
+            } else {
+                VisitPoints.RemoveAt(index);
+                if (VisitPoints.Count == 0) {
+                    return false;
+                }
+
+                if (randomSecuence) {
+                    result = VisitPoints[Random.Range(0, VisitPoints.Count)];
+                } else {
+                    result = VisitPoints[index];
+                }
+            }  
             return true;
         }
 

@@ -12,7 +12,7 @@ namespace RobotAtVirtualHome {
 
     [RequireComponent(typeof(NavMeshAgent))]
 
-    public class IACaptureGrill : MonoBehaviour {
+    public class IACaptureGrid : MonoBehaviour {
 
         public enum StatusMode { Loading, Walking, Turning, Finished }
 
@@ -32,7 +32,7 @@ namespace RobotAtVirtualHome {
         public string path { get; private set; }
 
         private SmartCamera smartCamera;
-        private List<Vector3> grill;
+        private List<Vector3> grid;
         private NavMeshAgent agent;
         private int index = 0;
         private StreamWriter writer;
@@ -54,18 +54,18 @@ namespace RobotAtVirtualHome {
                 LogWarning("Incorrect ranges");
             }
             path = FindObjectOfType<VirtualEnvironment>().path;
-            path = Path.Combine(path, "Grill");
+            path = Path.Combine(path, "Grid");
 
             if (!Directory.Exists(path)) {
                 Directory.CreateDirectory(path);
             }
             
             Log("The saving path is:" + path);
-            writer = new StreamWriter(path + "/InfoGrill.csv", true);
+            writer = new StreamWriter(path + "/InfoGrid.csv", true);
             writer.WriteLine("photoID;robotPosition;robotRotation;cameraPosition;cameraRotation;room");
-            grill = new List<Vector3>();
+            grid = new List<Vector3>();
             State = StatusMode.Loading;
-            StartCoroutine(CalculateGrill());
+            StartCoroutine(CalculateGrid());
 
 
             ros = transform.root.GetComponentInChildren<ROS>();
@@ -107,7 +107,7 @@ namespace RobotAtVirtualHome {
         private void OnDrawGizmos() {
             if (Application.isPlaying && this.enabled && verbose>0) {
                 Gizmos.color = Color.green;
-                foreach(Vector3 point in grill) {
+                foreach(Vector3 point in grid) {
                     Gizmos.DrawSphere(point, 0.1f);
                 }
                 Gizmos.color = Color.red;
@@ -146,19 +146,19 @@ namespace RobotAtVirtualHome {
             }
         }
 
-        private IEnumerator CalculateGrill() {
+        private IEnumerator CalculateGrid() {
             NavMeshPath path = new NavMeshPath();
             for (float i = minRange[0]; i <= maxRange[0]; i += size) {
                 for (float j = minRange[1]; j <= maxRange[1]; j += size) {
                     Vector3 point = new Vector3(i, transform.position.y, j);
                     agent.CalculatePath(point, path);
                     if (path.status == NavMeshPathStatus.PathComplete && Vector3.Distance(path.corners[path.corners.Length-1],point) < 0.04f) {
-                        grill.Add(point);
+                        grid.Add(point);
                     }                    
                 }
             }
             yield return new WaitForEndOfFrame();
-            agent.SetDestination(grill[index]);            
+            agent.SetDestination(grid[index]);            
             agent.isStopped = false; 
             yield return new WaitForEndOfFrame();
             State = StatusMode.Walking;
@@ -207,16 +207,17 @@ namespace RobotAtVirtualHome {
                 yield return new WaitForEndOfFrame();
             }
             yield return new WaitForEndOfFrame();
-            Log(index.ToString() + "/" + grill.Count + " - " + (index/ grill.Count)*100 +"%");
+            Log(index.ToString() + "/" + grid.Count + " - " + (index/(float)grid.Count)*100 +"%");
             index++;
-            if (index >= grill.Count) {
+            if (index >= grid.Count) {
                 State = StatusMode.Finished;
                 Log("Finished");
+                GetComponent<AudioSource>().Play();
             } else {
-                agent.SetDestination(grill[index]);
+                agent.SetDestination(grid[index]);
                 agent.isStopped = false;
                 State = StatusMode.Walking;
-                Log(grill[index].ToString());
+                Log(grid[index].ToString());
             }
 
             yield return null;

@@ -253,8 +253,8 @@ Transform:
   - {fileID: 2300629895232910793}
   - {fileID: 1187948794446990972}
   - {fileID: 7379900041743938628}
-  - {fileID: 5110272051309137712}
   - {fileID: 8370580462370738069}
+  - {fileID: 5110272051309137712}
   - {fileID: 15765476967383381}
   - {fileID: 9106615799952536215}
   - {fileID: 466057768768175932}
@@ -1505,6 +1505,11 @@ PrefabInstance:
       propertyPath: inheritedSeed
       value: 
       objectReference: {fileID: 7236713550250929171}
+    - target: {fileID: 2110250794972303418, guid: 69876b662dbfff945b3239cdac3b1811,
+        type: 3}
+      propertyPath: inheritedSeed
+      value: 
+      objectReference: {fileID: 6276627954700924319}
     - target: {fileID: 3949468099545173892, guid: 69876b662dbfff945b3239cdac3b1811,
         type: 3}
       propertyPath: inheritedSeed
@@ -4678,6 +4683,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1923674658342809544, guid: e52ac49fb25e9c744873d04c9e022ac5,
         type: 3}
+      propertyPath: m_Name
+      value: Counter - seed
+      objectReference: {fileID: 0}
+    - target: {fileID: 1923674658342809544, guid: e52ac49fb25e9c744873d04c9e022ac5,
+        type: 3}
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
@@ -4689,7 +4699,7 @@ PrefabInstance:
     - target: {fileID: 3483468797022252720, guid: e52ac49fb25e9c744873d04c9e022ac5,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3483468797022252720, guid: e52ac49fb25e9c744873d04c9e022ac5,
         type: 3}
@@ -4759,7 +4769,7 @@ PrefabInstance:
     - target: {fileID: 3483468797022352016, guid: e52ac49fb25e9c744873d04c9e022ac5,
         type: 3}
       propertyPath: m_Name
-      value: 1 Door
+      value: 1 Door - seed
       objectReference: {fileID: 0}
     - target: {fileID: 3579480299509992603, guid: e52ac49fb25e9c744873d04c9e022ac5,
         type: 3}
@@ -7188,7 +7198,7 @@ PrefabInstance:
     - target: {fileID: 4312197179725100470, guid: 44fa4c531085485468d495e0a9fb47ee,
         type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4312197179725100470, guid: 44fa4c531085485468d495e0a9fb47ee,
         type: 3}
@@ -7300,6 +7310,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 7795119549141638551, guid: 44fa4c531085485468d495e0a9fb47ee,
+        type: 3}
+      propertyPath: inheritedSeed
+      value: 
+      objectReference: {fileID: 7236713550250929171}
     - target: {fileID: 8197449942694150181, guid: 44fa4c531085485468d495e0a9fb47ee,
         type: 3}
       propertyPath: m_Layer
