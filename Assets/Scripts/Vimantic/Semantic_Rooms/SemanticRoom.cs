@@ -8,11 +8,11 @@ public class SemanticRoom : MonoBehaviour
     public string id;
     public string roomType = "Unknow";
 
-    public void SetID(string _id) {
+    public void SetRoomID(string _id) {
         id = _id;
     }
 
-    public void SetTypeRoom(string _roomType) {
+    public void SetRoomType(string _roomType) {
         roomType = _roomType;
     }
 

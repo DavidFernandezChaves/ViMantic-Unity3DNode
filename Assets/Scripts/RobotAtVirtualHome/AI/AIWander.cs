@@ -12,7 +12,7 @@ namespace RobotAtVirtualHome {
 
     [RequireComponent(typeof(NavMeshAgent))]
 
-    public class IAWander : MonoBehaviour {
+    public class AIWander : MonoBehaviour {
 
         public enum StatusMode { Loading, Walking, Turning, Finished }
 

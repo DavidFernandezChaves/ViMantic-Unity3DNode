@@ -22,12 +22,10 @@ public class VirtualSemanticObject : MonoBehaviour
     private OntologyManager ontologyManager;
     private DateTime time;
 
-    public List<GameObject> tocando;
-
     #region Unity Functions
+
     private void OnTriggerStay(Collider other) {
         VirtualSemanticObject vso = other.gameObject.GetComponent<VirtualSemanticObject>();
-        tocando.Add(other.gameObject);
 
         if (vso != null && vso.semanticObject.type.Equals(semanticObject.type) && dateTime <= vso.dateTime && null == associatedDetections.Find(O=>O.ontologyID.Equals(vso.semanticObject.ontologyID)) && vso.semanticObject.semanticRoom == semanticObject.semanticRoom) {
             if(dateTime == vso.dateTime && semanticObject.confidenceScore < vso.semanticObject.confidenceScore) {
@@ -59,13 +57,6 @@ public class VirtualSemanticObject : MonoBehaviour
             UpdateObject();
             Destroy(vso.transform.parent.gameObject);
 
-            if (semanticObject.semanticRoom == null) {
-                semanticObject.semanticRoom = UpdateRoom();
-                if (semanticObject.semanticRoom != null) {
-                    ontologyManager.ObjectInRoom(semanticObject);
-                }
-            }
-
             if (objectManager == null) {
                 objectManager = FindObjectOfType<ObjectManager>();
             }
@@ -83,10 +74,9 @@ public class VirtualSemanticObject : MonoBehaviour
     #endregion
 
     #region Public Functions
-    public void InitializeObject(SemanticObject _semanticObject)
+    public void InitializeObject(SemanticObject _semanticObject, Transform _robot)
     {        
         ontologyManager = FindObjectOfType<OntologyManager>();
-        tocando = new List<GameObject>();
         dateTime = DateTime.Now;
         semanticObject = _semanticObject;
         associatedDetections.Add(semanticObject);
@@ -96,11 +86,16 @@ public class VirtualSemanticObject : MonoBehaviour
         //transform.parent.rotation = Quaternion.identity;
 
         UpdateObject();
-
-        semanticObject.semanticRoom = UpdateRoom();
+        SemanticRoom sr = GetRoom(transform.position);
+        if(sr != GetRoom(_robot.position)) {
+            Destroy(transform.parent.gameObject);
+        }
+        semanticObject.semanticRoom = sr;
         if (semanticObject.semanticRoom != null) {
             ontologyManager.ObjectInRoom(semanticObject);
-        }     
+        }
+
+        GetComponent<BoxCollider>().enabled = true;
     }
 
     public void UpdateObject() {
@@ -125,11 +120,10 @@ public class VirtualSemanticObject : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public SemanticRoom UpdateRoom() {
+    public static SemanticRoom GetRoom(Vector3 position) {
         RaycastHit hit;
-        Vector3 position = transform.parent.position;
         position.y = -100;
-        if (Physics.Raycast(position, transform.TransformDirection(Vector3.up), out hit)) {
+        if (Physics.Raycast(position, Vector3.up, out hit)) {
             return hit.transform.GetComponent<SemanticRoom>();            
         }
         return null;

@@ -101,7 +101,7 @@ public class ObjectManager : MonoBehaviour {
 
                     if (distance < maxDistance) {
                         virtualSemanticMap.Add(virtualObject);
-                        InstanceNewSemanticObject(virtualObject);
+                        InstanceNewSemanticObject(virtualObject,_host);
                         listTimes.Add((DateTime.Now.Ticks - time) / TimeSpan.TicksPerMillisecond);
 
                     } else {
@@ -122,10 +122,11 @@ public class ObjectManager : MonoBehaviour {
     #endregion
 
     #region Private Functions
-    private void InstanceNewSemanticObject(SemanticObject _obj) {
+    private void InstanceNewSemanticObject(SemanticObject _obj, string host) {
+        Transform _robot = GameObject.Find(host).transform;
         Transform obj_inst = Instantiate(prefDetectedObject, _obj.pose, _obj.rotation).transform;
         obj_inst.parent = tfFrameForObjects;
-        obj_inst.GetComponentInChildren<VirtualSemanticObject>().InitializeObject(_obj);
+        obj_inst.GetComponentInChildren<VirtualSemanticObject>().InitializeObject(_obj, _robot);
     }
 
     private void Log(string _msg) {

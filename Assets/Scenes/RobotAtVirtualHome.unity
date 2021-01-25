@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verbose: 1
-  houseSelected: 17
+  houseSelected: 20
   virtualRobotPrefab: {fileID: 931527486158493203, guid: 60b6c9f65ab28894e907f78df833e023,
     type: 3}
   recordHierarchy: 0
@@ -534,7 +534,7 @@ MonoBehaviour:
   recodTimes: 0
   nObservationsToConsider: 5
   frequency: 2
-  sendResultsToROS: 0
+  sendResultsToROS: 1
   panel: {fileID: 0}
   titleRoom: {fileID: 0}
   graph: {fileID: 0}

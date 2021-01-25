@@ -12,7 +12,7 @@ namespace RobotAtVirtualHome {
 
     [RequireComponent(typeof(NavMeshAgent))]
 
-    public class IACaptureGrid : MonoBehaviour {
+    public class AIGrid : MonoBehaviour {
 
         public enum StatusMode { Loading, Walking, Turning, Finished }
 
@@ -21,6 +21,7 @@ namespace RobotAtVirtualHome {
         public Vector2 minRange;
         public Vector2 maxRange;
         public float size = 0.5f;
+        public bool exactRoute = false;
         public int photosPerPoint = 10;
         public bool captureRGB;
         public bool captureDepth;
@@ -152,9 +153,17 @@ namespace RobotAtVirtualHome {
                 for (float j = minRange[1]; j <= maxRange[1]; j += size) {
                     Vector3 point = new Vector3(i, transform.position.y, j);
                     agent.CalculatePath(point, path);
-                    if (path.status == NavMeshPathStatus.PathComplete && Vector3.Distance(path.corners[path.corners.Length-1],point) < 0.04f) {
-                        grid.Add(point);
-                    }                    
+                    if (exactRoute) {
+                        if (path.status == NavMeshPathStatus.PathComplete && Vector3.Distance(path.corners[path.corners.Length - 1], point) < 0.04f) {
+                            grid.Add(point);
+                        }
+                    } else {
+                        if (path.status == NavMeshPathStatus.PathComplete) {
+                            grid.Add(point);
+                        }
+                    }
+
+                  
                 }
             }
             yield return new WaitForEndOfFrame();

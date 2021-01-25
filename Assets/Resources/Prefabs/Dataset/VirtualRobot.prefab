@@ -92,8 +92,8 @@ MonoBehaviour:
   randomSecuence: 0
   record: 0
   frecuency: 0.5
-  captureRGB: 0
-  captureDepth: 0
+  captureRGB: 1
+  captureDepth: 1
   captureSemanticMask: 0
   sendPathToROS: 0
   ROSFrecuency: 1
@@ -112,7 +112,8 @@ MonoBehaviour:
   verbose: 2
   minRange: {x: -100, y: -100}
   maxRange: {x: 100, y: 100}
-  size: 0.25
+  size: 0.5
+  exactRoute: 0
   photosPerPoint: 10
   captureRGB: 1
   captureDepth: 1
@@ -129,10 +130,10 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.2
-  m_Speed: 1
+  m_Speed: 0.1
   m_Acceleration: 3
   avoidancePriority: 50
-  m_AngularSpeed: 100
+  m_AngularSpeed: 10
   m_StoppingDistance: 0.01
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1

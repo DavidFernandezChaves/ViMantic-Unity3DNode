@@ -39,8 +39,8 @@ namespace RobotAtVirtualHome {
                 }                
 
                 if (house = Instantiate(houses[i], transform).GetComponent<House>()) {
-                    if (recordHierarchy) {
-                        path = Path.Combine(path, "House" + (i+1));
+                    path = Path.Combine(path, "House" + (i + 1));
+                    if (recordHierarchy) {                        
                         if (!Directory.Exists(path)) {
                             Directory.CreateDirectory(path);
                         }

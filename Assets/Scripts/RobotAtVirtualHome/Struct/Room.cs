@@ -54,8 +54,11 @@ namespace RobotAtVirtualHome {
         }
 
         private void Start() {
-            SendMessage("SetID", transform.name,SendMessageOptions.DontRequireReceiver);
-            SendMessage("SetTypeRoom", roomType.ToString(),SendMessageOptions.DontRequireReceiver);
+            //If you are using Vimantic architecture
+            gameObject.AddComponent<SemanticRoom>();
+
+            SendMessage("SetRoomID", transform.name,SendMessageOptions.DontRequireReceiver);
+            SendMessage("SetRoomType", roomType.ToString(),SendMessageOptions.DontRequireReceiver);
 
             switch (initialStateDoor) {
                 case mode.On:
