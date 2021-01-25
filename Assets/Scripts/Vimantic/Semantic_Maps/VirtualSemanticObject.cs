@@ -88,6 +88,7 @@ public class VirtualSemanticObject : MonoBehaviour
         UpdateObject();
         SemanticRoom sr = GetRoom(transform.position);
         if(sr != GetRoom(_robot.position)) {
+            ObjectManager.instance.virtualSemanticMap.Remove(_semanticObject);
             Destroy(transform.parent.gameObject);
         }
         semanticObject.semanticRoom = sr;
