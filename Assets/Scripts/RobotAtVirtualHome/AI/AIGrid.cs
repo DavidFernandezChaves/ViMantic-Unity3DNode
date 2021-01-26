@@ -7,6 +7,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
 using ROSUnityCore.ROSBridgeLib.geometry_msgs;
+using System;
 
 namespace RobotAtVirtualHome {
 
@@ -128,7 +129,7 @@ namespace RobotAtVirtualHome {
                 if (ros.IsConnected()) {
                     Vector3[] points = agent.path.corners;
                     PoseStampedMsg[] poses = new PoseStampedMsg[points.Length];
-                    HeaderMsg head = new HeaderMsg(0, new TimeMsg(ros.epochStart.Second, 0), "map");
+                    HeaderMsg head = new HeaderMsg(0, new TimeMsg(DateTime.Now.Second, 0), "map");
                     Quaternion rotation = transform.rotation;
                     for (int i=0; i < points.Length; i++) {
                         head.SetSeq(i);                        
@@ -139,7 +140,7 @@ namespace RobotAtVirtualHome {
                         poses[i] = new PoseStampedMsg(head, new PoseMsg(points[i], rotation,true));
                     }                     
 
-                    HeaderMsg globalHead = new HeaderMsg(0, new TimeMsg(ros.epochStart.Second, 0), "map");
+                    HeaderMsg globalHead = new HeaderMsg(0, new TimeMsg(DateTime.Now.Second, 0), "map");
                     PathMsg pathmsg = new PathMsg(globalHead, poses);
                     ros.Publish(Path_pub.GetMessageTopic(), pathmsg);
                 }

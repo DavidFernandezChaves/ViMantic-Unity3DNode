@@ -86,12 +86,12 @@ public class VirtualSemanticObject : MonoBehaviour
         //transform.parent.rotation = Quaternion.identity;
 
         UpdateObject();
-        SemanticRoom sr = GetRoom(transform.position);
-        if(sr != GetRoom(_robot.position)) {
+        SemanticRoom objectRoom = GetRoom(transform.position);
+        if(objectRoom.id != GetRoom(_robot.position).id) {
             ObjectManager.instance.virtualSemanticMap.Remove(_semanticObject);
             Destroy(transform.parent.gameObject);
         }
-        semanticObject.semanticRoom = sr;
+        semanticObject.semanticRoom = objectRoom;
         if (semanticObject.semanticRoom != null) {
             ontologyManager.ObjectInRoom(semanticObject);
         }

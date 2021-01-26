@@ -147,7 +147,7 @@ public class SmartCamera : MonoBehaviour
                 rgb.SetPixels(pxs);
                 rgb.Apply();
 
-                HeaderMsg _head = new HeaderMsg(0, new TimeMsg(ros.epochStart.Second, 0), transform.name);
+                HeaderMsg _head = new HeaderMsg(0, new TimeMsg(DateTime.Now.Second, 0), transform.name);
                 CompressedImageMsg compressedImg = new CompressedImageMsg(_head, "png", rgb.EncodeToPNG());
                 ros.Publish(CameraRGB_pub.GetMessageTopic(), compressedImg);
             }

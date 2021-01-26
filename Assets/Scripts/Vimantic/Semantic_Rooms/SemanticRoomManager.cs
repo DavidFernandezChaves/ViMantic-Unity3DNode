@@ -17,10 +17,10 @@ public class SemanticRoomManager : MonoBehaviour
     //Setting
     public bool recodTimes;
     public int nObservationsToConsider = 5;
-    public float frequency = 2;
+    public float rate = 2;
     public bool sendResultsToROS;
     public Dictionary<string,Dictionary<string, float>> semantic_rooms;
-    public string currentRoom{ get; private set; }
+    public string currentRoom { get; private set; }
 
     //UI
     public GameObject panel;
@@ -36,7 +36,7 @@ public class SemanticRoomManager : MonoBehaviour
     private List<Text> _probabilities, _categories;
 
     #region Unity Functions
-    private void Awake() {
+    private void Start() {
         _ontologyManager = GetComponent<OntologyManager>();
     }
     #endregion
@@ -46,10 +46,10 @@ public class SemanticRoomManager : MonoBehaviour
         var ids = new List<string>();
 
         foreach (SemanticRoom room in FindObjectsOfType<SemanticRoom>()) {
-            if (!ids.Contains(room.transform.name)) {
-                ids.Add(room.transform.name);
+            if (!ids.Contains(room.id)) {
+                ids.Add(room.id);
                 _ontologyManager.AddNewRoom(room.id, room.roomType.ToString());
-                Log(room.transform.name + " added");
+                Log(room.id + " added");
             }
         }
         var categories = _ontologyManager.GetCategoriesOfRooms();
@@ -65,7 +65,7 @@ public class SemanticRoomManager : MonoBehaviour
             semantic_rooms.Add(id, probabilities);
         }
 
-        StartCoroutine("Timer");
+        StartCoroutine(Timer());
     }
 
     public void UpdateRoom() {
@@ -81,6 +81,9 @@ public class SemanticRoomManager : MonoBehaviour
 
             Dictionary<String, float> probabilities = _ontologyManager.GetProbabilityCategories(detectedObjectsInside);
             semantic_rooms[currentRoom] = probabilities;
+
+            Log("Rooms probabilities updated");
+
             if (panel != null) {
                 UpdateUI(probabilities);
             }
@@ -121,7 +124,7 @@ public class SemanticRoomManager : MonoBehaviour
     private IEnumerator Timer() {
         while (Application.isPlaying) {
             UpdateRoom();
-            yield return new WaitForSeconds(frequency);
+            yield return new WaitForSeconds(rate);
         }        
     }
 
@@ -140,10 +143,12 @@ public class SemanticRoomManager : MonoBehaviour
 
     public SemanticRoom GetCurrentRoom() {
         RaycastHit hit;
-        if (Physics.Raycast(robot.position, robot.TransformDirection(Vector3.down), out hit)) {
+        Vector3 position = robot.position;
+        position.y = -100;
+        if (Physics.Raycast(position, robot.TransformDirection(Vector3.up), out hit)) {
             SemanticRoom room = hit.transform.GetComponent<SemanticRoom>();
             if(room != null) {
-                currentRoom = hit.transform.name;
+                currentRoom = room.id;
                 return room;
             } else {
                 currentRoom = "Unknown";
@@ -184,7 +189,7 @@ public class SemanticRoomManager : MonoBehaviour
 
     private void PublishResult(List<SemanticObject> detectedObjectsInside) {
         if (ros.IsConnected()) {
-            HeaderMsg _head = new HeaderMsg(0, new TimeMsg(ros.epochStart.Second, 0), currentRoom.ToString());
+            HeaderMsg _head = new HeaderMsg(0, new TimeMsg(DateTime.Now.Second, 0), currentRoom.ToString());
             List<SemanticRoomScoreMsg> probabilities = new List<SemanticRoomScoreMsg>();
 
             foreach (KeyValuePair<string, float> result in semantic_rooms[currentRoom]) {

@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &116525146814674397
 Transform:
   m_ObjectHideFlags: 0
@@ -124,11 +124,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc7bc2d82a4e4c449ac7844bbcaba5b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  verbose: 0
   ip: ws://localhost
   pot: 9090
   viewfinder: 0
   autoConnect: 0
-  debug: 0
   subPackages: []
   pubPackages: []
 --- !u!1 &7624038197610101392
@@ -250,6 +250,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7092804192935383847}
     m_Modifications:
+    - target: {fileID: 374665925179294947, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
+        type: 3}
+      propertyPath: m_TargetDisplay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4382376901228219170, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4382376901228219170, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -264,6 +274,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4382376901228219170, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4382376901228219170, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
         type: 3}
@@ -282,16 +297,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4382376901228219170, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
         type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4382376901228219170, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4382376901228219170, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
-        type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
@@ -305,16 +310,31 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5679651137246048223, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
+        type: 3}
+      propertyPath: m_TargetDisplay
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7205881389748370572, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
         type: 3}
       propertyPath: m_Name
-      value: Camera RGB-D
+      value: SmartCamera RGB-D
       objectReference: {fileID: 0}
     - target: {fileID: 8244464800012263865, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
         type: 3}
       propertyPath: _ros
       value: 
       objectReference: {fileID: 5103294082682893912}
+    - target: {fileID: 8244464800012263865, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
+        type: 3}
+      propertyPath: verbose
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8244464800012263865, guid: f5b8e66e4d3d7584e9120efa5c4e60ae,
+        type: 3}
+      propertyPath: sendImagesToROS
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f5b8e66e4d3d7584e9120efa5c4e60ae, type: 3}
 --- !u!4 &8732529102593393579 stripped

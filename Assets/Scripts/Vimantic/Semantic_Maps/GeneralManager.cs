@@ -35,7 +35,7 @@ namespace Vimantic {
             Application.targetFrameRate = -1;
             _txVersion.text = "Version: " + Application.version + "\nUse the \"A\", \"D\", \"W\", \"S\", \"E\", \"C\" keys to move. Right Mouse Button to Rotate the Camera. Shift to move quickly.";
             _txPath.text = Application.dataPath;
-            _nameMap = PlayerPrefs.GetString("nameMap", "Semantic map 1");
+            _nameMap = PlayerPrefs.GetString("nameMap", "SemanticMap");
             _InFiTxNameMap.text = _nameMap;
             _robots = new List<Transform>();
             _semanticMapping = GetComponent<ObjectManager>();
@@ -60,23 +60,24 @@ namespace Vimantic {
 
         public void NewConnection(Text TxIp) {
             GameObject robot = Instantiate(_gamObjRobot);
-            robot.name = "ws://" + TxIp.text;
+            //robot.name = "ws://" + TxIp.text;
             var ros = robot.GetComponent<ROS>();
             ros.SetIP(TxIp.text);
-            ros.pubPackages = new List<string>() { "RoomScores_pub", "ObjectsInRoom_pub", "CameraRGB_pub", "CameraDepth_pub" };
+            ros.pubPackages = new List<string>() { "RoomScores_pub", "ObjectsInRoom_pub"};
             ros.subPackages = new List<string>() { "Tf_sub", "Semantic_mapping_sub" };
-            //if (_robots.Count==0)
-            //    ros._subPackages.Add("Map_sub");
 
+            robot.name = _InFiTfRobot.text;
 
-            var _tfFrameID_temp = GameObject.Find(_InFiTfRobot.text + "_" + ros.ip);
-            if (_tfFrameID_temp == null) {
-                _tfFrameID_temp = new GameObject() { name = _InFiTfRobot.text + "_" + ros.ip };
-            }
-            robot.transform.parent = _tfFrameID_temp.transform;
+            //var _tfFrameID_temp = GameObject.Find(_InFiTfRobot.text + "_" + ros.ip);
+            //if (_tfFrameID_temp == null) {
+            //    _tfFrameID_temp = new GameObject() { name = _InFiTfRobot.text + "_" + ros.ip };
+            //}
+            //robot.transform.parent = _tfFrameID_temp.transform;
 
             ros.Connect();
             _robots.Add(robot.transform);
+
+            TFController.instance.CheckClients();
 
             //Add connectio to Menu
             var panel = Instantiate(_gamObjPanelRobot, _panelLeftDown);
@@ -86,7 +87,7 @@ namespace Vimantic {
                 ros.Disconnect();
                 _robots.Remove(robot.transform);
                 try {
-                    Destroy(_tfFrameID_temp);
+                    Destroy(robot.gameObject);
                     Destroy(panel);
                 } catch { Debug.LogWarning("Tf not found"); }
             });

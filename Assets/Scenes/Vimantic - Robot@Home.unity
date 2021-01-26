@@ -845,7 +845,7 @@ GameObject:
   - component: {fileID: 150110562}
   - component: {fileID: 150110561}
   m_Layer: 5
-  m_Name: Btn_Update
+  m_Name: Btn_Print
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -914,17 +914,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1473188671}
-        m_MethodName: UpdateRoom
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: SemanticRoom, Assembly-CSharp
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 1473188671}
         m_MethodName: PrintResult
         m_Mode: 1
@@ -1089,7 +1078,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1473188671}
-        m_MethodName: SeekRooms
+        m_MethodName: OnVirtualEnviromentLoaded
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2529,7 +2518,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1473188671}
-        m_MethodName: SeekRooms
+        m_MethodName: OnVirtualEnviromentLoaded
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3430,7 +3419,7 @@ MonoBehaviour:
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_CustomCaretColor: 0
   m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
-  m_Text: 192.168.0.106
+  m_Text: 192.168.0.20
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
@@ -4148,7 +4137,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 192.168.0.106
+  m_Text: 192.168.0.20
 --- !u!222 &991174178
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5386,7 +5375,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1473188671}
-        m_MethodName: SeekRooms
+        m_MethodName: OnVirtualEnviromentLoaded
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5867,7 +5856,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Update Graph
+  m_Text: Results
 --- !u!222 &1445296303
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6235,7 +6224,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verbose: 0
-  ros: []
   updateRate: 1
 --- !u!114 &1473188669
 MonoBehaviour:
@@ -6249,7 +6237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52eecb07d2792884b8b5c5e53557d6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verbose: 0
+  verbose: 1
   saveOntology: 0
   prefix: MAPIR
   masterURI: http://mapir.isa.uma.es/
@@ -6267,14 +6255,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdfd9c59273188c46ae4a23c880a5c2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verbose: 0
+  verbose: 1
   recordTimes: 0
   maxDistance: 2
   minSize: 0.05
-  maxSizeZ: 1
+  maxSizeZ: 2
   minimunConfidenceScore: 0.5
-  prefDetectedObject: {fileID: 0}
-  tfFrameForObjects: {fileID: 0}
+  prefDetectedObject: {fileID: 1095422640751484, guid: 98c8dfbbab4a5e746bb2c0111b400211,
+    type: 3}
+  tfFrameForObjects: {fileID: 2124113846}
 --- !u!114 &1473188671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6287,15 +6276,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2138321dc0ddbab449f965560e196a77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verbose: 0
+  verbose: 1
   recodTimes: 0
   nObservationsToConsider: 5
-  frequency: 2
-  sendResultsToROS: 0
-  panel: {fileID: 0}
-  titleRoom: {fileID: 0}
-  graph: {fileID: 0}
-  uiCategoryRoom: {fileID: 0}
+  rate: 2
+  sendResultsToROS: 1
+  panel: {fileID: 690424322}
+  titleRoom: {fileID: 1858971526}
+  graph: {fileID: 636184617}
+  uiCategoryRoom: {fileID: 808290718410112280, guid: b0e27107ad3273549aa4b06f959899e3,
+    type: 3}
   robot: {fileID: 0}
 --- !u!20 &1480865811 stripped
 Camera:
@@ -8966,7 +8956,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1473188671}
-        m_MethodName: SeekRooms
+        m_MethodName: OnVirtualEnviromentLoaded
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9337,7 +9327,7 @@ PrefabInstance:
     - target: {fileID: 9169499002730053203, guid: 521ddc3acaf83a349afa8c24972b7b69,
         type: 3}
       propertyPath: m_Text
-      value: 192.168.0.106
+      value: 192.168.0.20
       objectReference: {fileID: 0}
     - target: {fileID: 9169499002998339780, guid: 521ddc3acaf83a349afa8c24972b7b69,
         type: 3}

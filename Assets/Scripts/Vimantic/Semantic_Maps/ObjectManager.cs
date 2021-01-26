@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.IO;
+using ROSUnityCore;
 
 [RequireComponent(typeof(OntologyManager))]
 
@@ -67,8 +68,6 @@ public class ObjectManager : MonoBehaviour {
     #region Public Functions
     public void DetectedObject(SemanticObjectsMsg _semanticObjects, string _host) {
 
-        Transform objsFrameID = GameObject.Find(_semanticObjects.GetHeader().GetFrameId()).transform;
-
         for (int i = 0; i < _semanticObjects.GetSemanticObjects().Length; i++) {
 
             var time = DateTime.Now.Ticks;
@@ -95,18 +94,23 @@ public class ObjectManager : MonoBehaviour {
                 
 
                 if (_obj.GetConfidenceScore() > minimunConfidenceScore) {
-                    var distance = Vector2.Distance(objsFrameID.position, globalPose);
+                    virtualSemanticMap.Add(virtualObject);
+                    InstanceNewSemanticObject(virtualObject, _host);
+                    listTimes.Add((DateTime.Now.Ticks - time) / TimeSpan.TicksPerMillisecond);
 
-                    Log(distance.ToString());
 
-                    if (distance < maxDistance) {
-                        virtualSemanticMap.Add(virtualObject);
-                        InstanceNewSemanticObject(virtualObject,_host);
-                        listTimes.Add((DateTime.Now.Ticks - time) / TimeSpan.TicksPerMillisecond);
+                    //var distance = Vector2.Distance(objsFrameID.position, globalPose);
 
-                    } else {
-                        Log(_obj.GetId() + " - Detected far away.");
-                    }
+                    //Log(distance.ToString());
+
+                    //if (distance < maxDistance) {
+                    //    virtualSemanticMap.Add(virtualObject);
+                    //    InstanceNewSemanticObject(virtualObject,_host);
+                    //    listTimes.Add((DateTime.Now.Ticks - time) / TimeSpan.TicksPerMillisecond);
+
+                    //} else {
+                    //    Log(_obj.GetId() + " - Detected far away.");
+                    //}
                 } else {
                     Log(_obj.GetId() + " - Detected but it have low score.");
                 }
@@ -122,11 +126,15 @@ public class ObjectManager : MonoBehaviour {
     #endregion
 
     #region Private Functions
+    private Transform FindClient(string _ip) {
+        List<ROS> clients = new List<ROS>(FindObjectsOfType<ROS>());
+        return clients.Find(c => c.ip.Equals(_ip)).transform;
+    }
+
     private void InstanceNewSemanticObject(SemanticObject _obj, string host) {
-        Transform _robot = GameObject.Find(host).transform;
         Transform obj_inst = Instantiate(prefDetectedObject, _obj.pose, _obj.rotation).transform;
         obj_inst.parent = tfFrameForObjects;
-        obj_inst.GetComponentInChildren<VirtualSemanticObject>().InitializeObject(_obj, _robot);
+        obj_inst.GetComponentInChildren<VirtualSemanticObject>().InitializeObject(_obj, FindClient(host));
     }
 
     private void Log(string _msg) {

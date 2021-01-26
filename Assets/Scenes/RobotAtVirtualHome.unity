@@ -154,11 +154,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verbose: 1
-  houseSelected: 20
+  houseSelected: 13
   virtualRobotPrefab: {fileID: 931527486158493203, guid: 60b6c9f65ab28894e907f78df833e023,
     type: 3}
-  recordHierarchy: 0
-  transparentRoof: 1
+  recordHierarchy: 1
+  transparentRoof: 0
   initialStateDoor: 3
   initialStateGeneralLight: 0
   initialStateLights: 1
