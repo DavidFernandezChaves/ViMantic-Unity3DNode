@@ -13,12 +13,12 @@ public class SmartCamera : MonoBehaviour
     public bool debug;
     public int verbose;
     public Vector2Int imageSize = new Vector2Int(640,480);
-    public Vector2Int imageMaskSize = new Vector2Int(640, 480);
     public float ROSFrecuency = 1;
     public bool sendImagesToROS;
 
     public Texture2D ImageRGB { get; private set; }
-    public Texture2D ImageDepth { get; private set; }    
+    public Texture2D ImageDepth { get; private set; }
+    public Texture2D imageSemanticMask { get; private set; }
 
     public ROS ros;
     private Camera cameraRgb;
@@ -32,12 +32,6 @@ public class SmartCamera : MonoBehaviour
         house = FindObjectOfType<House>(); 
         cameraRgb = transform.Find("CameraRGB").GetComponent<Camera>();
         cameraDepth = transform.Find("CameraD").GetComponent<Camera>();
-        //cameraDepth.fieldOfView = cameraRgb.fieldOfView;
-
-        if(imageMaskSize.x > imageSize.x || imageMaskSize.y > imageSize.y) {
-            imageMaskSize = imageSize;
-        }
-
 
         Log("Sensor size: " + cameraRgb.sensorSize.ToString() + "/" +
             "FoalLength: " + cameraRgb.focalLength.ToString() + "/" + 
@@ -48,6 +42,7 @@ public class SmartCamera : MonoBehaviour
 
         ImageRGB = new Texture2D(imageSize.x, imageSize.y, TextureFormat.RGBA32, false);
         ImageDepth = new Texture2D(imageSize.x, imageSize.y, TextureFormat.Alpha8, false);
+        imageSemanticMask = new Texture2D(imageSize.x, imageSize.y, TextureFormat.RGBA32, false);
     }
 
     void Start() {
@@ -78,11 +73,10 @@ public class SmartCamera : MonoBehaviour
         return "None";
     }
 
-    public Texture2D GetImageMask() {
-        Texture2D imageSemanticMask = new Texture2D(imageMaskSize.x, imageMaskSize.y, TextureFormat.RGBA32, false);
+    public Texture2D GetImageMask() {        
 
-        for (int i = 0; i < imageMaskSize.x; i++) {
-            for (int j = 0; j < imageMaskSize.y; j++) {
+        for (int i = 0; i < imageSize.x; i++) {
+            for (int j = 0; j < imageSize.y; j++) {
                 string name = GetSemanticType(new Vector3(i, j, 0));
                 Color color = Color.black;
                 if (house.semanticColors.ContainsKey(name)) {

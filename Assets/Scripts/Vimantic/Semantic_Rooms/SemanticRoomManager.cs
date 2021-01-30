@@ -1,4 +1,4 @@
-﻿using ROSUnityCore.ROSBridgeLib.semantic_mapping;
+﻿using ROSUnityCore.ROSBridgeLib.ViMantic_msgs;
 using ROSUnityCore.ROSBridgeLib.std_msgs;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Collections;
 
 public class SemanticRoomManager : MonoBehaviour
 {
-
+    public static SemanticRoomManager instance;
     public int verbose;
 
     //Setting
@@ -29,43 +29,49 @@ public class SemanticRoomManager : MonoBehaviour
     public GameObject uiCategoryRoom;
 
     //Private
-    private OntologyManager _ontologyManager;
     public Transform robot;
     private ROS ros;
     private List<Image> _bars;
     private List<Text> _probabilities, _categories;
 
     #region Unity Functions
-    private void Start() {
-        _ontologyManager = GetComponent<OntologyManager>();
+    private void Awake() {
+        if (!instance) {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        } else {
+            Destroy(gameObject);
+        }
     }
     #endregion
 
     #region Public Functions
     public void OnVirtualEnviromentLoaded() {
-        var ids = new List<string>();
+        if (this.enabled) {
+            var ids = new List<string>();
 
-        foreach (SemanticRoom room in FindObjectsOfType<SemanticRoom>()) {
-            if (!ids.Contains(room.id)) {
-                ids.Add(room.id);
-                _ontologyManager.AddNewRoom(room.id, room.roomType.ToString());
-                Log(room.id + " added");
+            foreach (SemanticRoom room in FindObjectsOfType<SemanticRoom>()) {
+                if (!ids.Contains(room.id)) {
+                    ids.Add(room.id);
+                    OntologyManager.instance.AddNewRoom(room.id, room.roomType.ToString());
+                    Log(room.id + " added");
+                }
             }
-        }
-        var categories = _ontologyManager.GetCategoriesOfRooms();
-        semantic_rooms = new Dictionary<string, Dictionary<string, float>>();
+            var categories = OntologyManager.instance.GetCategoriesOfRooms();
+            semantic_rooms = new Dictionary<string, Dictionary<string, float>>();
 
-        foreach (string id in ids) {
+            foreach (string id in ids) {
 
-            Dictionary<string, float> probabilities = new Dictionary<string, float>();
-            foreach (string category in categories) {
-                probabilities.Add(category, 1 / categories.Count);
+                Dictionary<string, float> probabilities = new Dictionary<string, float>();
+                foreach (string category in categories) {
+                    probabilities.Add(category, 1 / categories.Count);
+                }
+
+                semantic_rooms.Add(id, probabilities);
             }
 
-            semantic_rooms.Add(id, probabilities);
+            StartCoroutine(Timer());
         }
-
-        StartCoroutine(Timer());
     }
 
     public void UpdateRoom() {
@@ -73,13 +79,13 @@ public class SemanticRoomManager : MonoBehaviour
 
             GetCurrentRoom();
 
-            List<SemanticObject> detectedObjectsInside = _ontologyManager.GetPreviousDetections(currentRoom);
+            List<SemanticObject> detectedObjectsInside = OntologyManager.instance.GetPreviousDetections(currentRoom);
 
             if (detectedObjectsInside.Count > nObservationsToConsider) {
                 detectedObjectsInside = detectedObjectsInside.GetRange(0, nObservationsToConsider);
             }
 
-            Dictionary<String, float> probabilities = _ontologyManager.GetProbabilityCategories(detectedObjectsInside);
+            Dictionary<String, float> probabilities = OntologyManager.instance.GetProbabilityCategories(detectedObjectsInside);
             semantic_rooms[currentRoom] = probabilities;
 
             Log("Rooms probabilities updated");
@@ -199,13 +205,15 @@ public class SemanticRoomManager : MonoBehaviour
             SemanticRoomMsg msg = new SemanticRoomMsg(_head, currentRoom, probabilities.ToArray());
             ros.Publish(RoomScores_pub.GetMessageTopic(), msg);
 
-            List<SemanticObjectMsg> obj_msg = new List<SemanticObjectMsg>();
-            foreach (var obj in detectedObjectsInside) {
-                obj_msg.Add(new SemanticObjectMsg(obj));
+            if (detectedObjectsInside.Count > 0) {
+                List<SemanticObjectMsg> obj_msg = new List<SemanticObjectMsg>();
+                foreach (var obj in detectedObjectsInside) {
+                    obj_msg.Add(new SemanticObjectMsg(obj));
+                }
+                
+                SemanticObjectArrayMsg msg2 = new SemanticObjectArrayMsg(_head, obj_msg.ToArray());
+                ros.Publish(ObjectsInRoom_pub.GetMessageTopic(), msg2);
             }
-
-            SemanticObjectsMsg msg2 = new SemanticObjectsMsg(_head, obj_msg.ToArray());
-            ros.Publish(ObjectsInRoom_pub.GetMessageTopic(), msg2);
         }
     }
 

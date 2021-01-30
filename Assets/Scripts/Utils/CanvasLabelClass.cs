@@ -53,7 +53,7 @@ public class CanvasLabelClass : MonoBehaviour
 
     public void RemoveThisSemanticObject()
     {
-        transform.parent.GetComponent<VirtualSemanticObject>().RemoveSemanticObject();
+        transform.parent.GetChild(0).GetComponent<VirtualSemanticObject>().RemoveSemanticObject();
     }
 
     private void Colors()

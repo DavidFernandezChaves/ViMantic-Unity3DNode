@@ -201,7 +201,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a83d7a1acd709824692c7c423d920570, type: 2}
+  - {fileID: 2100000, guid: 077e9bf77fcea68419b8bc5c619a9ab6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -254,9 +254,9 @@ MonoBehaviour:
   lineRender: {fileID: 120497781960058800}
   heightCanvas: {x: 2, y: 5}
   semanticObject:
-    ontologyID: 
+    ontologyId: 
     type: 
-    confidenceScore: 0
+    score: 0
     nDetections: 0
     pose: {x: 0, y: 0, z: 0}
     size: {x: 0, y: 0, z: 0}

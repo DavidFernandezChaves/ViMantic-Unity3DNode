@@ -154,11 +154,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verbose: 1
-  houseSelected: 13
+  houseSelected: 3
   virtualRobotPrefab: {fileID: 931527486158493203, guid: 60b6c9f65ab28894e907f78df833e023,
     type: 3}
-  recordHierarchy: 1
-  transparentRoof: 0
+  recordHierarchy: 0
+  transparentRoof: 1
   initialStateDoor: 3
   initialStateGeneralLight: 0
   initialStateLights: 1
@@ -433,7 +433,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verbose: 1
-  ros: []
   updateRate: 0.1
 --- !u!4 &1701356810
 Transform:
@@ -533,7 +532,7 @@ MonoBehaviour:
   verbose: 1
   recodTimes: 0
   nObservationsToConsider: 5
-  frequency: 2
+  rate: 2
   sendResultsToROS: 1
   panel: {fileID: 0}
   titleRoom: {fileID: 0}

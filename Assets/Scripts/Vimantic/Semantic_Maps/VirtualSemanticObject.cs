@@ -16,10 +16,7 @@ public class VirtualSemanticObject : MonoBehaviour
     public SemanticObject semanticObject;
 
     public DateTime dateTime { get; private set; }
-    public List<SemanticObject> associatedDetections;
-    
-    private ObjectManager objectManager;
-    private OntologyManager ontologyManager;
+    public List<SemanticObject> associatedDetections;    
     private DateTime time;
 
     #region Unity Functions
@@ -27,22 +24,22 @@ public class VirtualSemanticObject : MonoBehaviour
     private void OnTriggerStay(Collider other) {
         VirtualSemanticObject vso = other.gameObject.GetComponent<VirtualSemanticObject>();
 
-        if (vso != null && vso.semanticObject.type.Equals(semanticObject.type) && dateTime <= vso.dateTime && null == associatedDetections.Find(O=>O.ontologyID.Equals(vso.semanticObject.ontologyID)) && vso.semanticObject.semanticRoom == semanticObject.semanticRoom) {
-            if(dateTime == vso.dateTime && semanticObject.confidenceScore < vso.semanticObject.confidenceScore) {
+        if (vso != null && vso.semanticObject.type.Equals(semanticObject.type) && dateTime <= vso.dateTime && null == associatedDetections.Find(O=>O.ontologyId.Equals(vso.semanticObject.ontologyId)) && vso.semanticObject.semanticRoom == semanticObject.semanticRoom) {
+            if(dateTime == vso.dateTime && semanticObject.score < vso.semanticObject.score) {
                 dateTime.AddMilliseconds(1);
                 return;
             }
             
             time = DateTime.Now;
             associatedDetections.Add(vso.semanticObject);
-            ontologyManager.JoinSemanticObject(semanticObject, vso.semanticObject);
+            OntologyManager.instance.JoinSemanticObject(semanticObject, vso.semanticObject);
             semanticObject.nDetections++;
 
-            double score = 0;
+            float score = 0;
             foreach (SemanticObject so in associatedDetections) {
-                score += so.confidenceScore;
+                score += so.score;
             }
-            semanticObject.confidenceScore = score / associatedDetections.Count;
+            semanticObject.score = score / associatedDetections.Count;
 
             transform.parent.rotation = Quaternion.identity;
             vso.transform.parent.rotation = Quaternion.identity;
@@ -56,18 +53,14 @@ public class VirtualSemanticObject : MonoBehaviour
             semanticObject.size = bounds.size*(1-erodeRate);
             UpdateObject();
             Destroy(vso.transform.parent.gameObject);
-
-            if (objectManager == null) {
-                objectManager = FindObjectOfType<ObjectManager>();
-            }
-            objectManager.AddTimeUnion((DateTime.Now - time).Milliseconds);
+            ObjectManager.instance.AddTimeUnion((DateTime.Now - time).Milliseconds);
         }
     }
 
 
     private void OnDestroy() {
         if (associatedDetections.Count > 1) {
-            ontologyManager.UpdateObject(semanticObject, semanticObject.pose, semanticObject.rotation, semanticObject.size, semanticObject.confidenceScore, semanticObject.nDetections);
+            OntologyManager.instance.UpdateObject(semanticObject, semanticObject.pose, semanticObject.rotation, semanticObject.size, semanticObject.score, semanticObject.nDetections);
         }
     }
 
@@ -76,24 +69,17 @@ public class VirtualSemanticObject : MonoBehaviour
     #region Public Functions
     public void InitializeObject(SemanticObject _semanticObject, Transform _robot)
     {        
-        ontologyManager = FindObjectOfType<OntologyManager>();
         dateTime = DateTime.Now;
         semanticObject = _semanticObject;
         associatedDetections.Add(semanticObject);
         GetComponent<BoxCollider>().size = Vector3.one * joiningDistance;
-        transform.parent.name = semanticObject.ontologyID;
-
-        //transform.parent.rotation = Quaternion.identity;
+        transform.parent.name = semanticObject.ontologyId;
 
         UpdateObject();
-        SemanticRoom objectRoom = GetRoom(transform.position);
-        if(objectRoom.id != GetRoom(_robot.position).id) {
-            ObjectManager.instance.virtualSemanticMap.Remove(_semanticObject);
-            Destroy(transform.parent.gameObject);
-        }
-        semanticObject.semanticRoom = objectRoom;
+
+        semanticObject.semanticRoom = GetRoom(transform.position);
         if (semanticObject.semanticRoom != null) {
-            ontologyManager.ObjectInRoom(semanticObject);
+            OntologyManager.instance.ObjectInRoom(semanticObject);
         }
 
         GetComponent<BoxCollider>().enabled = true;
@@ -109,7 +95,7 @@ public class VirtualSemanticObject : MonoBehaviour
 
         //Load Canvas
         canvasLabel.transform.position = semanticObject.pose + new Vector3(0, UnityEngine.Random.Range(heightCanvas.x, heightCanvas.y), 0);
-        canvasLabel.LoadLabel(semanticObject.type, semanticObject.confidenceScore);
+        canvasLabel.LoadLabel(semanticObject.type, semanticObject.score);
 
         lineRender.SetPosition(0, canvasLabel.transform.position - new Vector3(0, 0.2f, 0));
         lineRender.SetPosition(1, transform.parent.position);
@@ -117,8 +103,8 @@ public class VirtualSemanticObject : MonoBehaviour
 
     public void RemoveSemanticObject()
     {
-        FindObjectOfType<OntologyManager>().RemoveSemanticObject(semanticObject);
-        Destroy(gameObject);
+        OntologyManager.instance.RemoveSemanticObject(semanticObject);
+        Destroy(transform.parent.gameObject);
     }
 
     public static SemanticRoom GetRoom(Vector3 position) {

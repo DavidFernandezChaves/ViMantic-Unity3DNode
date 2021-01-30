@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using ROSUnityCore.ROSBridgeLib.semantic_mapping;
+using ROSUnityCore.ROSBridgeLib.ViMantic_msgs;
 using ROSUnityCore.ROSBridgeLib.geometry_msgs;
 using System.Collections.Generic;
 using System;
@@ -25,7 +25,6 @@ public class ObjectManager : MonoBehaviour {
 
     public List<SemanticObject> virtualSemanticMap { get; private set; }
 
-    private OntologyManager ontologyManager;
     private List<long> listTimes;
     private List<int> listTimesUnionObject;
     private List<long> listTimesOntology;
@@ -39,7 +38,6 @@ public class ObjectManager : MonoBehaviour {
             Destroy(gameObject);
         }
 
-        ontologyManager = GetComponent<OntologyManager>();
         virtualSemanticMap = new List<SemanticObject>();
 
         listTimes = new List<long>();
@@ -66,7 +64,7 @@ public class ObjectManager : MonoBehaviour {
     #endregion
 
     #region Public Functions
-    public void DetectedObject(SemanticObjectsMsg _semanticObjects, string _host) {
+    public void DetectedObject(SemanticObjectArrayMsg _semanticObjects, string _host) {
 
         for (int i = 0; i < _semanticObjects.GetSemanticObjects().Length; i++) {
 
@@ -75,47 +73,30 @@ public class ObjectManager : MonoBehaviour {
             SemanticObjectMsg _obj = _semanticObjects.GetSemanticObjects()[i];
 
             //Check if its an interesting object
-            Vector3 objSize = _obj.GetScale().GetVector3Unity();
-            if (ontologyManager.CheckClassObject(_obj.GetTypeObject()) && objSize.x>minSize && objSize.y > minSize && objSize.z > minSize && objSize.z < maxSizeZ) {
+            Vector3 objSize = _obj._size.GetVector3Unity();
+            if (OntologyManager.instance.CheckClassObject(_obj._objectType) && objSize.x>minSize && objSize.y > minSize && objSize.z > minSize && objSize.z < maxSizeZ) {
                 Log("New object detected: " + _obj.ToString());
 
-                //Vector3 globalPose = objsFrameID.TransformPoint(_obj.GetPose().GetPositionUnity());
-                Vector3 globalPose = _obj.GetPose().GetPositionUnity();
-
-                SemanticObject virtualObject = new SemanticObject(_obj.GetTypeObject(),
-                                                _obj.GetConfidenceScore(),
-                                                globalPose,
+                SemanticObject virtualObject = new SemanticObject(_obj._objectType,
+                                                _obj._object._score,
+                                                _obj._object._pose.GetPose().GetPositionUnity(),
                                                 objSize,
-                                                _obj.GetPose().GetRotationUnity());
+                                                _obj._object._pose.GetPose().GetRotationUnity());
 
                 var ontologyTime = DateTime.Now.Ticks;
-                virtualObject = ontologyManager.AddNewDetectedObject(virtualObject);
+                virtualObject = OntologyManager.instance.AddNewDetectedObject(virtualObject);
                 listTimesOntology.Add((DateTime.Now.Ticks - ontologyTime) / TimeSpan.TicksPerMillisecond);
                 
 
-                if (_obj.GetConfidenceScore() > minimunConfidenceScore) {
+                if (_obj._object._score > minimunConfidenceScore) {
                     virtualSemanticMap.Add(virtualObject);
                     InstanceNewSemanticObject(virtualObject, _host);
-                    listTimes.Add((DateTime.Now.Ticks - time) / TimeSpan.TicksPerMillisecond);
-
-
-                    //var distance = Vector2.Distance(objsFrameID.position, globalPose);
-
-                    //Log(distance.ToString());
-
-                    //if (distance < maxDistance) {
-                    //    virtualSemanticMap.Add(virtualObject);
-                    //    InstanceNewSemanticObject(virtualObject,_host);
-                    //    listTimes.Add((DateTime.Now.Ticks - time) / TimeSpan.TicksPerMillisecond);
-
-                    //} else {
-                    //    Log(_obj.GetId() + " - Detected far away.");
-                    //}
+                    listTimes.Add((DateTime.Now.Ticks - time) / TimeSpan.TicksPerMillisecond);                   
                 } else {
-                    Log(_obj.GetId() + " - Detected but it have low score.");
+                    Log(_obj._objectType + " - Detected but it have low score.");
                 }
             } else {
-                Log(_obj.GetId() + " detected but it is not in the ontology.");
+                Log(_obj._objectType + " detected but it is not in the ontology.");
             }
         }
     }

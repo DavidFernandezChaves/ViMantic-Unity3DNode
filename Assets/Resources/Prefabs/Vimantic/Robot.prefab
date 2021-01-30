@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc7bc2d82a4e4c449ac7844bbcaba5b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verbose: 0
+  verbose: 1
   ip: ws://localhost
   pot: 9090
   viewfinder: 0

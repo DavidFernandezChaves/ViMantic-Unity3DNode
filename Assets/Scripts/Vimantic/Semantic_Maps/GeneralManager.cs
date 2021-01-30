@@ -64,7 +64,7 @@ namespace Vimantic {
             var ros = robot.GetComponent<ROS>();
             ros.SetIP(TxIp.text);
             ros.pubPackages = new List<string>() { "RoomScores_pub", "ObjectsInRoom_pub"};
-            ros.subPackages = new List<string>() { "Tf_sub", "Semantic_mapping_sub" };
+            ros.subPackages = new List<string>() { "Tf_sub", "Vimantic_SemanticObjects_sub" };
 
             robot.name = _InFiTfRobot.text;
 
