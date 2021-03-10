@@ -1,97 +1,72 @@
-﻿using ROSUnityCore;
-using ROSUnityCore.ROSBridgeLib.std_msgs;
-using ROSUnityCore.ROSBridgeLib.nav_msgs;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
-using ROSUnityCore.ROSBridgeLib.geometry_msgs;
-using System;
 
 namespace RobotAtVirtualHome {
 
     [RequireComponent(typeof(NavMeshAgent))]
 
-    public class AIGrid : MonoBehaviour {
+    public class AIGrid : VirtualRobots {
 
-        public enum StatusMode { Loading, Walking, Turning, Finished }
-
-        public int verbose;
-        public StatusMode State { get; private set; }
         public Vector2 minRange;
         public Vector2 maxRange;
-        public float size = 0.5f;
+        public float cellSize = 0.5f;
         public bool exactRoute = false;
         public int photosPerPoint = 10;
         public bool captureRGB;
         public bool captureDepth;
         public bool captureSemanticMask;
-        public bool sendPathToROS;
-        public float ROSFrecuency = 1;
 
-        public string room { get; private set; }
-        public string path { get; private set; }
+        public string room { get; private set; }        
 
-        private SmartCamera smartCamera;
         private List<Vector3> grid;
-        private NavMeshAgent agent;
         private int index = 0;
-        private StreamWriter writer;
-        private ROS ros;
-
 
         #region Unity Functions
-        private void Awake() {
-            agent = GetComponent<NavMeshAgent>();
-            smartCamera = GetComponentInChildren<SmartCamera>();
-            if(smartCamera == null) {
-                LogWarning("Smart camera not found");
-            }
-        }
 
         void Start() {
 
-            if(minRange[0] >= maxRange[0] || minRange[1]>= maxRange[1]) {
+            if (minRange[0] >= maxRange[0] || minRange[1] >= maxRange[1]) {
                 LogWarning("Incorrect ranges");
             }
-            path = FindObjectOfType<VirtualEnvironment>().path;
-            path = Path.Combine(path, "Grid");
 
-            if (!Directory.Exists(path)) {
-                Directory.CreateDirectory(path);
+            if (record) {
+                string tempPath = Path.Combine(filePath, "Grid");
+                int i = 0;
+                while (Directory.Exists(tempPath)) {
+                    i++;
+                    tempPath = Path.Combine(filePath, "Grid" + i);
+                }
+
+                filePath = tempPath;
+                if (!Directory.Exists(filePath)) {
+                    Directory.CreateDirectory(filePath);
+                }
+
+                Log("The saving path is:" + filePath);
+                writer = new StreamWriter(filePath + "/InfoGrid.csv", true);
+                writer.WriteLine("photoID;robotPosition;robotRotation;cameraPosition;cameraRotation;room");
             }
-            
-            Log("The saving path is:" + path);
-            writer = new StreamWriter(path + "/InfoGrid.csv", true);
-            writer.WriteLine("photoID;robotPosition;robotRotation;cameraPosition;cameraRotation;room");
+            state = StatusMode.Loading;
             grid = new List<Vector3>();
-            State = StatusMode.Loading;
             StartCoroutine(CalculateGrid());
-
-
-            ros = transform.root.GetComponentInChildren<ROS>();
-            if (sendPathToROS && ros != null) {
-                Log("Send path to ros: Ok");
-                ros.RegisterPubPackage("Path_pub");
-                StartCoroutine(SendPathToROS());
-            } else {
-                Log("Send path to ros: False");
-            }
+           
         }
 
         private void Update() {
-            switch (State) {
+            switch (state) {
                 case StatusMode.Walking:
 
                     RaycastHit hit;
-                    if (Physics.Raycast(transform.position,transform.TransformDirection(Vector3.down), out hit)) {
+                    if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit)) {
                         room = hit.transform.name;
                     }
 
                     if (agent.remainingDistance <= agent.stoppingDistance &&
                         agent.velocity.sqrMagnitude == 0f) {
-                        State = StatusMode.Turning;
+                        state = StatusMode.Turning;
                         StartCoroutine(Capture());
                         Log("Change state to Capture");
                     }
@@ -102,14 +77,14 @@ namespace RobotAtVirtualHome {
         private void OnDestroy() {
             if (this.enabled) {
                 writer.Close();
-            }            
+            }
         }
 
-#if UNITY_EDITOR 
+#if UNITY_EDITOR
         private void OnDrawGizmos() {
-            if (Application.isPlaying && this.enabled && verbose>0) {
+            if (Application.isPlaying && this.enabled && verbose > 0) {
                 Gizmos.color = Color.green;
-                foreach(Vector3 point in grid) {
+                foreach (Vector3 point in grid) {
                     Gizmos.DrawSphere(point, 0.1f);
                 }
                 Gizmos.color = Color.red;
@@ -124,34 +99,10 @@ namespace RobotAtVirtualHome {
         #endregion
 
         #region Private Functions
-        private IEnumerator SendPathToROS() {
-            while (Application.isPlaying) {
-                if (ros.IsConnected()) {
-                    Vector3[] points = agent.path.corners;
-                    PoseStampedMsg[] poses = new PoseStampedMsg[points.Length];
-                    HeaderMsg head = new HeaderMsg(0, new TimeMsg(DateTime.Now.Second, 0), "map");
-                    Quaternion rotation = transform.rotation;
-                    for (int i=0; i < points.Length; i++) {
-                        head.SetSeq(i);                        
-                        if (i > 0) {
-                            rotation = Quaternion.FromToRotation(points[i - 1], points[i]);
-                        }
-
-                        poses[i] = new PoseStampedMsg(head, new PoseMsg(points[i], rotation,true));
-                    }                     
-
-                    HeaderMsg globalHead = new HeaderMsg(0, new TimeMsg(DateTime.Now.Second, 0), "map");
-                    PathMsg pathmsg = new PathMsg(globalHead, poses);
-                    ros.Publish(Path_pub.GetMessageTopic(), pathmsg);
-                }
-                yield return new WaitForSeconds(ROSFrecuency);
-            }
-        }
-
         private IEnumerator CalculateGrid() {
             NavMeshPath path = new NavMeshPath();
-            for (float i = minRange[0]; i <= maxRange[0]; i += size) {
-                for (float j = minRange[1]; j <= maxRange[1]; j += size) {
+            for (float i = minRange[0]; i <= maxRange[0]; i += cellSize) {
+                for (float j = minRange[1]; j <= maxRange[1]; j += cellSize) {
                     Vector3 point = new Vector3(i, transform.position.y, j);
                     agent.CalculatePath(point, path);
                     if (exactRoute) {
@@ -164,14 +115,14 @@ namespace RobotAtVirtualHome {
                         }
                     }
 
-                  
+
                 }
             }
             yield return new WaitForEndOfFrame();
-            agent.SetDestination(grid[index]);            
-            agent.isStopped = false; 
+            agent.SetDestination(grid[index]);
+            agent.isStopped = false;
             yield return new WaitForEndOfFrame();
-            State = StatusMode.Walking;
+            state = StatusMode.Walking;
             Log("Start");
 
             yield return null;
@@ -180,68 +131,60 @@ namespace RobotAtVirtualHome {
         private IEnumerator Capture() {
             transform.rotation = Quaternion.identity;
             yield return new WaitForEndOfFrame();
-            byte[] bytes;
-            for (int i = 1; i <= photosPerPoint; i++) {
-                if (captureRGB) {
-                    writer.WriteLine(index.ToString() + "_" + i.ToString() + "_rgb.png;"
-                    + transform.position.ToString("F6") + ";"
-                    + transform.rotation.eulerAngles.ToString("F6") + ";"
-                    + smartCamera.transform.localPosition.ToString("F6") + ";"
-                    + smartCamera.transform.localRotation.eulerAngles.ToString("F6") + ";"
-                    + room);
-                    bytes = smartCamera.ImageRGB.EncodeToPNG();
-                    File.WriteAllBytes(path + "/" + index.ToString() + "_" + i.ToString() + "_rgb.png", bytes);
+            if (record) {
+                byte[] bytes;
+                for (int i = 1; i <= photosPerPoint; i++) {
+                    if (captureRGB) {
+                        writer.WriteLine(index.ToString() + "_" + i.ToString() + "_rgb.png;"
+                        + transform.position.ToString("F6") + ";"
+                        + transform.rotation.eulerAngles.ToString("F6") + ";"
+                        + smartCamera.transform.localPosition.ToString("F6") + ";"
+                        + smartCamera.transform.localRotation.eulerAngles.ToString("F6") + ";"
+                        + room);
+                        bytes = smartCamera.ImageRGB.EncodeToPNG();
+                        File.WriteAllBytes(filePath + "/" + index.ToString() + "_" + i.ToString() + "_rgb.png", bytes);
+                    }
+                    if (captureDepth) {
+                        writer.WriteLine(index.ToString() + "_" + i.ToString() + "_depth.png;"
+                        + transform.position.ToString("F6") + ";"
+                        + transform.rotation.eulerAngles.ToString("F6") + ";"
+                        + smartCamera.transform.localPosition.ToString("F6") + ";"
+                        + smartCamera.transform.localRotation.eulerAngles.ToString("F6") + ";"
+                        + room);
+                        bytes = smartCamera.ImageDepth.EncodeToPNG();
+                        File.WriteAllBytes(filePath + "/" + index.ToString() + "_" + i.ToString() + "depth.png", bytes);
+                    }
+                    if (captureSemanticMask) {
+                        writer.WriteLine(index.ToString() + "_" + i.ToString() + "_mask.png;"
+                        + transform.position.ToString("F6") + ";"
+                        + transform.rotation.eulerAngles.ToString("F6") + ";"
+                        + smartCamera.transform.localPosition.ToString("F6") + ";"
+                        + smartCamera.transform.localRotation.eulerAngles.ToString("F6") + ";"
+                        + room);
+                        bytes = smartCamera.GetImageMask().EncodeToPNG();
+                        File.WriteAllBytes(filePath + "/" + index.ToString() + "_" + i.ToString() + "_mask.png", bytes);
+                    }
+                    bytes = null;
+                    transform.rotation = Quaternion.Euler(0, i * (360 / photosPerPoint), 0);
+                    yield return new WaitForEndOfFrame();
                 }
-                if (captureDepth) {
-                    writer.WriteLine(index.ToString() + "_" + i.ToString() + "_depth.png;"
-                    + transform.position.ToString("F6") + ";"
-                    + transform.rotation.eulerAngles.ToString("F6") + ";"
-                    + smartCamera.transform.localPosition.ToString("F6") + ";"
-                    + smartCamera.transform.localRotation.eulerAngles.ToString("F6") + ";"
-                    + room);
-                    bytes = smartCamera.ImageDepth.EncodeToPNG();
-                    File.WriteAllBytes(path + "/" + index.ToString() + "_" + i.ToString() + "depth.png", bytes);
-                }
-                if (captureSemanticMask) {
-                    writer.WriteLine(index.ToString() + "_" + i.ToString() + "_mask.png;"
-                    + transform.position.ToString("F6") + ";"
-                    + transform.rotation.eulerAngles.ToString("F6") + ";"
-                    + smartCamera.transform.localPosition.ToString("F6") + ";"
-                    + smartCamera.transform.localRotation.eulerAngles.ToString("F6") + ";"
-                    + room);
-                    bytes = smartCamera.GetImageMask().EncodeToPNG();
-                    File.WriteAllBytes(path + "/" + index.ToString() + "_" + i.ToString() + "_mask.png", bytes);
-                }
-                bytes=null;
-                transform.rotation = Quaternion.Euler(0, i * (360 / photosPerPoint), 0);
-                yield return new WaitForEndOfFrame();
             }
-            yield return new WaitForEndOfFrame();
-            Log(index.ToString() + "/" + grid.Count + " - " + (index/(float)grid.Count)*100 +"%");
+            Log(index.ToString() + "/" + grid.Count + " - " + (index / (float)grid.Count) * 100 + "%");
             index++;
             if (index >= grid.Count) {
-                State = StatusMode.Finished;
+                state = StatusMode.Finished;
                 Log("Finished");
                 GetComponent<AudioSource>().Play();
             } else {
                 agent.SetDestination(grid[index]);
                 agent.isStopped = false;
-                State = StatusMode.Walking;
+                state = StatusMode.Walking;
                 Log(grid[index].ToString());
             }
 
             yield return null;
         }
 
-        private void Log(string _msg) {
-            if (verbose > 1)
-                Debug.Log("[Capture Grill]: " + _msg);
-        }
-
-        private void LogWarning(string _msg) {
-            if (verbose > 0)
-                Debug.LogWarning("[Capture Grill]: " + _msg);
-        }
         #endregion
     }
 }

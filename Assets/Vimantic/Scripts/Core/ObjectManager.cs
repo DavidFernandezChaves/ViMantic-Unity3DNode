@@ -82,7 +82,8 @@ public class ObjectManager : MonoBehaviour {
                 
                 if (objSize.x > minSize && objSize.y > minSize && objSize.z > minSize && objSize.z < maxSizeZ) {
 
-                    Log("New object detected: " + _obj.ToString());
+                    if(verbose > 2)
+                        Log("New object detected: " + _obj.ToString());
 
                     SemanticObject virtualObject = new SemanticObject(_obj._objectType,
                                                     _obj._object._score,
@@ -99,19 +100,19 @@ public class ObjectManager : MonoBehaviour {
 
                         Transform host = FindClient(_host);
                         Vector3 objPosition = _obj._object._pose.GetPose().GetPositionUnity();
-
-                        if (maxDistance > Vector2.Distance(new Vector2(objPosition.x, objPosition.z), new Vector2(host.position.x, host.position.z))) {
+                        float distance = Vector2.Distance(new Vector2(objPosition.x, objPosition.z), new Vector2(host.position.x, host.position.z));
+                        if (maxDistance > distance) {
                             virtualSemanticMap.Add(virtualObject);
                             InstanceNewSemanticObject(virtualObject, host);
                             listTimes.Add((DateTime.Now.Ticks - time) / TimeSpan.TicksPerMillisecond);
                         } else {
-                            Log(_obj._objectType + " - detected far away");
+                            Log(_obj._objectType + " - detected far away: "+distance+"/"+maxDistance);
                         }
                     } else {
-                        Log(_obj._objectType + " - detected but it have low score.");
+                        Log(_obj._objectType + " - detected but it have low score: " + _obj._object._score +"/"+minimunConfidenceScore);
                     }
                 } else {
-                    Log(_obj._objectType + " - detected, but does not meet the minimum features: size["+ objSize.x+","+ objSize.y+","+ objSize.z+"]");
+                    Log(_obj._objectType + " - detected, but does not meet the minimum features: size["+ objSize.x+","+ objSize.y+","+ objSize.z+"]/[>"+minSize+",>"+minSize+",<"+maxSizeZ+"]");
                 }
             } else {
                 Log(_obj._objectType + " detected but not identified in the ontology.");

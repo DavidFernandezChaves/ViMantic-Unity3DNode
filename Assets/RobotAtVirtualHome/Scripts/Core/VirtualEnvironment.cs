@@ -35,13 +35,13 @@ namespace RobotAtVirtualHome {
         private void Awake() {
             var houses = Resources.LoadAll("RobotAtVirtualHome/Houses", typeof(GameObject)).Cast<GameObject>().ToList();
             if (houses != null && houses.Count > 0) {
-                int i = UnityEngine.Random.Range(0, houses.Count);
-                if (houseSelected > 0) {
-                    i = houseSelected-1;
-                }                
 
-                if (house = Instantiate(houses[i], transform).GetComponent<House>()) {
-                    path = Path.Combine(path, "House" + (i + 1));
+                if (houseSelected == 0) {
+                    houseSelected = UnityEngine.Random.Range(0, houses.Count);
+                }              
+
+                if (house = Instantiate(houses[houseSelected-1], transform).GetComponent<House>()) {
+                    path = Path.Combine(path, "House" + (houseSelected));
                     if (recordHierarchy) {                        
                         if (!Directory.Exists(path)) {
                             Directory.CreateDirectory(path);
@@ -69,7 +69,7 @@ namespace RobotAtVirtualHome {
                     }
                     Invoke("StartSimulation", 0.1f);
                 } else {
-                    LogWarning("The gameObject " + i + " does not have the 'House' component.");
+                    LogWarning("The gameObject " + (houseSelected-1) + " does not have the 'House' component.");
                 }
 
             } else { LogWarning("There are no assigned houses in the virtual environment."); }
