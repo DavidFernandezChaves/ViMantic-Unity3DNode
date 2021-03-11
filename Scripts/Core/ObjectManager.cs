@@ -23,8 +23,6 @@ public class ObjectManager : MonoBehaviour {
     public GameObject prefDetectedObject;
     public Transform tfFrameForObjects;
 
-    public int nDetections = 0;
-
     public List<SemanticObject> virtualSemanticMap { get; private set; }
 
     private List<long> listTimes;
@@ -66,6 +64,10 @@ public class ObjectManager : MonoBehaviour {
     #endregion
 
     #region Public Functions
+    public void Connected(ROS ros) {
+        ros.RegisterSubPackage("Vimantic_SemanticObjects_sub");
+    }
+
     public void DetectedObject(SemanticObjectArrayMsg _semanticObjects, string _host) {
 
         for (int i = 0; i < _semanticObjects.GetSemanticObjects().Length; i++) {
@@ -77,8 +79,6 @@ public class ObjectManager : MonoBehaviour {
             //Check if its an interesting object
             Vector3 objSize = _obj._size.GetVector3Unity();
             if (OntologyManager.instance.CheckClassObject(_obj._objectType)){
-
-                nDetections++;
                 
                 if (objSize.x > minSize && objSize.y > minSize && objSize.z > minSize && objSize.z < maxSizeZ) {
 

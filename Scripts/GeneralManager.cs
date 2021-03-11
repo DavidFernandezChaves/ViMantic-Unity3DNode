@@ -59,25 +59,15 @@ namespace Vimantic {
         }
 
         public void NewConnection(Text TxIp) {
-            GameObject robot = Instantiate(_gamObjRobot);
-            //robot.name = "ws://" + TxIp.text;
-            var ros = robot.GetComponent<ROS>();
+            var _tfRobotParent = GameObject.Find(_InFiTfRobot.text);
+            if (_tfRobotParent == null) {
+                _tfRobotParent = new GameObject() { name = _InFiTfRobot.text};
+            }
 
-            //ros.pubPackages = new List<string>() { "RoomScores_pub", "ObjectsInRoom_pub"};
-            //ros.subPackages = new List<string>() { "Tf_sub", "Vimantic_SemanticObjects_sub" };
-
-            //robot.name = _InFiTfRobot.text;
-
-            //var _tfFrameID_temp = GameObject.Find(_InFiTfRobot.text + "_" + ros.ip);
-            //if (_tfFrameID_temp == null) {
-            //    _tfFrameID_temp = new GameObject() { name = _InFiTfRobot.text + "_" + ros.ip };
-            //}
-            //robot.transform.parent = _tfFrameID_temp.transform;
-
+            GameObject robot = Instantiate(_gamObjRobot,_tfRobotParent.transform);
+            ROS ros = robot.GetComponent<ROS>();
             ros.Connect(TxIp.text);
             _robots.Add(robot.transform);
-
-            TFController.instance.CheckClients();
 
             //Add connectio to Menu
             var panel = Instantiate(_gamObjPanelRobot, _panelLeftDown);

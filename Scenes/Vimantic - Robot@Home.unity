@@ -3419,10 +3419,11 @@ MonoBehaviour:
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_CustomCaretColor: 0
   m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
-  m_Text: 192.168.0.12
+  m_Text: 192.168.0.23
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!114 &722622647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3607,6 +3608,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!224 &767145970
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4137,7 +4139,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 192.168.0.12
+  m_Text: 192.168.0.23
 --- !u!222 &991174178
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4719,6 +4721,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!114 &1232379716
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4937,6 +4940,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!114 &1238902319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5056,6 +5060,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!224 &1252874471
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5220,6 +5225,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!114 &1269054053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6153,8 +6159,8 @@ GameObject:
   - component: {fileID: 1473188669}
   - component: {fileID: 1473188671}
   m_Layer: 0
-  m_Name: System
-  m_TagString: Untagged
+  m_Name: General Scripts
+  m_TagString: GeneralScripts
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6264,7 +6270,6 @@ MonoBehaviour:
   prefDetectedObject: {fileID: 1095422640751484, guid: 98c8dfbbab4a5e746bb2c0111b400211,
     type: 3}
   tfFrameForObjects: {fileID: 2124113846}
-  nDetections: 0
 --- !u!114 &1473188671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7414,6 +7419,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_ShouldActivateOnSelect: 1
 --- !u!114 &1723591924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9328,7 +9334,7 @@ PrefabInstance:
     - target: {fileID: 9169499002730053203, guid: 521ddc3acaf83a349afa8c24972b7b69,
         type: 3}
       propertyPath: m_Text
-      value: 192.168.0.12
+      value: 192.168.0.23
       objectReference: {fileID: 0}
     - target: {fileID: 9169499002998339780, guid: 521ddc3acaf83a349afa8c24972b7b69,
         type: 3}
