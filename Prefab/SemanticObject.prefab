@@ -40,7 +40,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1095422640751484}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 0
@@ -48,6 +48,7 @@ LineRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -153,7 +154,6 @@ GameObject:
   - component: {fileID: 7880049619080464832}
   - component: {fileID: 5716538009968882839}
   - component: {fileID: 8962530631594949681}
-  - component: {fileID: 2801991662256598589}
   m_Layer: 10
   m_Name: BoundingBox
   m_TagString: Object
@@ -190,14 +190,15 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5858584817072842814}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_Enabled: 0
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -222,6 +223,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &7880049619080464832
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -249,20 +251,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   verbose: 0
   joiningDistance: 1
+  similarityRate: 1
   erodeRate: 0.05
+  detectionsForVisibility: 3
   canvasLabel: {fileID: 2766889848152880030}
   lineRender: {fileID: 120497781960058800}
   heightCanvas: {x: 2, y: 5}
-  semanticObject:
-    ontologyId: 
-    type: 
-    score: 0
-    nDetections: 0
-    pose: {x: 0, y: 0, z: 0}
-    size: {x: 0, y: 0, z: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 0}
-    semanticRoom: {fileID: 0}
-  associatedDetections: []
 --- !u!54 &8962530631594949681
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -279,19 +273,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!65 &2801991662256598589
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5858584817072842814}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &8390046263339180676
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -314,25 +295,35 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 4375385857446440572, guid: 8f5da884668cd7d4a902664e77b80f5d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4375988138236025806, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 4406905821869899566, guid: 8f5da884668cd7d4a902664e77b80f5d,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4584866331291976216, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4584866331291976216, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4584866331291976216, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 4584866331291976216, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
@@ -342,7 +333,7 @@ PrefabInstance:
     - target: {fileID: 4584866331291976216, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 4585432998982829150, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
@@ -452,7 +443,7 @@ PrefabInstance:
     - target: {fileID: 4585677818151856260, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -110
       objectReference: {fileID: 0}
     - target: {fileID: 5292092929152952793, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
@@ -463,6 +454,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8681522165181412123, guid: 8f5da884668cd7d4a902664e77b80f5d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5716538009968882839}
+    - target: {fileID: 8681522165181412123, guid: 8f5da884668cd7d4a902664e77b80f5d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RemoveVirtualBox
+      objectReference: {fileID: 0}
+    - target: {fileID: 8681522165181412123, guid: 8f5da884668cd7d4a902664e77b80f5d,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: VirtualObjectBox, Assembly-CSharp
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f5da884668cd7d4a902664e77b80f5d, type: 3}

@@ -13,7 +13,6 @@ public class ObjectManager : MonoBehaviour {
     
     public static ObjectManager instance;
     public int verbose;
-    public bool recordTimes = false;
 
     public float maxDistance = 2;
     public float minSize = 0.05f;
@@ -23,11 +22,9 @@ public class ObjectManager : MonoBehaviour {
     public GameObject prefDetectedObject;
     public Transform tfFrameForObjects;
 
+    public int detecciones { get; private set; }
     public List<SemanticObject> virtualSemanticMap { get; private set; }
 
-    private List<long> listTimes;
-    private List<int> listTimesUnionObject;
-    private List<long> listTimesOntology;
 
     #region Unity Functions
     private void Awake() {
@@ -39,27 +36,6 @@ public class ObjectManager : MonoBehaviour {
         }
 
         virtualSemanticMap = new List<SemanticObject>();
-
-        listTimes = new List<long>();
-        listTimesUnionObject = new List<int>();
-        listTimesOntology = new List<long>();
-    }
-
-    private void OnApplicationQuit() {
-        if (recordTimes) {
-            string csv1 = String.Join(" ", listTimes.Select(x => x.ToString()).ToArray());
-            string csv2 = String.Join(" ", listTimesUnionObject.Select(x => x.ToString()).ToArray());
-            string csv3 = String.Join(" ", listTimesOntology.Select(x => x.ToString()).ToArray());
-            StreamWriter writer = new StreamWriter(PlayerPrefs.GetString("pathToSave") + "ObjectManagerTimes.csv");
-            writer.Write(csv1);
-            writer.Close();
-            writer = new StreamWriter(PlayerPrefs.GetString("pathToSave") + "UnionTimes.csv");
-            writer.Write(csv2);
-            writer.Close();
-            writer = new StreamWriter(PlayerPrefs.GetString("pathToSave") + "InsertionOntologyTimes.csv");
-            writer.Write(csv2);
-            writer.Close();
-        }
     }
     #endregion
 
@@ -72,57 +48,45 @@ public class ObjectManager : MonoBehaviour {
 
         for (int i = 0; i < _semanticObjects.GetSemanticObjects().Length; i++) {
 
-            var time = DateTime.Now.Ticks;
-
             SemanticObjectMsg _obj = _semanticObjects.GetSemanticObjects()[i];
 
             //Check if its an interesting object
             Vector3 objSize = _obj._size.GetVector3Unity();
-            if (OntologyManager.instance.CheckClassObject(_obj._objectType)){
-                
-                if (objSize.x > minSize && objSize.y > minSize && objSize.z > minSize && objSize.z < maxSizeZ) {
+            if (objSize.x > minSize && objSize.y > minSize && objSize.z > minSize && objSize.z < maxSizeZ) {
 
-                    if(verbose > 2)
-                        Log("New object detected: " + _obj.ToString());
+                Vector3 objPosition = _obj._pose.GetPose().GetPositionUnity();
+                SemanticObject virtualObject = new SemanticObject("",
+                                                                  _obj.GetScores(),
+                                                                  objPosition,                                                                  
+                                                                  _obj._pose.GetPose().GetRotationUnity(),
+                                                                  objSize,
+                                                                  null);
 
-                    SemanticObject virtualObject = new SemanticObject(_obj._objectType,
-                                                    _obj._object._score,
-                                                    _obj._object._pose.GetPose().GetPositionUnity(),
-                                                    objSize,
-                                                    _obj._object._pose.GetPose().GetRotationUnity());
+                if (verbose > 2)
+                    Log("New object detected: " + virtualObject.ToString());
 
-                    var ontologyTime = DateTime.Now.Ticks;
-                    virtualObject = OntologyManager.instance.AddNewDetectedObject(virtualObject);
-                    listTimesOntology.Add((DateTime.Now.Ticks - ontologyTime) / TimeSpan.TicksPerMillisecond);
+                virtualObject = OntologyManager.instance.AddNewDetectedObject(virtualObject);
 
+                if (virtualObject.score > minimunConfidenceScore) {
 
-                    if (_obj._object._score > minimunConfidenceScore) {
-
-                        Transform host = FindClient(_host);
-                        Vector3 objPosition = _obj._object._pose.GetPose().GetPositionUnity();
-                        float distance = Vector2.Distance(new Vector2(objPosition.x, objPosition.z), new Vector2(host.position.x, host.position.z));
-                        if (maxDistance > distance) {
-                            virtualSemanticMap.Add(virtualObject);
-                            InstanceNewSemanticObject(virtualObject, host);
-                            listTimes.Add((DateTime.Now.Ticks - time) / TimeSpan.TicksPerMillisecond);
-                        } else {
-                            Log(_obj._objectType + " - detected far away: "+distance+"/"+maxDistance);
-                        }
+                    Transform host = FindClient(_host);
+                    float distance = Vector2.Distance(new Vector2(objPosition.x, objPosition.z), new Vector2(host.position.x, host.position.z));
+                    if (maxDistance > distance) {
+                        detecciones++;
+                        virtualSemanticMap.Add(virtualObject);
+                        InstanceNewSemanticObject(virtualObject, host);
                     } else {
-                        Log(_obj._objectType + " - detected but it have low score: " + _obj._object._score +"/"+minimunConfidenceScore);
+                        Log(virtualObject.type + " - detected far away: " + distance + "/" + maxDistance);
                     }
                 } else {
-                    Log(_obj._objectType + " - detected, but does not meet the minimum features: size["+ objSize.x+","+ objSize.y+","+ objSize.z+"]/[>"+minSize+",>"+minSize+",<"+maxSizeZ+"]");
+                    Log(virtualObject.type + " - detected but it have low score: " + virtualObject.score + "/" + minimunConfidenceScore);
                 }
             } else {
-                Log(_obj._objectType + " detected but not identified in the ontology.");
+                Log("Object detected, but does not meet the minimum features: size[" + objSize.x + "," + objSize.y + "," + objSize.z + "]/[>" + minSize + ",>" + minSize + ",<" + maxSizeZ + "]");
             }
         }
     }
 
-    public void AddTimeUnion(int time) {
-        listTimesUnionObject.Add(time);
-    }
     #endregion
 
     #region Private Functions
@@ -133,7 +97,7 @@ public class ObjectManager : MonoBehaviour {
     private void InstanceNewSemanticObject(SemanticObject _obj, Transform host) {
         Transform obj_inst = Instantiate(prefDetectedObject, _obj.pose, _obj.rotation).transform;
         obj_inst.parent = tfFrameForObjects;
-        obj_inst.GetComponentInChildren<VirtualSemanticObject>().InitializeObject(_obj, host);
+        obj_inst.GetComponentInChildren<VirtualObjectBox>().InitializeObject(_obj, host);
     }
 
     private void Log(string _msg) {
@@ -146,15 +110,5 @@ public class ObjectManager : MonoBehaviour {
             Debug.LogWarning("[Object Manager]: " + _msg);
     }
     #endregion
-
-
-
-
-
-
-
-
-
-
 
 }

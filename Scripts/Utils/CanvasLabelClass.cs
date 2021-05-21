@@ -51,11 +51,6 @@ public class CanvasLabelClass : MonoBehaviour
         _label.text = "  " + label.ToUpper() + " (" + (confidenceScorescore).ToString("0.00") + ")  ";
     }
 
-    public void RemoveThisSemanticObject()
-    {
-        transform.parent.GetChild(0).GetComponent<VirtualSemanticObject>().RemoveSemanticObject();
-    }
-
     private void Colors()
     {
         _colors = new Dictionary<string, Color>
