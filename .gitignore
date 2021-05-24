@@ -9,8 +9,8 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
-/[Aa]ssets/RobotAtVirtualHome/ExternalResources
-/ExternalResources
+/[Aa]ssets/RobotAtVirtualHome/ExternalResources/
+/ExternalResources/
 /.vs
 
 # MemoryCaptures can get excessive in size.
@@ -80,3 +80,4 @@ crashlytics-build.properties
 Releases/
 
 *.ply
+*.meta
