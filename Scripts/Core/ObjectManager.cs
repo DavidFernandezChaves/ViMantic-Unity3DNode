@@ -70,13 +70,15 @@ public class ObjectManager : MonoBehaviour {
                 if (virtualObject.score > minimunConfidenceScore) {
 
                     Transform host = FindClient(_host);
-                    float distance = Vector2.Distance(new Vector2(objPosition.x, objPosition.z), new Vector2(host.position.x, host.position.z));
-                    if (maxDistance > distance) {
-                        detecciones++;
-                        virtualSemanticMap.Add(virtualObject);
-                        InstanceNewSemanticObject(virtualObject, host);
-                    } else {
-                        Log(virtualObject.type + " - detected far away: " + distance + "/" + maxDistance);
+                    if (host != null) {
+                        float distance = Vector2.Distance(new Vector2(objPosition.x, objPosition.z), new Vector2(host.position.x, host.position.z));
+                        if (maxDistance > distance) {
+                            detecciones++;
+                            virtualSemanticMap.Add(virtualObject);
+                            InstanceNewSemanticObject(virtualObject, host);
+                        } else {
+                            Log(virtualObject.type + " - detected far away: " + distance + "/" + maxDistance);
+                        }
                     }
                 } else {
                     Log(virtualObject.type + " - detected but it have low score: " + virtualObject.score + "/" + minimunConfidenceScore);
@@ -91,7 +93,13 @@ public class ObjectManager : MonoBehaviour {
 
     #region Private Functions
     private Transform FindClient(string _ip) {
-        return GameObject.Find(_ip).GetComponent<ROS>().transform;
+        var agents = GameObject.FindObjectsOfType<ROS>();
+        foreach(ROS a in agents) {
+            if (a.ip == _ip) {
+                return a.transform;
+            }
+        }
+        return null;
     }
 
     private void InstanceNewSemanticObject(SemanticObject _obj, Transform host) {
