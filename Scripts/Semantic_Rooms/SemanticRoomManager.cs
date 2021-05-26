@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using ROSUnityCore;
 using System.Collections;
 
-[RequireComponent(typeof(OntologyManager))]
+[RequireComponent(typeof(OntologySystem))]
 
 public class SemanticRoomManager : MonoBehaviour
 {
@@ -51,11 +51,11 @@ public class SemanticRoomManager : MonoBehaviour
             foreach (SemanticRoom room in FindObjectsOfType<SemanticRoom>()) {
                 if (!ids.Contains(room.id)) {
                     ids.Add(room.id);
-                    OntologyManager.instance.AddNewRoom(room.id, room.roomType.ToString());
+                    OntologySystem.instance.AddNewRoom(room.id, room.roomType.ToString());
                     Log(room.id + " added");
                 }
             }
-            var categories = OntologyManager.instance.GetCategoriesOfRooms();
+            var categories = OntologySystem.instance.GetCategoriesOfRooms();
             semantic_rooms = new Dictionary<string, Dictionary<string, float>>();
 
             foreach (string id in ids) {
@@ -77,13 +77,13 @@ public class SemanticRoomManager : MonoBehaviour
 
             GetCurrentRoom();
 
-            List<SemanticObject> detectedObjectsInside = OntologyManager.instance.GetPreviousDetections(currentRoom);
+            List<SemanticObject> detectedObjectsInside = OntologySystem.instance.GetPreviousDetections(currentRoom);
 
             if (detectedObjectsInside.Count > nObservationsToConsider) {
                 detectedObjectsInside = detectedObjectsInside.GetRange(0, nObservationsToConsider);
             }
 
-            Dictionary<String, float> probabilities = OntologyManager.instance.GetProbabilityCategories(detectedObjectsInside);
+            Dictionary<String, float> probabilities = OntologySystem.instance.GetProbabilityCategories(detectedObjectsInside);
             semantic_rooms[currentRoom] = probabilities;
 
             Log("Rooms probabilities updated");

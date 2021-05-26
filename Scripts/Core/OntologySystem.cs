@@ -12,8 +12,8 @@ using System.Linq;
 
 
 
-public class OntologyManager : MonoBehaviour {
-    public static OntologyManager instance;
+public class OntologySystem : MonoBehaviour {
+    public static OntologySystem instance;
 
     public int verbose;
     public bool saveOntology;
@@ -31,7 +31,7 @@ public class OntologyManager : MonoBehaviour {
     private List<string> objectClassInRooms;
     public List<string> cateogiesOfRooms;
     private Dictionary<string, Dictionary<string, float>> probabilityRoomByClass;
-    private ObjectManager semanticMapping;
+    private ObjectManagerSystem semanticMapping;
 
     #region Unity Functions
     private void Awake() {
@@ -44,7 +44,7 @@ public class OntologyManager : MonoBehaviour {
     }
 
     private void Start() {
-        semanticMapping = GetComponent<ObjectManager>();
+        semanticMapping = GetComponent<ObjectManagerSystem>();
     }
 
     private void OnDestroy() {

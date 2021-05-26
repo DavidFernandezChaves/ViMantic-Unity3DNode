@@ -36,10 +36,10 @@ public class SemanticObject {
         rotation = _rotation;
         pose = _pose;
         scores = new Dictionary<string, float>();
-        float defaultValue =  (1-scores.Values.Sum()) / OntologyManager.instance.objectClassInOntology.Count;
+        float defaultValue =  (1-scores.Values.Sum()) / OntologySystem.instance.objectClassInOntology.Count;
 
         scores.Add("Other", defaultValue);
-        foreach(string objectClass in OntologyManager.instance.objectClassInOntology) {
+        foreach(string objectClass in OntologySystem.instance.objectClassInOntology) {
             scores.Add(objectClass, defaultValue);
         }
 
@@ -48,6 +48,8 @@ public class SemanticObject {
         }
 
         UpdateType();
+
+        associated = new List<SemanticObject>();
     }
 
     public void SetId(string id) {
@@ -104,7 +106,7 @@ public class SemanticObject {
     public void SetRoom(SemanticRoom room) {
         if(room != null && this.room == null) {
             this.room = room;
-            OntologyManager.instance.ObjectInRoom(id,room.id);
+            OntologySystem.instance.ObjectInRoom(id,room.id);
         }
     }
 

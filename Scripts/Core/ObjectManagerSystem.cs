@@ -7,9 +7,9 @@ using System.Linq;
 using System.IO;
 using ROSUnityCore;
 
-public class ObjectManager : MonoBehaviour {
+public class ObjectManagerSystem : MonoBehaviour {
     
-    public static ObjectManager instance;
+    public static ObjectManagerSystem instance;
     public int verbose;
 
     public float minSize = 0.05f;
@@ -68,7 +68,7 @@ public class ObjectManager : MonoBehaviour {
             }
 
             //Insertion detection into the ontology
-            virtualObject = OntologyManager.instance.AddNewDetectedObject(virtualObject);
+            virtualObject = OntologySystem.instance.AddNewDetectedObject(virtualObject);
             nDetections++;
             //Procesamiento que tendremos que hacer....
             virtualSemanticMap.Add(virtualObject);
