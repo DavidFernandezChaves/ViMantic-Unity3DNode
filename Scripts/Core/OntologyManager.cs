@@ -21,15 +21,16 @@ public class OntologyManager : MonoBehaviour {
     public string masterURI = "http://mapir.isa.uma.es/";
     public string path = @"D:\SemanticMap";
 
+    public List<string> objectClassInOntology { get; private set; }
+    public string raidID { get; private set; }
+
     private RDFNamespace nameSpace;
     private RDFOntology ontology;
-    private string raidID;
-    private RDFOntologyFact raidFact, houseFact;
-    private List<string> objectClassInOntology;
+    
+    private RDFOntologyFact raidFact, houseFact;    
     private List<string> interestClass;
     public List<string> cateogiesOfRooms;
     private Dictionary<string, Dictionary<string, float>> probabilityRoomByClass;
-    private SemanticRoomManager semanticRoomManager;
     private ObjectManager semanticMapping;
 
     #region Unity Functions
@@ -43,7 +44,6 @@ public class OntologyManager : MonoBehaviour {
     }
 
     private void Start() {
-        semanticRoomManager = GetComponent<SemanticRoomManager>();
         semanticMapping = GetComponent<ObjectManager>();
     }
 

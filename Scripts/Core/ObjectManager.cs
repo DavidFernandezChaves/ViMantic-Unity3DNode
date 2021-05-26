@@ -7,8 +7,6 @@ using System.Linq;
 using System.IO;
 using ROSUnityCore;
 
-[RequireComponent(typeof(OntologyManager))]
-
 public class ObjectManager : MonoBehaviour {
     
     public static ObjectManager instance;
@@ -20,9 +18,8 @@ public class ObjectManager : MonoBehaviour {
     public GameObject prefDetectedObject;
     public Transform tfFrameForObjects;
 
-    public int detecciones { get; private set; }
+    public int nDetections { get; private set; }
     public List<SemanticObject> virtualSemanticMap { get; private set; }
-
 
     #region Unity Functions
     private void Awake() {
@@ -39,7 +36,7 @@ public class ObjectManager : MonoBehaviour {
 
     #region Public Functions
     public void Connected(ROS ros) {
-        ros.RegisterSubPackage("Vimantic_SemanticObjects_sub");
+        ros.RegisterSubPackage("Vimantic_Detections_sub");
     }
 
     public void DetectedObject(DetectionArrayMsg _detections, string _ip) {
@@ -55,15 +52,13 @@ public class ObjectManager : MonoBehaviour {
             }
 
             Vector3 detectionPosition = detection._pose.GetPositionUnity();
-            SemanticObject virtualObject = new SemanticObject("",
-                                                                detection.GetScores(),
+            SemanticObject virtualObject = new SemanticObject(  detection.GetScores(),
                                                                 detectionPosition,
                                                                 detection._pose.GetRotationUnity(),
-                                                                detectionSize,
-                                                                null);
+                                                                detectionSize);
 
             //Check minimun Condifence Score
-            if (virtualObject.score > minimunConfidenceScore) {
+            if (virtualObject.score < minimunConfidenceScore) {
                 Log(virtualObject.type + " - detected but it have low score: " + virtualObject.score + "/" + minimunConfidenceScore);
                 continue;
             }
@@ -74,7 +69,7 @@ public class ObjectManager : MonoBehaviour {
 
             //Insertion detection into the ontology
             virtualObject = OntologyManager.instance.AddNewDetectedObject(virtualObject);
-            detecciones++;
+            nDetections++;
             //Procesamiento que tendremos que hacer....
             virtualSemanticMap.Add(virtualObject);
             InstanceNewSemanticObject(virtualObject);
