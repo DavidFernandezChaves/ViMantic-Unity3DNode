@@ -48,7 +48,7 @@ public class VirtualObjectBox : MonoBehaviour
             bounds.Encapsulate(vob.GetComponent<MeshRenderer>().bounds);
             //bounds.Encapsulate(vso.semanticObject.pose);
 
-            semanticObject.NewDetection(vob.semanticObject, bounds.center, Quaternion.Euler(rotation), bounds.size * (1 - erodeRate));
+            //semanticObject.NewDetection(vob.semanticObject, bounds.center, Quaternion.Euler(rotation), bounds.size * (1 - erodeRate));
             UpdateObject();
 
             Destroy(vob.transform.parent.gameObject);

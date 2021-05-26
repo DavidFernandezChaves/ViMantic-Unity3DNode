@@ -31,11 +31,23 @@ public class SemanticObject {
     //}
 
     public SemanticObject(Dictionary<string, float> _scores, Vector3 _pose, Quaternion _rotation, Vector3 _size) {
+        id = "";
         size = _size;
         rotation = _rotation;
-        pose = _pose;      
+        pose = _pose;
+        scores = new Dictionary<string, float>();
+        float defaultValue =  (1-scores.Values.Sum()) / OntologyManager.instance.objectClassInOntology.Count;
 
+        scores.Add("Other", defaultValue);
+        foreach(string objectClass in OntologyManager.instance.objectClassInOntology) {
+            scores.Add(objectClass, defaultValue);
+        }
 
+        foreach(KeyValuePair<string,float> s in _scores) {
+            scores[s.Key] = s.Value;
+        }
+
+        UpdateType();
     }
 
     public void SetId(string id) {

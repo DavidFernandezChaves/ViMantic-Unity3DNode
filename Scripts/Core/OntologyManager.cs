@@ -28,7 +28,7 @@ public class OntologyManager : MonoBehaviour {
     private RDFOntology ontology;
     
     private RDFOntologyFact raidFact, houseFact;    
-    private List<string> interestClass;
+    private List<string> objectClassInRooms;
     public List<string> cateogiesOfRooms;
     private Dictionary<string, Dictionary<string, float>> probabilityRoomByClass;
     private ObjectManager semanticMapping;
@@ -273,7 +273,7 @@ public class OntologyManager : MonoBehaviour {
     }
 
     public bool CheckInteresObject(string typeObject) {
-        return interestClass.Contains(GetNameWithURI(typeObject));
+        return objectClassInOntology.Contains(GetNameWithURI(typeObject));
     }
 
     public void ObjectInRoom(string objectId, string roomId) {
@@ -323,8 +323,8 @@ public class OntologyManager : MonoBehaviour {
         detectedClasses.Remove(detection);
         previousClass.Add(detection);
 
-        foreach (string classObject in interestClass) {
-            var total = (interestClass.Count - 1) * 0.1f;
+        foreach (string classObject in objectClassInRooms) {
+            var total = (objectClassInRooms.Count - 1) * 0.1f;
             float P1 = 0.1f / total;
 
             if (classObject.Equals(detection.type)) {
@@ -463,7 +463,7 @@ public class OntologyManager : MonoBehaviour {
             .AddProjectionVariable(categoryRoom);
 
         RDFSelectQueryResult resultDetectedObject = query.ApplyToGraph(ontology.ToRDFGraph(RDFSemanticsEnums.RDFOntologyInferenceExportBehavior.ModelAndData));
-        interestClass = (from r in resultDetectedObject.SelectResults.AsEnumerable() select r["?OBJECTCLASS"].ToString()).Distinct().ToList();
+        objectClassInRooms = (from r in resultDetectedObject.SelectResults.AsEnumerable() select r["?OBJECTCLASS"].ToString()).Distinct().ToList();
 
         probabilityRoomByClass = new Dictionary<string, Dictionary<string, float>>();
 
@@ -471,7 +471,7 @@ public class OntologyManager : MonoBehaviour {
 
         foreach (string category in _roomCategoriesInOntology) {
             Dictionary<string, float> probabilityRoom = new Dictionary<string, float>();
-            foreach (string objClass in interestClass) {
+            foreach (string objClass in objectClassInRooms) {
                 List<string> posibilities = (from r in resultDetectedObject.SelectResults.AsEnumerable().Where(r => r.Field<string>("?OBJECTCLASS") == objClass) select GetNameWithoutURI(r["?CATEGORYROOM"].ToString())).ToList();
 
                 if (posibilities.Contains(category)) {
