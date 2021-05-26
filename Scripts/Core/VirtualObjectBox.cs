@@ -68,7 +68,7 @@ public class VirtualObjectBox : MonoBehaviour
     #endregion
 
     #region Public Functions
-    public void InitializeObject(SemanticObject _semanticObject, Transform _robot)
+    public void InitializeObject(SemanticObject _semanticObject)
     {        
         dateTime = DateTime.Now;
         semanticObject = _semanticObject;

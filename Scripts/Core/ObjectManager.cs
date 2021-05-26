@@ -14,9 +14,7 @@ public class ObjectManager : MonoBehaviour {
     public static ObjectManager instance;
     public int verbose;
 
-    public float maxDistance = 2;
     public float minSize = 0.05f;
-    public float maxSizeZ = 1;
     public float minimunConfidenceScore = 0.5f;
 
     public GameObject prefDetectedObject;
@@ -44,49 +42,44 @@ public class ObjectManager : MonoBehaviour {
         ros.RegisterSubPackage("Vimantic_SemanticObjects_sub");
     }
 
-    public void DetectedObject(SemanticObjectArrayMsg _semanticObjects, string _host) {
+    public void DetectedObject(DetectionArrayMsg _detections, string _ip) {
 
-        for (int i = 0; i < _semanticObjects.GetSemanticObjects().Length; i++) {
 
-            SemanticObjectMsg _obj = _semanticObjects.GetSemanticObjects()[i];
+        foreach(DetectionMsg detection in _detections.GetDetections()) { 
 
             //Check if its an interesting object
-            Vector3 objSize = _obj._size.GetVector3Unity();
-            if (objSize.x > minSize && objSize.y > minSize && objSize.z > minSize && objSize.z < maxSizeZ) {
-
-                Vector3 objPosition = _obj._pose.GetPose().GetPositionUnity();
-                SemanticObject virtualObject = new SemanticObject("",
-                                                                  _obj.GetScores(),
-                                                                  objPosition,                                                                  
-                                                                  _obj._pose.GetPose().GetRotationUnity(),
-                                                                  objSize,
-                                                                  null);
-
-                if (verbose > 2)
-                    Log("New object detected: " + virtualObject.ToString());
-
-                virtualObject = OntologyManager.instance.AddNewDetectedObject(virtualObject);
-
-                if (virtualObject.score > minimunConfidenceScore) {
-
-                    Transform host = FindClient(_host);
-                    if (host != null) {
-                        float distance = Vector2.Distance(new Vector2(objPosition.x, objPosition.z), new Vector2(host.position.x, host.position.z));
-                        if (maxDistance > distance) {
-                            detecciones++;
-                            virtualSemanticMap.Add(virtualObject);
-                            InstanceNewSemanticObject(virtualObject, host);
-                        } else {
-                            Log(virtualObject.type + " - detected far away: " + distance + "/" + maxDistance);
-                        }
-                    }
-                } else {
-                    Log(virtualObject.type + " - detected but it have low score: " + virtualObject.score + "/" + minimunConfidenceScore);
-                }
-            } else {
-                Log("Object detected, but does not meet the minimum features: size[" + objSize.x + "," + objSize.y + "," + objSize.z + "]/[>" + minSize + ",>" + minSize + ",<" + maxSizeZ + "]");
+            Vector3 detectionSize = detection._size.GetVector3Unity();
+            if (detectionSize.x < minSize || detectionSize.y < minSize || detectionSize.z < minSize) {
+                Log("Object detected but does not meet the minimum features: size[" + detectionSize.x + "," + detectionSize.y + "," + detectionSize.z + "]");
+                continue;
             }
+
+            Vector3 detectionPosition = detection._pose.GetPositionUnity();
+            SemanticObject virtualObject = new SemanticObject("",
+                                                                detection.GetScores(),
+                                                                detectionPosition,
+                                                                detection._pose.GetRotationUnity(),
+                                                                detectionSize,
+                                                                null);
+
+            //Check minimun Condifence Score
+            if (virtualObject.score > minimunConfidenceScore) {
+                Log(virtualObject.type + " - detected but it have low score: " + virtualObject.score + "/" + minimunConfidenceScore);
+                continue;
+            }
+
+            if (verbose > 2) {
+                Log("New object detected: " + virtualObject.ToString());
+            }
+
+            //Insertion detection into the ontology
+            virtualObject = OntologyManager.instance.AddNewDetectedObject(virtualObject);
+            detecciones++;
+            //Procesamiento que tendremos que hacer....
+            virtualSemanticMap.Add(virtualObject);
+            InstanceNewSemanticObject(virtualObject);
         }
+        
     }
 
     #endregion
@@ -102,10 +95,10 @@ public class ObjectManager : MonoBehaviour {
         return null;
     }
 
-    private void InstanceNewSemanticObject(SemanticObject _obj, Transform host) {
+    private void InstanceNewSemanticObject(SemanticObject _obj) {
         Transform obj_inst = Instantiate(prefDetectedObject, _obj.pose, _obj.rotation).transform;
         obj_inst.parent = tfFrameForObjects;
-        obj_inst.GetComponentInChildren<VirtualObjectBox>().InitializeObject(_obj, host);
+        obj_inst.GetComponentInChildren<VirtualObjectBox>().InitializeObject(_obj);
     }
 
     private void Log(string _msg) {

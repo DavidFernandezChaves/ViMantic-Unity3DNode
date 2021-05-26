@@ -39,10 +39,8 @@ namespace Vimantic {
             _InFiTxNameMap.text = _nameMap;
             _robots = new List<Transform>();
             _semanticMapping = GetComponent<ObjectManager>();
-            _semanticMapping.maxDistance = PlayerPrefs.GetFloat("maxDistanceZ", 2f);
             _semanticMapping.minimunConfidenceScore = PlayerPrefs.GetFloat("minimunConfidenceScore", 0.5f);
             _InFiSetting0.text = _semanticMapping.minimunConfidenceScore.ToString();
-            _InFiSetting2.text = _semanticMapping.maxDistance.ToString();
             _ontologyManager = GetComponent<OntologyManager>();
             _ontologyManager.path = PlayerPrefs.GetString("pathToSave", Application.dataPath);
             _InFiSetting3.text = _ontologyManager.path;
@@ -112,10 +110,8 @@ namespace Vimantic {
         }
 
         public void SaveSetting() {
-            _semanticMapping.maxDistance = float.Parse(_InFiSetting2.text);
             _semanticMapping.minimunConfidenceScore = float.Parse(_InFiSetting0.text);
             _ontologyManager.path = _InFiSetting3.text;
-            PlayerPrefs.SetFloat("maxDistanceZ", _semanticMapping.maxDistance);
             PlayerPrefs.SetFloat("minimunConfidenceScore", _semanticMapping.minimunConfidenceScore);
             PlayerPrefs.SetString("pathToSave", _InFiSetting3.text);
             PlayerPrefs.Save();
