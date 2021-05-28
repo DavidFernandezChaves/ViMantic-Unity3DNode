@@ -7,7 +7,7 @@ using ROSUnityCore;
 
 namespace Vimantic {
 
-    [RequireComponent(typeof(ObjectManagerSystem))]
+    [RequireComponent(typeof(VirtualObjectSystem))]
     [RequireComponent(typeof(OntologySystem))]
 
     public class GeneralManager : MonoBehaviour {
@@ -26,7 +26,7 @@ namespace Vimantic {
         public List<Transform> _robots;
 
         private GameObject _geometricMap;
-        private ObjectManagerSystem _semanticMapping;
+        private VirtualObjectSystem _semanticMapping;
         private OntologySystem _ontologyManager;
         private SemanticRoomManager _semanticRoomManager;
 
@@ -38,7 +38,7 @@ namespace Vimantic {
             _nameMap = PlayerPrefs.GetString("nameMap", "SemanticMap");
             _InFiTxNameMap.text = _nameMap;
             _robots = new List<Transform>();
-            _semanticMapping = GetComponent<ObjectManagerSystem>();
+            _semanticMapping = GetComponent<VirtualObjectSystem>();
             _semanticMapping.minimunConfidenceScore = PlayerPrefs.GetFloat("minimunConfidenceScore", 0.5f);
             _InFiSetting0.text = _semanticMapping.minimunConfidenceScore.ToString();
             _ontologyManager = GetComponent<OntologySystem>();

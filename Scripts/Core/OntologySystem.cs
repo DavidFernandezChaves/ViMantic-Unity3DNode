@@ -31,7 +31,7 @@ public class OntologySystem : MonoBehaviour {
     private List<string> objectClassInRooms;
     public List<string> cateogiesOfRooms;
     private Dictionary<string, Dictionary<string, float>> probabilityRoomByClass;
-    private ObjectManagerSystem semanticMapping;
+    private VirtualObjectSystem semanticMapping;
 
     #region Unity Functions
     private void Awake() {
@@ -44,7 +44,7 @@ public class OntologySystem : MonoBehaviour {
     }
 
     private void Start() {
-        semanticMapping = GetComponent<ObjectManagerSystem>();
+        semanticMapping = GetComponent<VirtualObjectSystem>();
     }
 
     private void OnDestroy() {
@@ -118,7 +118,7 @@ public class OntologySystem : MonoBehaviour {
         var newDetectedObject = new RDFOntologyFact(GetClassResource(obj.id));
         ontology.Data.AddFact(newDetectedObject);
         ontology.Data.AddClassTypeRelation(newDetectedObject, new RDFOntologyClass(GetClassResource(obj.type)));
-        ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("position")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.pose.ToString())));
+        ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("position")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.position.ToString())));
         ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("rotation")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.rotation.eulerAngles.ToString())));
         ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("score")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.score.ToString())));
         ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("nDetections")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.nDetections.ToString())));
@@ -130,7 +130,7 @@ public class OntologySystem : MonoBehaviour {
 
     public void RemoveSemanticObject(SemanticObject obj) {
         var objectFact = ontology.Data.SelectFact(GetNameWithURI(obj.id));
-        ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("position")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.pose.ToString())));
+        ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("position")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.position.ToString())));
         ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("rotation")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.rotation.eulerAngles.ToString())));
         ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("score")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.score.ToString())));
         ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("nDetections")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.nDetections.ToString())));
@@ -158,10 +158,10 @@ public class OntologySystem : MonoBehaviour {
 
         //Update pose
         ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("position")),
-                                            new RDFOntologyLiteral(new RDFPlainLiteral(oldObj.pose.ToString())));
+                                            new RDFOntologyLiteral(new RDFPlainLiteral(oldObj.position.ToString())));
 
         ontology.Data.AddAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("position")),
-                                            new RDFOntologyLiteral(new RDFPlainLiteral(newObj.pose.ToString())));
+                                            new RDFOntologyLiteral(new RDFPlainLiteral(newObj.position.ToString())));
 
         //Update rotation
 

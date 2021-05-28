@@ -9,32 +9,18 @@ public class SemanticObject {
     public string type { get; private set; }
     public float score { get; private set; }
     public Dictionary<string, float> scores { get; private set; }    
-    public Vector3 pose { get; private set; }
+    public Vector3 position { get; private set; }
     public Vector3 size { get; private set; }
     public Quaternion rotation { get; private set; }
     public List<SemanticObject> associated { get; private set; }
     public int nDetections { get { return associated.Count; }  }
     public SemanticRoom room { get; private set; }
 
-
-    //public SemanticObject(string _id, Dictionary<string, float> _scores, Vector3 _pose, Quaternion _rotation, Vector3 _size, SemanticRoom _room) {
-    //    id = _id;        
-    //    pose = _pose;
-    //    size = _size;
-    //    rotation = _rotation;
-    //    room = _room;
-    //    scores = Normalize(_scores);
-    //    associated = new List<SemanticObject>();
-    //    associated.Add(this);
-    //    scores = _scores;
-    //    UpdateType();
-    //}
-
-    public SemanticObject(Dictionary<string, float> _scores, Vector3 _pose, Quaternion _rotation, Vector3 _size) {
+    public SemanticObject(Dictionary<string, float> _scores, Vector3 _position, Quaternion _rotation, Vector3 _size) {
         id = "";
         size = _size;
         rotation = _rotation;
-        pose = _pose;
+        position = _position;
         scores = new Dictionary<string, float>();
         float defaultValue =  (1-scores.Values.Sum()) / OntologySystem.instance.objectClassInOntology.Count;
 
@@ -137,7 +123,7 @@ public class SemanticObject {
     public override string ToString() {
         return "SemanticObject [id =" + id
                         + ", scores=" + score
-                        + ", pose=" + pose.ToString()
+                        + ", pose=" + position.ToString()
                         + ", nDetections=" + nDetections
                         + ", size=" + size.ToString() + "]";
     }
