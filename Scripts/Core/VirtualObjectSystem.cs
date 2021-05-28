@@ -45,16 +45,24 @@ public class VirtualObjectSystem : MonoBehaviour {
         bbCamera.transform.position = _detections._origin.GetPositionUnity();
         bbCamera.transform.rotation = _detections._origin.GetRotationUnity() * Quaternion.Euler(0f, 90f, 0f);
 
+        Rect rect = new Rect(0, 0, bbCamera.pixelWidth, bbCamera.pixelHeight);
         RenderTexture renderTextureMask = new RenderTexture(bbCamera.pixelWidth, bbCamera.pixelHeight, 24);
+
         bbCamera.targetTexture = renderTextureMask;
         bbCamera.Render();
         RenderTexture.active = renderTextureMask;
 
-        Texture2D image = new Texture2D(bbCamera.targetTexture.width, bbCamera.targetTexture.height);
-        image.ReadPixels(new Rect(0, 0, bbCamera.targetTexture.width, bbCamera.targetTexture.height), 0, 0);
+        Texture2D image = new Texture2D(bbCamera.pixelWidth, bbCamera.pixelHeight, TextureFormat.RGB24, false);
+        image.ReadPixels(rect, 0, 0);
         image.Apply();
 
-        HashSet<Color> colors = new HashSet<Color>(image.GetPixels());
+        HashSet<Color> colors = new HashSet<Color>(image.GetPixels(0, 0, bbCamera.pixelWidth, bbCamera.pixelHeight));
+        //HashSet<Color> colors = new HashSet<Color>();
+        //foreach (Color c in image.GetPixels())
+        //{
+        //    Color new_c = new Color(c.r, c.g, c.b);
+        //    colors.Add(new_c);
+        //}
 
         bbCamera.targetTexture = null;
         RenderTexture.active = null; //Clean
@@ -88,25 +96,28 @@ public class VirtualObjectSystem : MonoBehaviour {
             }
 
             //Creamos ranking
-            KeyValuePair<Transform, float> high_match = new KeyValuePair<Transform, float>(transform, 0);
-            colors.Remove(Color.black);
-            foreach (Color c in colors) {
+            //KeyValuePair<Transform, float> high_match = new KeyValuePair<Transform, float>(transform, 0);
+            //colors.Remove(new Color(0.0f, 0.0f, 0.0f, 0.0f));
+            //foreach (Color c in colors)
+            //{
 
-                SemanticObject previous_object = boxColors[c].GetComponent<VirtualObjectBox>().semanticObject;
+            //    SemanticObject previous_object = boxColors[c].GetComponent<VirtualObjectBox>().semanticObject;
 
-                float distance = Vector3.Distance(previous_object.position, virtualObject.position);
-                Vector3 diff_sizes = (previous_object.size - virtualObject.size);
-                float sizes = Mathf.Abs(diff_sizes.x) + Mathf.Abs(diff_sizes.y) + Mathf.Abs(diff_sizes.z);
-                float score = distance + sizes;
+            //    float distance = Vector3.Distance(previous_object.position, virtualObject.position);
+            //    Vector3 diff_sizes = (previous_object.size - virtualObject.size);
+            //    float sizes = Mathf.Abs(diff_sizes.x) + Mathf.Abs(diff_sizes.y) + Mathf.Abs(diff_sizes.z);
+            //    float score = distance + sizes;
 
-                if (high_match.Value < score) {
-                    high_match = new KeyValuePair<Transform, float>(boxColors[c], score);
-                }
-            }
+            //    if (high_match.Value < score)
+            //    {
+            //        high_match = new KeyValuePair<Transform, float>(boxColors[c], score);
+            //    }
+            //}
 
-            if (high_match.Value != 0) {
-                Destroy(high_match.Key.gameObject);
-            }
+            //if (high_match.Value != 0)
+            //{
+            //    Destroy(high_match.Key.gameObject);
+            //}
 
 
             //Si no hay match
