@@ -47,13 +47,15 @@ public class VirtualObjectSystem : MonoBehaviour {
         bbCamera.transform.position = _detections._origin.GetPositionUnity();
         bbCamera.transform.rotation = _detections._origin.GetRotationUnity() * Quaternion.Euler(0f, 90f, 0f);
 
+        Rect rect = new Rect(0, 0, bbCamera.pixelWidth, bbCamera.pixelHeight);
         RenderTexture renderTextureMask = new RenderTexture(bbCamera.pixelWidth, bbCamera.pixelHeight, 24);
+
         bbCamera.targetTexture = renderTextureMask;
         bbCamera.Render();
         RenderTexture.active = renderTextureMask;
 
-        Texture2D image = new Texture2D(bbCamera.targetTexture.width, bbCamera.targetTexture.height);
-        image.ReadPixels(new Rect(0, 0, bbCamera.targetTexture.width, bbCamera.targetTexture.height), 0, 0);
+        Texture2D image = new Texture2D(bbCamera.pixelWidth, bbCamera.pixelHeight, TextureFormat.RGB24, false);
+        image.ReadPixels(rect, 0, 0);
         image.Apply();
 
         //var itemBGBytes = image.EncodeToPNG();
@@ -104,8 +106,9 @@ public class VirtualObjectSystem : MonoBehaviour {
                     
                     float distance = Mathf.Max(1 - Vector3.Distance(previous_object.semanticObject.position, virtualObject.position), 0);
 
-                    Vector3 diff_sizes = (previous_object.semanticObject.size - virtualObject.size);
-                    float sizes = Mathf.Max(1 - (Mathf.Abs(diff_sizes.x) + Mathf.Abs(diff_sizes.y) + Mathf.Abs(diff_sizes.z))/3, 0);
+                    //Vector3 diff_sizes = (previous_object.semanticObject.size - virtualObject.size);
+                    //float sizes = Mathf.Max(1 - (Mathf.Abs(diff_sizes.x) + Mathf.Abs(diff_sizes.y) + Mathf.Abs(diff_sizes.z))/3, 0);
+                    float sizes = 1;
 
                     float score = (distance + sizes) / 2;
 
