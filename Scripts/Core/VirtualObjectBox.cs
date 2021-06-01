@@ -60,11 +60,13 @@ public class VirtualObjectBox : MonoBehaviour
 
 
     private void Start() {        
-        boxColor = VirtualObjectSystem.instance.GetColorObject(transform);
+        boxColor = VirtualObjectSystem.instance.GetColorObject(this);
+        Color transparentColor = new Color(boxColor.r, boxColor.g, boxColor.b,0.3f);
         Material material = new Material(Shader.Find("Standard"));
         GetComponent<Renderer>().materials[0] = material;
         GetComponent<Renderer>().material.SetFloat("_Mode", 2.0f);
-        GetComponent<Renderer>().material.SetColor("_Color", boxColor);
+        GetComponent<Renderer>().material.SetColor("_Color", transparentColor);
+        GetComponent<Renderer>().material.SetColor("_UnlitColor", boxColor);
         lineRender = GetComponentInParent<LineRenderer>();
         lineRender.startColor = boxColor;
         canvasLabel.SetColor(boxColor);
@@ -109,6 +111,11 @@ public class VirtualObjectBox : MonoBehaviour
     {
         OntologySystem.instance.RemoveSemanticObject(semanticObject);
         Destroy(transform.parent.gameObject);
+    }
+
+    public void NewDetection(SemanticObject newDetection) {
+
+        
     }
 
     public static SemanticRoom GetRoom(Vector3 position) {

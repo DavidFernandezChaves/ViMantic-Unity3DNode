@@ -26,7 +26,7 @@ Shader "Custom/UnlitColorOnly" {
             ZWrite On
             Cull Back
             SetTexture[_] {
-                constantColor[_Color]
+                constantColor[_UnlitColor]
                 Combine constant
             }
         }

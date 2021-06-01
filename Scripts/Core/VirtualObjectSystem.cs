@@ -3,12 +3,14 @@ using ROSUnityCore.ROSBridgeLib.ViMantic_msgs;
 using ROSUnityCore.ROSBridgeLib.geometry_msgs;
 using System.Collections.Generic;
 using ROSUnityCore;
+using System.IO;
 
 public class VirtualObjectSystem : MonoBehaviour {
     
     public static VirtualObjectSystem instance;
     public int verbose;
 
+    public float threshold_match = 0.8f;
     public float minSize = 0.05f;
     public float minimunConfidenceScore = 0.5f;
 
@@ -18,7 +20,7 @@ public class VirtualObjectSystem : MonoBehaviour {
 
     public int nDetections { get; private set; }
     public List<SemanticObject> virtualSemanticMap { get; private set; }
-    public Dictionary<Color,Transform> boxColors { get; private set; }
+    public Dictionary<Color, VirtualObjectBox> boxColors { get; private set; }
 
     #region Unity Functions
     private void Awake() {
@@ -30,7 +32,7 @@ public class VirtualObjectSystem : MonoBehaviour {
         }
 
         virtualSemanticMap = new List<SemanticObject>();
-        boxColors = new Dictionary<Color, Transform>();
+        boxColors = new Dictionary<Color, VirtualObjectBox>();
     }
     #endregion
 
@@ -54,13 +56,16 @@ public class VirtualObjectSystem : MonoBehaviour {
         image.ReadPixels(new Rect(0, 0, bbCamera.targetTexture.width, bbCamera.targetTexture.height), 0, 0);
         image.Apply();
 
+        //var itemBGBytes = image.EncodeToPNG();
+        //File.WriteAllBytes("D:/foto"+_detections._header.GetTimeMsg().ToString()+".png", itemBGBytes);
+
         HashSet<Color> colors = new HashSet<Color>(image.GetPixels());
 
         bbCamera.targetTexture = null;
         RenderTexture.active = null; //Clean
         Destroy(renderTextureMask); //Free memory
 
-        foreach (DetectionMsg detection in _detections._detections) { 
+        foreach (DetectionMsg detection in _detections._detections) {
 
             //Check if its an interesting object
             Vector3 detectionSize = detection._size.GetVector3();
@@ -70,7 +75,7 @@ public class VirtualObjectSystem : MonoBehaviour {
             }
 
             Vector3 detectionPosition = detection._pose.GetPositionUnity();
-            SemanticObject virtualObject = new SemanticObject(  detection.GetScores(),
+            SemanticObject virtualObject = new SemanticObject(detection.GetScores(),
                                                                 detectionPosition,
                                                                 detection._pose.GetRotationUnity(),
                                                                 detectionSize);
@@ -87,52 +92,58 @@ public class VirtualObjectSystem : MonoBehaviour {
                 continue;
             }
 
-            //Creamos ranking
-            KeyValuePair<Transform, float> high_match = new KeyValuePair<Transform, float>(transform, 0);
-            colors.Remove(Color.black);
+            //Build Ranking
+            KeyValuePair<VirtualObjectBox, float> high_match = new KeyValuePair<VirtualObjectBox, float>(null, 0);
+            colors.Remove(new Color(0, 0, 0, 0));
+
             foreach (Color c in colors) {
 
-                SemanticObject previous_object = boxColors[c].GetComponent<VirtualObjectBox>().semanticObject;
+                VirtualObjectBox previous_object = GetObjectMatch(c);
 
-                float distance = Vector3.Distance(previous_object.position, virtualObject.position);
-                Vector3 diff_sizes = (previous_object.size - virtualObject.size);
-                float sizes = Mathf.Abs(diff_sizes.x) + Mathf.Abs(diff_sizes.y) + Mathf.Abs(diff_sizes.z);
-                float score = distance + sizes;
+                if (previous_object != null) {
+                    
+                    float distance = Mathf.Max(1 - Vector3.Distance(previous_object.semanticObject.position, virtualObject.position), 0);
 
-                if (high_match.Value < score) {
-                    high_match = new KeyValuePair<Transform, float>(boxColors[c], score);
+                    Vector3 diff_sizes = (previous_object.semanticObject.size - virtualObject.size);
+                    float sizes = Mathf.Max(1 - (Mathf.Abs(diff_sizes.x) + Mathf.Abs(diff_sizes.y) + Mathf.Abs(diff_sizes.z))/3, 0);
+
+                    float score = (distance + sizes) / 2;
+
+                    if (high_match.Value < score) {
+                        high_match = new KeyValuePair<VirtualObjectBox, float>(previous_object, score);
+                    }
+                } else {
+                    LogWarning("Color "+c.ToString()+"detected, but it is not registered.");
+                    continue;
                 }
+
             }
 
-            if (high_match.Value != 0) {
-                Destroy(high_match.Key.gameObject);
+            //Match process
+            if (high_match.Value >= threshold_match) {
+                high_match.Key.NewDetection(virtualObject);
+            } else {
+                if (verbose > 2) {
+                    Log("New object detected: " + virtualObject.ToString());
+                }
+
+                //Insertion detection into the ontology
+                virtualObject = OntologySystem.instance.AddNewDetectedObject(virtualObject);
+                nDetections++;
+                virtualSemanticMap.Add(virtualObject);
+                InstanceNewSemanticObject(virtualObject);
             }
 
-
-            //Si no hay match
-
-            if (verbose > 2) {
-                Log("New object detected: " + virtualObject.ToString());
-            }
-
-            //Insertion detection into the ontology
-            virtualObject = OntologySystem.instance.AddNewDetectedObject(virtualObject);
-            nDetections++;
-            virtualSemanticMap.Add(virtualObject);
-            InstanceNewSemanticObject(virtualObject);
-
-            //Si hay match
-            //Union
         }
 
         //Si algun objeto no se ha visto, se le mete un penalizador
 
     }
 
-    public Color GetColorObject(Transform vob) {
-        Color newColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 0.5f);
+    public Color GetColorObject(VirtualObjectBox vob) {
+        Color newColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1f);
         while (boxColors.ContainsKey(newColor)) {
-            newColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 0.5f);
+            newColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1f);
         }
         boxColors[newColor]=vob;
         return newColor;
@@ -146,6 +157,17 @@ public class VirtualObjectSystem : MonoBehaviour {
         foreach(ROS a in agents) {
             if (a.ip == _ip) {
                 return a.transform;
+            }
+        }
+        return null;
+    }
+
+    private VirtualObjectBox GetObjectMatch(Color color) {
+        foreach(KeyValuePair<Color, VirtualObjectBox> pair in boxColors) {
+            if(Mathf.Abs(color.r-pair.Key.r) 
+                + Mathf.Abs(color.g - pair.Key.g)
+                + Mathf.Abs(color.b - pair.Key.b) < 0.05f) {
+                return pair.Value.GetComponent<VirtualObjectBox>();
             }
         }
         return null;

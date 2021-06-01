@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4113027701314146}
   - component: {fileID: 120497781960058800}
-  m_Layer: 10
+  m_Layer: 1
   m_Name: SemanticObject
   m_TagString: Object
   m_Icon: {fileID: 0}
@@ -235,14 +235,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verbose: 0
-  radius: 1
-  joiningDistance: 1
-  similarityRate: 1
-  erodeRate: 0.05
-  detectionsForVisibility: 3
-  canvasLabel: {fileID: 2766889848152880030}
-  lineRender: {fileID: 120497781960058800}
   heightCanvas: {x: 2, y: 5}
+  canvasLabel: {fileID: 2766889848152880030}
 --- !u!1001 &8390046263339180676
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -253,7 +247,7 @@ PrefabInstance:
     - target: {fileID: 4375360388499800876, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
       propertyPath: m_Layer
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4375385857446440572, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
@@ -263,7 +257,7 @@ PrefabInstance:
     - target: {fileID: 4375385857446440572, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
       propertyPath: m_Layer
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4375385857446440572, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
@@ -273,7 +267,7 @@ PrefabInstance:
     - target: {fileID: 4375988138236025806, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
       propertyPath: m_Layer
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4406905821869899566, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
@@ -418,12 +412,12 @@ PrefabInstance:
     - target: {fileID: 5292092929152952793, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
       propertyPath: m_Layer
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7319635023572874762, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
       propertyPath: m_Layer
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8681522165181412123, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}
