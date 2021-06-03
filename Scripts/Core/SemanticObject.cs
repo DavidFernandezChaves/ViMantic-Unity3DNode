@@ -58,14 +58,16 @@ public class SemanticObject {
 
         SemanticObject oldObj = GetDeepCopy();
 
-        if (newDetection != null) {        
+        if (newDetection != null) {
+
+            int historicProportion = Mathf.Min(nDetections, 20);
 
             // Update bounding box
-            position = (nDetections * position + newDetection.position) / (nDetections + 1);
-            size = (nDetections * size + newDetection.size) / (nDetections + 1);
+            position = (historicProportion * position + newDetection.position) / (historicProportion + 1);
+            size = (historicProportion * size + newDetection.size) / (historicProportion + 1);
 
             Vector3 r = rotation.eulerAngles;
-            r = (nDetections * r + newDetection.rotation.eulerAngles) / (nDetections + 1);
+            r = (historicProportion * r + newDetection.rotation.eulerAngles) / (historicProportion + 1);
             rotation = Quaternion.Euler(r);
 
             // Update scores
