@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Globalization;
 
 public class SemanticObject {
 
@@ -20,6 +21,7 @@ public class SemanticObject {
         size = _size;
         rotation = _rotation;
         position = _position;
+        nDetections = 1;
         scores = new Dictionary<string, float>();
         float defaultValue =  (1-scores.Values.Sum()) / OntologySystem.instance.objectClassInOntology.Count;
 
@@ -29,7 +31,7 @@ public class SemanticObject {
         }
 
         foreach(KeyValuePair<string,float> s in _scores) {
-            scores[s.Key] = s.Value;
+            scores[CultureInfo.InvariantCulture.TextInfo.ToTitleCase(s.Key).Replace(" ", "_")] = s.Value;
         }
 
         UpdateType();
@@ -49,15 +51,16 @@ public class SemanticObject {
 
     public void UpdateType() {
         type = scores.OrderByDescending(x => x.Value).FirstOrDefault().Key;
-        score = scores[type];        
+        score = scores[type] / nDetections;
     }
 
     public void NewDetection(SemanticObject newDetection) {
 
+        SemanticObject oldObj = GetDeepCopy();
+
         if (newDetection != null) {        
 
-            SemanticObject oldObj = GetDeepCopy();
-
+            // Update bounding box
             position = (nDetections * position + newDetection.position) / (nDetections + 1);
             size = (nDetections * size + newDetection.size) / (nDetections + 1);
 
@@ -65,10 +68,29 @@ public class SemanticObject {
             r = (nDetections * r + newDetection.rotation.eulerAngles) / (nDetections + 1);
             rotation = Quaternion.Euler(r);
 
-            OntologySystem.instance.UpdateObject(oldObj,this);
+            // Update scores
+            foreach (KeyValuePair<string, float> s in newDetection.scores)
+            {
+                string name = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(s.Key).Replace(" ", "_");
+                if (!scores.Keys.Contains(name))
+                {
+                    Debug.LogWarning(name);
+                }
+                scores[name] += s.Value;
+            }
+
             OntologySystem.instance.JoinSemanticObject(this, newDetection);
-            nDetections++;
         }
+        else {
+            scores["Other"] += 0.8f;
+        }
+
+        UpdateType();
+
+        // Update ontology
+        OntologySystem.instance.UpdateObject(oldObj, this);
+        nDetections++;
+
     }
 
     

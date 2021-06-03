@@ -12,7 +12,6 @@ public class VirtualObjectSystem : MonoBehaviour {
 
     public float threshold_match = 0.8f;
     public float minSize = 0.05f;
-    public float minimunConfidenceScore = 0.5f;
 
     public GameObject prefDetectedObject;
     public Transform tfFrameForObjects;
@@ -94,12 +93,6 @@ public class VirtualObjectSystem : MonoBehaviour {
                 continue;
             }
 
-            //Check minimun Condifence Score
-            if (virtualObject.score < minimunConfidenceScore) {
-                Log(virtualObject.type + " - detected but it has low score: " + virtualObject.score + "/" + minimunConfidenceScore);
-                continue;
-            }
-
             //Build Ranking
             VirtualObjectBox match = null;
             float best_score = 0;
@@ -120,6 +113,9 @@ public class VirtualObjectSystem : MonoBehaviour {
                 }
             }
 
+            //Insertion detection into the ontology
+            virtualObject = OntologySystem.instance.AddNewDetectedObject(virtualObject);
+
             //Match process
             if (best_score >= threshold_match) {
                 match.NewDetection(virtualObject);
@@ -129,9 +125,6 @@ public class VirtualObjectSystem : MonoBehaviour {
                 if (verbose > 2) {
                     Log("New object detected: " + virtualObject.ToString());
                 }
-
-                //Insertion detection into the ontology
-                virtualObject = OntologySystem.instance.AddNewDetectedObject(virtualObject);
                 nDetections++;
                 virtualSemanticMap.Add(virtualObject);
                 InstanceNewSemanticObject(virtualObject);

@@ -203,10 +203,6 @@ public class OntologySystem : MonoBehaviour {
 
     }
 
-    public bool CheckClassObject(string class_object) {
-        return objectClassInOntology.Contains(GetNameWithURI(class_object));
-    }
-
     public void AddNewRoom(string id, string typeRoom) {
         var newSemanticRoom = new RDFOntologyFact(GetClassResource(id));
         ontology.Data.AddFact(newSemanticRoom);
@@ -221,7 +217,7 @@ public class OntologySystem : MonoBehaviour {
     }
 
     public string GetNameWithoutURI(string name) {
-        return name.Substring(nameSpace.ToString().Length);
+        return CultureInfo.InvariantCulture.TextInfo.ToTitleCase(name.Substring(nameSpace.ToString().Length)).Replace(" ", "_");
     }
 
     public RDFResource GetClassResource(String name) {
@@ -273,7 +269,7 @@ public class OntologySystem : MonoBehaviour {
     }
 
     public bool CheckInteresObject(string typeObject) {
-        return objectClassInOntology.Contains(GetNameWithURI(typeObject));
+        return objectClassInOntology.Contains(typeObject);
     }
 
     public void ObjectInRoom(string objectId, string roomId) {
@@ -444,7 +440,7 @@ public class OntologySystem : MonoBehaviour {
             .AddProjectionVariable(c);
 
         RDFSelectQueryResult resultDetectedObject = query.ApplyToGraph(ontology.ToRDFGraph(RDFSemanticsEnums.RDFOntologyInferenceExportBehavior.ModelAndData));
-        objectClassInOntology = (from r in resultDetectedObject.SelectResults.AsEnumerable() select r["?CLASS"].ToString()).Distinct().ToList();
+        objectClassInOntology = (from r in resultDetectedObject.SelectResults.AsEnumerable() select GetNameWithoutURI(r["?CLASS"].ToString())).Distinct().ToList();
     }
 
     private void GetProbabilityRoomByClass() {
