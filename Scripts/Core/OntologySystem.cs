@@ -35,6 +35,7 @@ public class OntologySystem : MonoBehaviour {
 
     #region Unity Functions
     private void Awake() {
+        path = PlayerPrefs.GetString("ontoloyPath", path);
         if (!instance) {
             instance = this;
             DontDestroyOnLoad(gameObject);
@@ -48,6 +49,8 @@ public class OntologySystem : MonoBehaviour {
     }
 
     private void OnDestroy() {
+        PlayerPrefs.SetString("ontoloyPath", path);
+        PlayerPrefs.Save();
         if (saveOntology) {
             SaveOntology();
         }
