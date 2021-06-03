@@ -12,8 +12,7 @@ public class SemanticObject {
     public Vector3 position { get; private set; }
     public Vector3 size { get; private set; }
     public Quaternion rotation { get; private set; }
-    public List<SemanticObject> associated { get; private set; }
-    public int nDetections { get { return associated.Count; }  }
+    public int nDetections { get; private set; }
     public SemanticRoom room { get; private set; }
 
     public SemanticObject(Dictionary<string, float> _scores, Vector3 _position, Quaternion _rotation, Vector3 _size) {
@@ -34,60 +33,12 @@ public class SemanticObject {
         }
 
         UpdateType();
-
-        associated = new List<SemanticObject>();
     }
 
     public void SetId(string id) {
         if (this.id == "")
             this.id = id;
     }
-
-    //public void NewDetection(SemanticObject _newSemanticObject, Vector3 _pose, Quaternion _rotation, Vector3 _size) {
-        
-    //    SemanticObject old = new SemanticObject(id, scores, pose, rotation, size, room);
-
-    //    List<string> dif = _newSemanticObject.scores.Keys.Except(scores.Keys).ToList();
-    //    if (dif.Count > 0) {
-    //        float newScore = scores["Default"] / (dif.Count + 1);
-    //        foreach (string newKey in dif) {
-    //            scores[newKey] = newScore;
-    //        }
-    //        scores["Default"] = newScore;
-    //    }
-
-    //    dif = scores.Keys.Except(_newSemanticObject.scores.Keys).ToList(); 
-    //    if(dif.Count > 0) {
-    //        float newScore = _newSemanticObject.scores["Default"] / (dif.Count + 1);
-    //        foreach (string newKey in dif) {
-    //            _newSemanticObject.scores[newKey] = newScore;
-    //        }
-    //        _newSemanticObject.scores["Default"] = newScore;
-    //    }
-
-
-    //    foreach (string detection in scores.Keys.ToList()) {
-    //        scores[detection] *= _newSemanticObject.scores[detection];
-    //    }
-    //    scores = Normalize(scores);
-    //    this.scores = scores.OrderByDescending(s => s.Value).Take(5).ToDictionary(s => s.Key, s => s.Value);
-    //    UpdateType();
-    //    this.pose = _pose;
-    //    this.rotation = _rotation;
-    //    this.size = _size;        
-
-    //    if (nDetections == 1) {
-    //        associated = new List<SemanticObject>() { old, _newSemanticObject };
-    //        this.id = "";     
-    //        OntologyManager.instance.AddNewDetectedObject(this);
-    //        OntologyManager.instance.JoinSemanticObject(this, old);
-    //    } else {
-    //        associated.Add(_newSemanticObject);
-    //        OntologyManager.instance.UpdateObject(old, this);
-    //        OntologyManager.instance.JoinSemanticObject(this, _newSemanticObject);
-    //    }
-        
-    //}
 
     public void SetRoom(SemanticRoom room) {
         if(room != null && this.room == null) {
@@ -100,6 +51,27 @@ public class SemanticObject {
         type = scores.OrderByDescending(x => x.Value).FirstOrDefault().Key;
         score = scores[type];        
     }
+
+    public void NewDetection(SemanticObject newDetection) {
+
+        if (newDetection != null) {        
+
+            SemanticObject oldObj = GetDeepCopy();
+
+            position = (nDetections * position + newDetection.position) / (nDetections + 1);
+            size = (nDetections * size + newDetection.size) / (nDetections + 1);
+
+            Vector3 r = rotation.eulerAngles;
+            r = (nDetections * r + newDetection.rotation.eulerAngles) / (nDetections + 1);
+            rotation = Quaternion.Euler(r);
+
+            OntologySystem.instance.UpdateObject(oldObj,this);
+            OntologySystem.instance.JoinSemanticObject(this, newDetection);
+            nDetections++;
+        }
+    }
+
+    
 
     //public static Dictionary<string,float> Normalize(Dictionary<string, float> dictionary) {
     //    Dictionary<string, float> result = dictionary;
@@ -135,4 +107,9 @@ public class SemanticObject {
             return "";
     }
 
+    public SemanticObject GetDeepCopy() {
+        SemanticObject newSO = new SemanticObject(scores, position, rotation, size);
+        newSO.SetId(id);
+        return newSO;
+    }
 }

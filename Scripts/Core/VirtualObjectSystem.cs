@@ -62,11 +62,18 @@ public class VirtualObjectSystem : MonoBehaviour {
         //File.WriteAllBytes("D:/foto"+_detections._header.GetTimeMsg().ToString()+".png", itemBGBytes);
 
         HashSet<Color> colors = new HashSet<Color>(image.GetPixels());
+        colors.Remove(new Color(0, 0, 0, 1f));
+        List<VirtualObjectBox> virtualObjectBoxInRange = new List<VirtualObjectBox>();
+        foreach(Color c in colors) {
+            virtualObjectBoxInRange.Add(GetObjectMatch(c));
+        }
+
 
         bbCamera.targetTexture = null;
         RenderTexture.active = null; //Clean
         Destroy(renderTextureMask); //Free memory
 
+        List<VirtualObjectBox> detectedVirtualObjectBox = new List<VirtualObjectBox>();
         foreach (DetectionMsg detection in _detections._detections) {
 
             //Check if its an interesting object
@@ -76,9 +83,8 @@ public class VirtualObjectSystem : MonoBehaviour {
                 continue;
             }
 
-            Vector3 detectionPosition = detection._pose.GetPositionUnity();
             SemanticObject virtualObject = new SemanticObject(detection.GetScores(),
-                                                                detectionPosition,
+                                                                detection._pose.GetPositionUnity(),
                                                                 detection._pose.GetRotationUnity(),
                                                                 detectionSize);
 
@@ -95,37 +101,31 @@ public class VirtualObjectSystem : MonoBehaviour {
             }
 
             //Build Ranking
-            KeyValuePair<VirtualObjectBox, float> high_match = new KeyValuePair<VirtualObjectBox, float>(null, 0);
-            colors.Remove(new Color(0, 0, 0, 0));
+            VirtualObjectBox match = null;
+            float best_score = 0;
+            foreach (VirtualObjectBox vob in virtualObjectBoxInRange) {
 
-            foreach (Color c in colors) {
+                float distance = Mathf.Max(1 - Vector3.Distance(vob.semanticObject.position, virtualObject.position), 0);
 
-                VirtualObjectBox previous_object = GetObjectMatch(c);
+                float scoreSize = Mathf.Min(vob.semanticObject.size.x, virtualObject.size.x) / Mathf.Max(vob.semanticObject.size.x, virtualObject.size.x);
+                scoreSize += Mathf.Min(vob.semanticObject.size.y, virtualObject.size.y) / Mathf.Max(vob.semanticObject.size.y, virtualObject.size.y);
+                scoreSize += Mathf.Min(vob.semanticObject.size.z, virtualObject.size.z) / Mathf.Max(vob.semanticObject.size.z, virtualObject.size.z);
+                scoreSize /= 3;
 
-                if (previous_object != null) {
-                    
-                    float distance = Mathf.Max(1 - Vector3.Distance(previous_object.semanticObject.position, virtualObject.position), 0);
+                float score = (distance + scoreSize) / 2;
 
-                    //Vector3 diff_sizes = (previous_object.semanticObject.size - virtualObject.size);
-                    //float sizes = Mathf.Max(1 - (Mathf.Abs(diff_sizes.x) + Mathf.Abs(diff_sizes.y) + Mathf.Abs(diff_sizes.z))/3, 0);
-                    float sizes = 1;
-
-                    float score = (distance + sizes) / 2;
-
-                    if (high_match.Value < score) {
-                        high_match = new KeyValuePair<VirtualObjectBox, float>(previous_object, score);
-                    }
-                } else {
-                    LogWarning("Color "+c.ToString()+"detected, but it is not registered.");
-                    continue;
+                if (best_score < score) {
+                    match = vob;
+                    best_score = score;
                 }
-
             }
 
             //Match process
-            if (high_match.Value >= threshold_match) {
-                high_match.Key.NewDetection(virtualObject);
-            } else {
+            if (best_score >= threshold_match) {
+                match.NewDetection(virtualObject);
+                detectedVirtualObjectBox.Add(match);
+                //Destroy(high_match.Key.transform.parent.gameObject);
+            }else {
                 if (verbose > 2) {
                     Log("New object detected: " + virtualObject.ToString());
                 }
@@ -138,8 +138,8 @@ public class VirtualObjectSystem : MonoBehaviour {
             }
 
         }
-
-        //Si algun objeto no se ha visto, se le mete un penalizador
+        detectedVirtualObjectBox.ForEach(dvob => virtualObjectBoxInRange.Remove(dvob));
+        virtualObjectBoxInRange.ForEach(vob => vob.NewDetection(null));      
 
     }
 
@@ -155,16 +155,6 @@ public class VirtualObjectSystem : MonoBehaviour {
     #endregion
 
     #region Private Functions
-    private Transform FindClient(string _ip) {
-        var agents = GameObject.FindObjectsOfType<ROS>();
-        foreach(ROS a in agents) {
-            if (a.ip == _ip) {
-                return a.transform;
-            }
-        }
-        return null;
-    }
-
     private VirtualObjectBox GetObjectMatch(Color color) {
         foreach(KeyValuePair<Color, VirtualObjectBox> pair in boxColors) {
             if(Mathf.Abs(color.r-pair.Key.r) 

@@ -114,8 +114,8 @@ public class VirtualObjectBox : MonoBehaviour
     }
 
     public void NewDetection(SemanticObject newDetection) {
-
-        
+        semanticObject.NewDetection(newDetection);
+        UpdateObject();
     }
 
     public static SemanticRoom GetRoom(Vector3 position) {
