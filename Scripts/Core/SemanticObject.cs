@@ -73,25 +73,21 @@ public class SemanticObject {
             // Update scores
             foreach (KeyValuePair<string, float> s in newDetection.scores)
             {
-                string name = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(s.Key).Replace(" ", "_");
-                if (!scores.Keys.Contains(name))
-                {
-                    Debug.LogWarning(name);
-                }
-                scores[name] += s.Value;
+                scores[CultureInfo.InvariantCulture.TextInfo.ToTitleCase(s.Key).Replace(" ", "_")] += s.Value;
             }
 
             OntologySystem.instance.JoinSemanticObject(this, newDetection);
         }
         else {
-            scores["Other"] += 0.8f;
+            scores["Other"] += 0.4f;
         }
+
+        nDetections++;
 
         UpdateType();
 
         // Update ontology
         OntologySystem.instance.UpdateObject(oldObj, this);
-        nDetections++;
 
     }
 
