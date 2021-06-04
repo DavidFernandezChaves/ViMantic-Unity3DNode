@@ -54,13 +54,38 @@ public class SemanticObject {
         score = scores[type] / nDetections;
     }
 
-    public void NewDetection(SemanticObject newDetection) {
+    public void NewDetection(SemanticObject newDetection, List<VirtualObjectBox> matches = null) {
 
-        SemanticObject oldObj = GetDeepCopy();
+        if (nDetections > 1)
+        {
+            OntologySystem.instance.RemoveSemanticObject(this);
+        }
 
         if (newDetection != null) {
 
-            int historicProportion = Mathf.Min(nDetections, 20);
+            foreach (VirtualObjectBox vob in matches)
+            {
+
+                SemanticObject so = vob.semanticObject;
+
+                // Update bounding box
+                position = (nDetections * position + so.nDetections * so.position) / (nDetections + so.nDetections);
+                size = (nDetections * size + so.nDetections * so.size) / (nDetections + so.nDetections);
+
+                Vector3 eulerRotation = rotation.eulerAngles;
+                eulerRotation = (nDetections * eulerRotation + so.nDetections * so.rotation.eulerAngles) / (nDetections + so.nDetections);
+                rotation = Quaternion.Euler(eulerRotation);
+
+                // Update scores
+                foreach (KeyValuePair<string, float> s in so.scores)
+                {
+                    scores[CultureInfo.InvariantCulture.TextInfo.ToTitleCase(s.Key).Replace(" ", "_")] += s.Value;
+                }
+
+                nDetections += so.nDetections;
+            }
+
+            int historicProportion = Mathf.Min(nDetections, 50);
 
             // Update bounding box
             position = (historicProportion * position + newDetection.position) / (historicProportion + 1);
@@ -77,17 +102,28 @@ public class SemanticObject {
             }
 
             OntologySystem.instance.JoinSemanticObject(this, newDetection);
+
         }
         else {
             scores["Other"] += 0.4f;
         }
 
         nDetections++;
-
         UpdateType();
 
         // Update ontology
-        OntologySystem.instance.UpdateObject(oldObj, this);
+        if (nDetections == 2)
+        {
+            string oldId = id;
+            id = "";
+            id = OntologySystem.instance.AddNewDetectedObject(this).id;
+            OntologySystem.instance.JoinSemanticObject(id, oldId);
+        }
+        else
+        {
+            OntologySystem.instance.AddNewDetectedObject(this);
+        }
+        
 
     }
 

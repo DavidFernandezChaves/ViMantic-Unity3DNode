@@ -10,10 +10,10 @@ public class VirtualObjectBox : MonoBehaviour
     public Vector2 heightCanvas;
 
     public SemanticObject semanticObject;
+    public Color boxColor { get; private set; }
 
     public CanvasLabelClass canvasLabel;
     private LineRenderer lineRender;   
-    private Color boxColor;
 
     #region Unity Functions
 
@@ -83,7 +83,7 @@ public class VirtualObjectBox : MonoBehaviour
 
     public void UpdateObject() {
         if (semanticObject.type == "Other") {
-            Destroy(transform.parent.gameObject);
+            RemoveVirtualBox();
             return;
         }
 
@@ -109,13 +109,17 @@ public class VirtualObjectBox : MonoBehaviour
 
     public void RemoveVirtualBox()
     {
-        OntologySystem.instance.RemoveSemanticObject(semanticObject);
+        //OntologySystem.instance.RemoveSemanticObject(semanticObject);
         VirtualObjectSystem.instance.UnregisterColor(boxColor);
         Destroy(transform.parent.gameObject);
     }
 
-    public void NewDetection(SemanticObject newDetection) {
-        semanticObject.NewDetection(newDetection);
+    public void NewDetection(SemanticObject newDetection, List<VirtualObjectBox> matches = null) {
+        semanticObject.NewDetection(newDetection, matches);
+        if (matches != null)
+        {
+            matches.ForEach(m => m.RemoveVirtualBox());
+        }
         UpdateObject();
     }
 

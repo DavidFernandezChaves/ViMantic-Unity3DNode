@@ -145,10 +145,16 @@ public class OntologySystem : MonoBehaviour {
     }
 
     public void JoinSemanticObject(SemanticObject father, SemanticObject child) {
-        ontology.Data.AddAssertionRelation(new RDFOntologyFact(GetClassResource(child.id)),
-                                            new RDFOntologyObjectProperty(GetResource("isPartOf")),
-                                            new RDFOntologyFact(GetClassResource(father.id)));
+        JoinSemanticObject(father.id, child.id);
     }
+
+    public void JoinSemanticObject(string father, string child)
+    {
+        ontology.Data.AddAssertionRelation(new RDFOntologyFact(GetClassResource(child)),
+                                            new RDFOntologyObjectProperty(GetResource("isPartOf")),
+                                            new RDFOntologyFact(GetClassResource(father)));
+    }
+
 
     public void RemoveSemanticObjectUnion(SemanticObject father, SemanticObject child) {
         ontology.Data.RemoveAssertionRelation(new RDFOntologyFact(GetClassResource(child.id)),
