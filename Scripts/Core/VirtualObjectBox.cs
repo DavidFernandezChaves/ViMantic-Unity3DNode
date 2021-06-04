@@ -110,6 +110,7 @@ public class VirtualObjectBox : MonoBehaviour
     public void RemoveVirtualBox()
     {
         OntologySystem.instance.RemoveSemanticObject(semanticObject);
+        VirtualObjectSystem.instance.UnregisterColor(boxColor);
         Destroy(transform.parent.gameObject);
     }
 

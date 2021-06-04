@@ -4,6 +4,7 @@ using ROSUnityCore.ROSBridgeLib.geometry_msgs;
 using System.Collections.Generic;
 using ROSUnityCore;
 using System.IO;
+using System.Collections;
 
 public class VirtualObjectSystem : MonoBehaviour {
     
@@ -21,6 +22,8 @@ public class VirtualObjectSystem : MonoBehaviour {
     public List<SemanticObject> virtualSemanticMap { get; private set; }
     public Dictionary<Color, VirtualObjectBox> boxColors { get; private set; }
 
+    private Queue<DetectionArrayMsg> processingQueue;
+
     #region Unity Functions
     private void Awake() {
         if (!instance) {
@@ -32,6 +35,8 @@ public class VirtualObjectSystem : MonoBehaviour {
 
         virtualSemanticMap = new List<SemanticObject>();
         boxColors = new Dictionary<Color, VirtualObjectBox>();
+        processingQueue = new Queue<DetectionArrayMsg>();
+        StartCoroutine(ProcessMsgs());
     }
     #endregion
 
@@ -41,100 +46,9 @@ public class VirtualObjectSystem : MonoBehaviour {
     }
 
     public void DetectedObject(DetectionArrayMsg _detections, string _ip) {
-
-        //Get view previous detections from bbCamera located in the origin
-        bbCamera.transform.position = _detections._origin.GetPositionUnity();
-        bbCamera.transform.rotation = _detections._origin.GetRotationUnity() * Quaternion.Euler(0f, 90f, 0f);
-
-        Rect rect = new Rect(0, 0, bbCamera.pixelWidth, bbCamera.pixelHeight);
-        RenderTexture renderTextureMask = new RenderTexture(bbCamera.pixelWidth, bbCamera.pixelHeight, 24);
-
-        bbCamera.targetTexture = renderTextureMask;
-        bbCamera.Render();
-        RenderTexture.active = renderTextureMask;
-
-        Texture2D image = new Texture2D(bbCamera.pixelWidth, bbCamera.pixelHeight, TextureFormat.RGB24, false);
-        image.ReadPixels(rect, 0, 0);
-        image.Apply();
-
-        //var itemBGBytes = image.EncodeToPNG();
-        //File.WriteAllBytes("D:/foto"+_detections._header.GetTimeMsg().ToString()+".png", itemBGBytes);
-
-        HashSet<Color> colors = new HashSet<Color>(image.GetPixels());
-        colors.Remove(new Color(0, 0, 0, 1f));
-        List<VirtualObjectBox> virtualObjectBoxInRange = new List<VirtualObjectBox>();
-        foreach(Color c in colors) {
-            virtualObjectBoxInRange.Add(GetObjectMatch(c));
-        }
-
-
-        bbCamera.targetTexture = null;
-        RenderTexture.active = null; //Clean
-        Destroy(renderTextureMask); //Free memory
-
-        List<VirtualObjectBox> detectedVirtualObjectBox = new List<VirtualObjectBox>();
-        foreach (DetectionMsg detection in _detections._detections) {
-
-            //Check if its an interesting object
-            Vector3 detectionSize = detection._size.GetVector3();
-            if (detectionSize.x < minSize || detectionSize.y < minSize || detectionSize.z < minSize) {
-                Log("Object detected but does not meet the minimum features: size[" + detectionSize.x + ";" + detectionSize.y + ";" + detectionSize.z + "]");
-                continue;
-            }
-
-            SemanticObject virtualObject = new SemanticObject(detection.GetScores(),
-                                                                detection._pose.GetPositionUnity(),
-                                                                detection._pose.GetRotationUnity(),
-                                                                detectionSize);
-
-            //Check the type object is in the ontology
-            if (!OntologySystem.instance.CheckInteresObject(virtualObject.type)) {
-                Log(virtualObject.type + " - detected but it is not in the ontology");
-                continue;
-            }
-
-            //Build Ranking
-            VirtualObjectBox match = null;
-            float best_score = 0;
-            foreach (VirtualObjectBox vob in virtualObjectBoxInRange) {
-
-                float distance = Mathf.Max(1 - Vector3.Distance(vob.semanticObject.position, virtualObject.position), 0);
-
-                float scoreSize = Mathf.Min(vob.semanticObject.size.x, virtualObject.size.x) / Mathf.Max(vob.semanticObject.size.x, virtualObject.size.x);
-                scoreSize += Mathf.Min(vob.semanticObject.size.y, virtualObject.size.y) / Mathf.Max(vob.semanticObject.size.y, virtualObject.size.y);
-                scoreSize += Mathf.Min(vob.semanticObject.size.z, virtualObject.size.z) / Mathf.Max(vob.semanticObject.size.z, virtualObject.size.z);
-                scoreSize /= 3;
-
-                float score = (distance + scoreSize) / 2;
-
-                if (best_score < score) {
-                    match = vob;
-                    best_score = score;
-                }
-            }
-
-            //Insertion detection into the ontology
-            virtualObject = OntologySystem.instance.AddNewDetectedObject(virtualObject);
-
-            //Match process
-            if (best_score >= threshold_match) {
-                match.NewDetection(virtualObject);
-                detectedVirtualObjectBox.Add(match);
-                //Destroy(high_match.Key.transform.parent.gameObject);
-            }else {
-                if (verbose > 2) {
-                    Log("New object detected: " + virtualObject.ToString());
-                }
-                nDetections++;
-                virtualSemanticMap.Add(virtualObject);
-                InstanceNewSemanticObject(virtualObject);
-            }
-
-        }
-        detectedVirtualObjectBox.ForEach(dvob => virtualObjectBoxInRange.Remove(dvob));
-        virtualObjectBoxInRange.ForEach(vob => vob.NewDetection(null));      
-
+        processingQueue.Enqueue(_detections);
     }
+        
 
     public Color GetColorObject(VirtualObjectBox vob) {
         Color newColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1f);
@@ -145,9 +59,117 @@ public class VirtualObjectSystem : MonoBehaviour {
         return newColor;
     }
 
+    public void UnregisterColor(Color color) {
+        if (boxColors.ContainsKey(color)) {
+            boxColors.Remove(color);
+        }
+    }
+
     #endregion
 
     #region Private Functions
+    private IEnumerator ProcessMsgs() {
+        while (Application.isPlaying) {
+
+            if (processingQueue.Count > 0) {
+
+                DetectionArrayMsg _detections = processingQueue.Dequeue();
+
+                //Get view previous detections from bbCamera located in the origin
+                bbCamera.transform.position = _detections._origin.GetPositionUnity();
+                bbCamera.transform.rotation = _detections._origin.GetRotationUnity() * Quaternion.Euler(0f, 90f, 0f);
+
+                Rect rect = new Rect(0, 0, bbCamera.pixelWidth, bbCamera.pixelHeight);
+                RenderTexture renderTextureMask = new RenderTexture(bbCamera.pixelWidth, bbCamera.pixelHeight, 24);
+
+                bbCamera.targetTexture = renderTextureMask;
+                bbCamera.Render();
+                RenderTexture.active = renderTextureMask;
+
+                Texture2D image = new Texture2D(bbCamera.pixelWidth, bbCamera.pixelHeight, TextureFormat.RGB24, false);
+                image.ReadPixels(rect, 0, 0);
+                image.Apply();
+
+                HashSet<Color> colors = new HashSet<Color>(image.GetPixels());
+                colors.Remove(new Color(0, 0, 0, 1f));
+                List<VirtualObjectBox> virtualObjectBoxInRange = new List<VirtualObjectBox>();
+                foreach (Color c in colors) {
+                    virtualObjectBoxInRange.Add(GetObjectMatch(c));
+                }
+
+
+                bbCamera.targetTexture = null;
+                RenderTexture.active = null; //Clean
+                Destroy(renderTextureMask); //Free memory
+
+                List<VirtualObjectBox> detectedVirtualObjectBox = new List<VirtualObjectBox>();
+                foreach (DetectionMsg detection in _detections._detections) {
+
+                    //Check if its an interesting object
+                    Vector3 detectionSize = detection._size.GetVector3();
+                    if (detectionSize.x < minSize || detectionSize.y < minSize || detectionSize.z < minSize) {
+                        Log("Object detected but does not meet the minimum features: size[" + detectionSize.x + ";" + detectionSize.y + ";" + detectionSize.z + "]");
+                        continue;
+                    }
+
+                    SemanticObject virtualObject = new SemanticObject(detection.GetScores(),
+                                                                        detection._pose.GetPositionUnity(),
+                                                                        detection._pose.GetRotationUnity(),
+                                                                        detectionSize);
+
+                    //Check the type object is in the ontology
+                    if (!OntologySystem.instance.CheckInteresObject(virtualObject.type)) {
+                        Log(virtualObject.type + " - detected but it is not in the ontology");
+                        continue;
+                    }
+
+                    //Build Ranking
+                    VirtualObjectBox match = null;
+                    float best_score = 0;
+                    foreach (VirtualObjectBox vob in virtualObjectBoxInRange) {
+
+                        float distance = Mathf.Max(1 - Vector3.Distance(vob.semanticObject.position, virtualObject.position), 0);
+
+                        float scoreSize = Mathf.Min(vob.semanticObject.size.x, virtualObject.size.x) / Mathf.Max(vob.semanticObject.size.x, virtualObject.size.x);
+                        scoreSize += Mathf.Min(vob.semanticObject.size.y, virtualObject.size.y) / Mathf.Max(vob.semanticObject.size.y, virtualObject.size.y);
+                        scoreSize += Mathf.Min(vob.semanticObject.size.z, virtualObject.size.z) / Mathf.Max(vob.semanticObject.size.z, virtualObject.size.z);
+                        scoreSize /= 3;
+
+                        float score = (distance + scoreSize) / 2;
+
+                        if (best_score < score) {
+                            match = vob;
+                            best_score = score;
+                        }
+                    }
+
+                    //Insertion detection into the ontology
+                    virtualObject = OntologySystem.instance.AddNewDetectedObject(virtualObject);
+
+                    //Match process
+                    if (best_score >= threshold_match) {
+                        match.NewDetection(virtualObject);
+                        detectedVirtualObjectBox.Add(match);
+                        //Destroy(high_match.Key.transform.parent.gameObject);
+                    } else {
+                        if (verbose > 2) {
+                            Log("New object detected: " + virtualObject.ToString());
+                        }
+                        nDetections++;
+                        virtualSemanticMap.Add(virtualObject);
+                        InstanceNewSemanticObject(virtualObject);
+                    }
+
+                }
+                detectedVirtualObjectBox.ForEach(dvob => virtualObjectBoxInRange.Remove(dvob));
+                virtualObjectBoxInRange.ForEach(vob => vob.NewDetection(null));
+            }
+
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+
     private VirtualObjectBox GetObjectMatch(Color color) {
         foreach(KeyValuePair<Color, VirtualObjectBox> pair in boxColors) {
             if(Mathf.Abs(color.r-pair.Key.r) 
