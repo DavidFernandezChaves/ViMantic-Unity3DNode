@@ -13,7 +13,7 @@ public class VirtualObjectBox : MonoBehaviour
     public Color boxColor { get; private set; }
 
     public CanvasLabelClass canvasLabel;
-    private LineRenderer lineRender;   
+    private LineRenderer lineRender;
 
     #region Unity Functions
 
@@ -49,14 +49,16 @@ public class VirtualObjectBox : MonoBehaviour
     //}
 
 
-    //#if UNITY_EDITOR
-    //    private void OnDrawGizmos() {
-    //        if (Application.isPlaying && this.enabled && verbose > 1) {
-    //            Gizmos.color = Color.green;
-    //            Gizmos.DrawSphere(transform.position, radius);
-    //        }
-    //    }
-    //#endif
+#if UNITY_EDITOR
+    private void OnDrawGizmos() {
+        if (Application.isPlaying && this.enabled && verbose > 1) {
+            for(int i=0;i<8;i++) {
+                Gizmos.color = Color.green;
+                Gizmos.DrawSphere(semanticObject.corners[0], 0.1f);
+            }            
+        }
+    }
+#endif
 
 
     private void Start() {        

@@ -82,8 +82,8 @@ public class VirtualObjectSystem : MonoBehaviour {
                 DetectionArrayMsg _detections = processingQueue.Dequeue();
 
                 //Get view previous detections from bbCamera located in the origin
-                bbCamera.transform.position = _detections._origin.GetPositionUnity();
-                bbCamera.transform.rotation = _detections._origin.GetRotationUnity() * Quaternion.Euler(0f, 90f, 0f);
+                bbCamera.transform.position = _detections.origin.GetPositionUnity();
+                bbCamera.transform.rotation = _detections.origin.GetRotationUnity() * Quaternion.Euler(0f, 90f, 0f);
 
                 bbCamera.targetTexture = renderTextureMask;
 
@@ -120,12 +120,13 @@ public class VirtualObjectSystem : MonoBehaviour {
                 //Destroy(renderTextureMask); //Free memory
 
                 List<VirtualObjectBox> detectedVirtualObjectBox = new List<VirtualObjectBox>();
-                foreach (DetectionMsg detection in _detections._detections) {
+                foreach (DetectionMsg detection in _detections.detections) {
+
+
 
                     SemanticObject virtualObject = new SemanticObject(detection.GetScores(),
-                                                                        detection._pose.GetPositionUnity(),
-                                                                        detection._pose.GetRotationUnity(),
-                                                                        detection._size.GetVector3());
+                                                                        detection.GetCorners(),
+                                                                        detection.fixed_corners); 
 
                     //Check the type object is in the ontology
                     if (!OntologySystem.instance.CheckInteresObject(virtualObject.type)) {

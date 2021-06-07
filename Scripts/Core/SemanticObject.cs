@@ -5,22 +5,24 @@ using System;
 using System.Globalization;
 
 public class SemanticObject {
+    public Dictionary<string, float> scores { get; private set; }
+    public List<Vector3> corners { get; private set; }
+    public byte fixed_corners { get; private set; }
 
     public string id { get; private set; }
     public string type { get; private set; }
     public float score { get; private set; }
-    public Dictionary<string, float> scores { get; private set; }    
     public Vector3 position { get; private set; }
     public Vector3 size { get; private set; }
     public Quaternion rotation { get; private set; }
     public int nDetections { get; private set; }
     public SemanticRoom room { get; private set; }
 
-    public SemanticObject(Dictionary<string, float> _scores, Vector3 _position, Quaternion _rotation, Vector3 _size) {
+
+    public SemanticObject(Dictionary<string, float> _scores, List<Vector3> _corners, byte _fixed_corners) {
         id = "";
-        size = _size;
-        rotation = _rotation;
-        position = _position;
+        corners = _corners;
+        fixed_corners = _fixed_corners;
         nDetections = 1;
         scores = new Dictionary<string, float>();
         float defaultValue =  (1-scores.Values.Sum()) / OntologySystem.instance.objectClassInOntology.Count;
@@ -34,7 +36,7 @@ public class SemanticObject {
             scores[CultureInfo.InvariantCulture.TextInfo.ToTitleCase(s.Key).Replace(" ", "_")] = s.Value;
         }
 
-        UpdateType();
+        UpdateProperties();
     }
 
     public void SetId(string id) {
@@ -49,9 +51,14 @@ public class SemanticObject {
         }
     }
 
-    public void UpdateType() {
+    public void UpdateProperties() {
         type = scores.OrderByDescending(x => x.Value).FirstOrDefault().Key;
         score = scores[type] / nDetections;
+
+        position = new Vector3(corners.Average(p=>p.x), corners.Average(p => p.y), corners.Average(p => p.z));
+        size = new Vector3(corners.Max(p => p.x)- corners.Min(p => p.x),size.y, corners.Max(p => p.z) - corners.Min(p => p.z)) ;
+        float r = Vector3.Angle(corners[6], corners[3]);
+        rotation = Quaternion.Euler(0, r, 0);
     }
 
     public void NewDetection(SemanticObject newDetection, List<VirtualObjectBox> matches = null) {
@@ -68,13 +75,13 @@ public class SemanticObject {
 
                 SemanticObject so = vob.semanticObject;
 
-                // Update bounding box
-                position = (nDetections * position + so.nDetections * so.position) / (nDetections + so.nDetections);
-                size = (nDetections * size + so.nDetections * so.size) / (nDetections + so.nDetections);
+                //// Update bounding box
+                //position = (nDetections * position + so.nDetections * so.position) / (nDetections + so.nDetections);
+                //size = (nDetections * size + so.nDetections * so.size) / (nDetections + so.nDetections);
 
-                Vector3 eulerRotation = rotation.eulerAngles;
-                eulerRotation = (nDetections * eulerRotation + so.nDetections * so.rotation.eulerAngles) / (nDetections + so.nDetections);
-                rotation = Quaternion.Euler(eulerRotation);
+                //Vector3 eulerRotation = rotation.eulerAngles;
+                //eulerRotation = (nDetections * eulerRotation + so.nDetections * so.rotation.eulerAngles) / (nDetections + so.nDetections);
+                //rotation = Quaternion.Euler(eulerRotation);
 
                 // Update scores
                 foreach (KeyValuePair<string, float> s in so.scores)
@@ -88,12 +95,12 @@ public class SemanticObject {
             int historicProportion = Mathf.Min(nDetections, 50);
 
             // Update bounding box
-            position = (historicProportion * position + newDetection.position) / (historicProportion + 1);
-            size = (historicProportion * size + newDetection.size) / (historicProportion + 1);
+            //position = (historicProportion * position + newDetection.position) / (historicProportion + 1);
+            //size = (historicProportion * size + newDetection.size) / (historicProportion + 1);
 
-            Vector3 r = rotation.eulerAngles;
-            r = (historicProportion * r + newDetection.rotation.eulerAngles) / (historicProportion + 1);
-            rotation = Quaternion.Euler(r);
+            //Vector3 r = rotation.eulerAngles;
+            //r = (historicProportion * r + newDetection.rotation.eulerAngles) / (historicProportion + 1);
+            //rotation = Quaternion.Euler(r);
 
             // Update scores
             foreach (KeyValuePair<string, float> s in newDetection.scores)
@@ -109,7 +116,7 @@ public class SemanticObject {
         }
 
         nDetections++;
-        UpdateType();
+        UpdateProperties();
 
         // Update ontology
         if (nDetections == 2)
@@ -164,7 +171,7 @@ public class SemanticObject {
     }
 
     public SemanticObject GetDeepCopy() {
-        SemanticObject newSO = new SemanticObject(scores, position, rotation, size);
+        SemanticObject newSO = new SemanticObject(scores,corners,fixed_corners);
         newSO.SetId(id);
         return newSO;
     }
