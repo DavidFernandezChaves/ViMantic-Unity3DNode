@@ -56,7 +56,7 @@ public class SemanticObject {
         score = scores[type] / nDetections;
 
         position = new Vector3(corners.Average(p=>p.x), corners.Average(p => p.y), corners.Average(p => p.z));
-        size = new Vector3(corners.Max(p => p.x)- corners.Min(p => p.x),size.y, corners.Max(p => p.z) - corners.Min(p => p.z)) ;
+        size = new Vector3(corners.Max(p => p.x)- corners.Min(p => p.x), corners.Max(p => p.y) - corners.Min(p => p.y), corners.Max(p => p.z) - corners.Min(p => p.z)) ;
         float r = Vector3.Angle(corners[6], corners[3]);
         rotation = Quaternion.Euler(0, r, 0);
     }

@@ -54,7 +54,7 @@ public class VirtualObjectBox : MonoBehaviour
         if (Application.isPlaying && this.enabled && verbose > 1) {
             for(int i=0;i<8;i++) {
                 Gizmos.color = Color.green;
-                Gizmos.DrawSphere(semanticObject.corners[0], 0.1f);
+                Gizmos.DrawSphere(semanticObject.corners[i], 0.05f);
             }            
         }
     }
