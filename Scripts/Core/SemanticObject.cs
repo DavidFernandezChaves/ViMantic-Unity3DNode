@@ -54,8 +54,10 @@ public class SemanticObject {
     public void UpdateProperties() {
         // Update bounding box
         position = new Vector3(corners.Average(p => p.x), corners.Average(p => p.y), corners.Average(p => p.z));
-        size = new Vector3(corners.Max(p => p.x) - corners.Min(p => p.x), corners.Max(p => p.y) - corners.Min(p => p.y), corners.Max(p => p.z) - corners.Min(p => p.z));
-        rotation = Quaternion.Euler(0, Vector3.Angle(corners[6], corners[3]), 0);
+        size = new Vector3(Mathf.Abs(Vector3.Distance(corners[1], corners[0])),
+                           Mathf.Abs(Vector3.Distance(corners[1], corners[5])),
+                           Mathf.Abs(Vector3.Distance(corners[1], corners[2])));
+        rotation = Quaternion.Euler(0, Mathf.Atan2(corners[1].x - corners[2].x, corners[1].z - corners[2].z) * Mathf.Rad2Deg, 0);
 
         // Update type
         type = scores.OrderByDescending(x => x.Value).FirstOrDefault().Key;
@@ -77,14 +79,18 @@ public class SemanticObject {
                 SemanticObject so = vob.semanticObject;
 
                 // Update corners
-                for (int i = 0; i<8; i++) {
+                for (int i = 0; i < 8; i++)
+                {
 
                     bool cornerFixed1 = (fixed_corners & (1 << i)) > 0;
                     bool cornerFixed2 = (so.fixed_corners & (1 << i)) > 0;
 
-                    if (cornerFixed1 && cornerFixed2 || !cornerFixed1 && !cornerFixed2) {
+                    if (cornerFixed1 && cornerFixed2 || !cornerFixed1 && !cornerFixed2)
+                    {
                         corners[i] = (corners[i] + so.corners[i]) / 2;
-                    }else if(!cornerFixed1 && cornerFixed2) {
+                    }
+                    else if (!cornerFixed1 && cornerFixed2)
+                    {
                         corners[i] = so.corners[i];
                     }
 
@@ -100,14 +106,18 @@ public class SemanticObject {
             }
 
             // Update corners
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < 8; i++)
+            {
 
                 bool cornerFixed1 = (fixed_corners & (1 << i)) > 0;
                 bool cornerFixed2 = (newDetection.fixed_corners & (1 << i)) > 0;
 
-                if (cornerFixed1 && cornerFixed2 || !cornerFixed1 && !cornerFixed2) {
+                if (cornerFixed1 && cornerFixed2 || !cornerFixed1 && !cornerFixed2)
+                {
                     corners[i] = (corners[i] + newDetection.corners[i]) / 2;
-                } else if (!cornerFixed1 && cornerFixed2) {
+                }
+                else if (!cornerFixed1 && cornerFixed2)
+                {
                     corners[i] = newDetection.corners[i];
                 }
 

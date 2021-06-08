@@ -21,10 +21,21 @@ public class VirtualObjectBox : MonoBehaviour
     private void OnDrawGizmos() {
         if (Application.isPlaying && this.enabled && verbose > 1) {
             for(int i=0;i<8;i++) {
+
                 if((semanticObject.fixed_corners & (1 << i)) > 0)
                     Gizmos.color = Color.green;
                 else
                     Gizmos.color = Color.red;
+
+                //if (i == 0) Gizmos.color = Color.blue;
+                //if (i == 1) Gizmos.color = Color.magenta;
+                //if (i == 2) Gizmos.color = Color.gray;
+                //if (i == 3) Gizmos.color = Color.yellow;
+                //if (i == 4) Gizmos.color = Color.green;
+                //if (i == 5) Gizmos.color = Color.red;
+                //if (i == 6) Gizmos.color = Color.white;
+                //if (i == 7) Gizmos.color = Color.cyan;
+
                 Gizmos.DrawSphere(semanticObject.corners[i], 0.05f);
             }            
         }
