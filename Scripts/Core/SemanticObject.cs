@@ -52,13 +52,14 @@ public class SemanticObject {
     }
 
     public void UpdateProperties() {
+        // Update bounding box
+        position = new Vector3(corners.Average(p => p.x), corners.Average(p => p.y), corners.Average(p => p.z));
+        size = new Vector3(corners.Max(p => p.x) - corners.Min(p => p.x), corners.Max(p => p.y) - corners.Min(p => p.y), corners.Max(p => p.z) - corners.Min(p => p.z));
+        rotation = Quaternion.Euler(0, Vector3.Angle(corners[6], corners[3]), 0);
+
+        // Update type
         type = scores.OrderByDescending(x => x.Value).FirstOrDefault().Key;
         score = scores[type] / nDetections;
-
-        position = new Vector3(corners.Average(p=>p.x), corners.Average(p => p.y), corners.Average(p => p.z));
-        size = new Vector3(corners.Max(p => p.x)- corners.Min(p => p.x), corners.Max(p => p.y) - corners.Min(p => p.y), corners.Max(p => p.z) - corners.Min(p => p.z)) ;
-        float r = Vector3.Angle(corners[6], corners[3]);
-        rotation = Quaternion.Euler(0, r, 0);
     }
 
     public void NewDetection(SemanticObject newDetection, List<VirtualObjectBox> matches = null) {
@@ -75,13 +76,19 @@ public class SemanticObject {
 
                 SemanticObject so = vob.semanticObject;
 
-                //// Update bounding box
-                //position = (nDetections * position + so.nDetections * so.position) / (nDetections + so.nDetections);
-                //size = (nDetections * size + so.nDetections * so.size) / (nDetections + so.nDetections);
+                // Update corners
+                for (int i = 0; i<8; i++) {
 
-                //Vector3 eulerRotation = rotation.eulerAngles;
-                //eulerRotation = (nDetections * eulerRotation + so.nDetections * so.rotation.eulerAngles) / (nDetections + so.nDetections);
-                //rotation = Quaternion.Euler(eulerRotation);
+                    bool cornerFixed1 = (fixed_corners & (1 << i)) > 0;
+                    bool cornerFixed2 = (so.fixed_corners & (1 << i)) > 0;
+
+                    if (cornerFixed1 && cornerFixed2 || !cornerFixed1 && !cornerFixed2) {
+                        corners[i] = (corners[i] + so.corners[i]) / 2;
+                    }else if(!cornerFixed1 && cornerFixed2) {
+                        corners[i] = so.corners[i];
+                    }
+
+                }
 
                 // Update scores
                 foreach (KeyValuePair<string, float> s in so.scores)
@@ -92,15 +99,19 @@ public class SemanticObject {
                 nDetections += so.nDetections;
             }
 
-            int historicProportion = Mathf.Min(nDetections, 50);
+            // Update corners
+            for (int i = 0; i < 8; i++) {
 
-            // Update bounding box
-            //position = (historicProportion * position + newDetection.position) / (historicProportion + 1);
-            //size = (historicProportion * size + newDetection.size) / (historicProportion + 1);
+                bool cornerFixed1 = (fixed_corners & (1 << i)) > 0;
+                bool cornerFixed2 = (newDetection.fixed_corners & (1 << i)) > 0;
 
-            //Vector3 r = rotation.eulerAngles;
-            //r = (historicProportion * r + newDetection.rotation.eulerAngles) / (historicProportion + 1);
-            //rotation = Quaternion.Euler(r);
+                if (cornerFixed1 && cornerFixed2 || !cornerFixed1 && !cornerFixed2) {
+                    corners[i] = (corners[i] + newDetection.corners[i]) / 2;
+                } else if (!cornerFixed1 && cornerFixed2) {
+                    corners[i] = newDetection.corners[i];
+                }
+
+            }
 
             // Update scores
             foreach (KeyValuePair<string, float> s in newDetection.scores)
@@ -129,38 +140,8 @@ public class SemanticObject {
         else
         {
             OntologySystem.instance.AddNewDetectedObject(this);
-        }
-        
+        }       
 
-    }
-
-    
-
-    //public static Dictionary<string,float> Normalize(Dictionary<string, float> dictionary) {
-    //    Dictionary<string, float> result = dictionary;
-    //    float sum = dictionary.Values.Sum();
-
-    //    if (!dictionary.ContainsKey("Default")) {
-    //        if (sum >= 1) {
-    //            result.Add("Default",0.01f);
-    //        } else {
-    //            result.Add("Default",1-sum);
-    //        }
-    //        sum = result.Values.Sum();
-    //    }
-
-    //    foreach (string type in result.Keys.ToList()) {
-    //        result[type] /= sum;
-    //    }
-    //    return result;
-    //}
-
-    public override string ToString() {
-        return "SemanticObject [id =" + id
-                        + ", scores=" + score
-                        + ", pose=" + position.ToString()
-                        + ", nDetections=" + nDetections
-                        + ", size=" + size.ToString() + "]";
     }
 
     public string GetIdRoom() {
@@ -171,8 +152,17 @@ public class SemanticObject {
     }
 
     public SemanticObject GetDeepCopy() {
-        SemanticObject newSO = new SemanticObject(scores,corners,fixed_corners);
+        SemanticObject newSO = new SemanticObject(scores, corners, fixed_corners);
         newSO.SetId(id);
         return newSO;
     }
+
+    public override string ToString() {
+        return "SemanticObject [id =" + id
+                        + ", scores=" + score
+                        + ", pose=" + position.ToString()
+                        + ", nDetections=" + nDetections
+                        + ", size=" + size.ToString() + "]";
+    }
+
 }

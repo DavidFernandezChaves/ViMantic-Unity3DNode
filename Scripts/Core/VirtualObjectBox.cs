@@ -17,43 +17,14 @@ public class VirtualObjectBox : MonoBehaviour
 
     #region Unity Functions
 
-    //private void OnTriggerStay(Collider other) {
-    //    VirtualObjectBox vob = other.gameObject.GetComponent<VirtualObjectBox>();
-
-    //    if (vob != null &&
-    //    dateTime <= vob.dateTime &&
-    //    vob.semanticObject.room == semanticObject.room &&
-    //    vob.semanticObject.scores.ContainsKey(semanticObject.type) &&
-    //    vob.semanticObject.scores[semanticObject.type] >= (semanticObject.score - similarityRate)) { 
-
-    //        if (dateTime == vob.dateTime && semanticObject.score < vob.semanticObject.score) {
-    //            dateTime.AddMilliseconds(1);
-    //            return;
-    //        }
-
-    //        Vector3 rotation = (semanticObject.rotation.eulerAngles + vob.semanticObject.rotation.eulerAngles) / 2;
-
-    //        transform.parent.rotation = Quaternion.identity;
-    //        vob.transform.parent.rotation = Quaternion.identity;
-
-    //        Bounds bounds = GetComponent<MeshRenderer>().bounds;
-    //        //Debug.Log(semanticObject.pose+"/"+semanticObject.size+"/"+bounds.center + "/" + bounds.size);
-    //        bounds.Encapsulate(vob.GetComponent<MeshRenderer>().bounds);
-    //        //bounds.Encapsulate(vso.semanticObject.pose);
-
-    //        //semanticObject.NewDetection(vob.semanticObject, bounds.center, Quaternion.Euler(rotation), bounds.size * (1 - erodeRate));
-    //        UpdateObject();
-
-    //        Destroy(vob.transform.parent.gameObject);
-    //    }
-    //}
-
-
 #if UNITY_EDITOR
     private void OnDrawGizmos() {
         if (Application.isPlaying && this.enabled && verbose > 1) {
             for(int i=0;i<8;i++) {
-                Gizmos.color = Color.green;
+                if((semanticObject.fixed_corners & (1 << i)) > 0)
+                    Gizmos.color = Color.green;
+                else
+                    Gizmos.color = Color.red;
                 Gizmos.DrawSphere(semanticObject.corners[i], 0.05f);
             }            
         }

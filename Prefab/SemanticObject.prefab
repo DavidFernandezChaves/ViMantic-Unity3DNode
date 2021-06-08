@@ -234,7 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9fc526eacd3cfc49939ac547d6ed52e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verbose: 0
+  verbose: 2
   heightCanvas: {x: 2, y: 5}
   canvasLabel: {fileID: 2766889848152880030}
 --- !u!1001 &8390046263339180676
