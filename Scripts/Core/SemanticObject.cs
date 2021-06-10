@@ -14,6 +14,7 @@ public class SemanticObject {
     public Vector3 Size { get; private set; }
     public Quaternion Rotation { get; private set; }
     public int NDetections { get; private set; }
+    public int NNonOccluded { get; private set; }
     public SemanticRoom Room { get; private set; }
 
     public struct Corner {
@@ -26,7 +27,8 @@ public class SemanticObject {
     }
     public SemanticObject(Dictionary<string, float> _scores, List<Vector3> _corners, byte _occluded_corners) {
         Id = "";
-        for(int i = 0; i < Corners.Count; i++) {
+        Corners = new List<Corner>();
+        for(int i = 0; i < _corners.Count; i++) {
             Corners.Add(new Corner(_corners[i], (_occluded_corners & (1 << i)) > 0));
         }
 
@@ -42,6 +44,16 @@ public class SemanticObject {
         foreach(KeyValuePair<string,float> s in _scores) {
             Scores[CultureInfo.InvariantCulture.TextInfo.ToTitleCase(s.Key).Replace(" ", "_")] = s.Value;
         }
+
+        UpdateProperties();
+    }
+
+    public SemanticObject(Dictionary<string, float> _scores, List<Corner> _corners)
+    {
+        Id = "";
+        Scores = _scores;
+        Corners = _corners;
+        NDetections = 1;
 
         UpdateProperties();
     }
@@ -73,6 +85,12 @@ public class SemanticObject {
         // Update type
         Type = Scores.OrderByDescending(x => x.Value).FirstOrDefault().Key;
         Score = Scores[Type] / NDetections;
+
+        NNonOccluded = 0;
+        foreach (Corner c in Corners)
+        {
+            if (c.occluded) NNonOccluded++;
+        }
     }
 
     public void NewDetection(SemanticObject newDetection, List<VirtualObjectBox> matches = null) {
@@ -82,77 +100,36 @@ public class SemanticObject {
         //    OntologySystem.instance.RemoveSemanticObject(this);
         //}
 
-        //if (newDetection != null) {
+        if (newDetection != null)
+        {
 
-        //    foreach (VirtualObjectBox vob in matches)
-        //    {
+           
+            // Update corners
+            for (int i = 0; i < Corners.Count; i++)
+            {
 
-        //        SemanticObject so = vob.semanticObject;
+                Corners[i] = new Corner((Corners[i].position + newDetection.Corners[i].position) / 2, Corners[i].occluded);
 
-        //        // Update corners
-        //        for (int i = 0; i < 8; i++)
-        //        {
+            }
 
-        //            bool cornerFixed1 = (fixed_corners & (1 << i)) > 0;
-        //            bool cornerFixed2 = (so.fixed_corners & (1 << i)) > 0;
+            // Update scores
+            foreach (KeyValuePair<string, float> s in newDetection.Scores)
+            {
+                Scores[CultureInfo.InvariantCulture.TextInfo.ToTitleCase(s.Key).Replace(" ", "_")] += s.Value;
+            }
 
-        //            if (cornerFixed1 && cornerFixed2 || !cornerFixed1 && !cornerFixed2)
-        //            {
-        //                Corners[i] = (Corners[i] + so.Corners[i]) / 2;
-        //            }
-        //            else if (!cornerFixed1 && cornerFixed2)
-        //            {
-        //                Corners[i] = so.Corners[i];
-        //            }
+            OntologySystem.instance.JoinSemanticObject(this, newDetection);
 
-        //        }
+        }
+        else
+        {
+            Scores["Other"] += 0.4f;
+        }
 
-        //        fixed_corners |= so.fixed_corners;
+        NDetections++;
+        UpdateProperties();
 
-        //        // Update scores
-        //        foreach (KeyValuePair<string, float> s in so.Scores)
-        //        {
-        //            Scores[CultureInfo.InvariantCulture.TextInfo.ToTitleCase(s.Key).Replace(" ", "_")] += s.Value;
-        //        }
-
-        //        NDetections += so.NDetections;
-        //    }
-
-        //    // Update corners
-        //    for (int i = 0; i < 8; i++)
-        //    {
-
-        //        bool cornerFixed1 = (fixed_corners & (1 << i)) > 0;
-        //        bool cornerFixed2 = (newDetection.fixed_corners & (1 << i)) > 0;
-
-        //        if (cornerFixed1 && cornerFixed2 || !cornerFixed1 && !cornerFixed2)
-        //        {
-        //            Corners[i] = (Corners[i] + newDetection.Corners[i]) / 2;
-        //        }
-        //        else if (!cornerFixed1 && cornerFixed2)
-        //        {
-        //            Corners[i] = newDetection.Corners[i];
-        //        }
-
-        //    }
-
-        //    // Update scores
-        //    foreach (KeyValuePair<string, float> s in newDetection.Scores)
-        //    {
-        //        Scores[CultureInfo.InvariantCulture.TextInfo.ToTitleCase(s.Key).Replace(" ", "_")] += s.Value;
-        //    }
-
-        //    OntologySystem.instance.JoinSemanticObject(this, newDetection);
-
-        //}
-        //else {
-        //    Scores["Other"] += 0.4f;
-        //}
-
-        //NDetections++;
-        //UpdateProperties();
-
-        //// Update ontology
+        // Update ontology
         //if (NDetections == 2)
         //{
         //    string oldId = Id;
@@ -163,7 +140,7 @@ public class SemanticObject {
         //else
         //{
         //    OntologySystem.instance.AddNewDetectedObject(this);
-        //}       
+        //}
 
     }
 
@@ -175,7 +152,7 @@ public class SemanticObject {
     }
 
     public SemanticObject GetDeepCopy() {
-        SemanticObject newSO = new SemanticObject(Scores, Corners, fixed_corners);
+        SemanticObject newSO = new SemanticObject(Scores, Corners);
         newSO.SetId(Id);
         return newSO;
     }

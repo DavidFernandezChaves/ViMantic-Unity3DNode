@@ -11,7 +11,7 @@ public class VirtualObjectSystem : MonoBehaviour {
     public static VirtualObjectSystem instance;
     public int verbose;
 
-    public float threshold_match = 1f;
+    public float threshold_match = 0.25f;
 
     public GameObject prefDetectedObject;
     public Transform tfFrameForObjects;
@@ -204,7 +204,7 @@ public class VirtualObjectSystem : MonoBehaviour {
                     foreach (VirtualObjectBox vob in virtualObjectBoxInRange) {
                         List<SemanticObject.Corner> order = YNN(vob.semanticObject.Corners, virtualObject.Corners);
                         float distance = CalculateCornerDistance(vob.semanticObject.Corners, order, true);
-                        if (distance < threshold_match && (match_distance < 0 || match_distance > distance)) {
+                        if (distance < (threshold_match * virtualObject.NNonOccluded) && (match_distance < 0 || match_distance > distance)) {
                             match_corners_ordered = order;
                             match_distance = distance;
                             match = vob;
@@ -215,7 +215,6 @@ public class VirtualObjectSystem : MonoBehaviour {
                     if (match != null) {
                         virtualObject.SetNewCorners(match_corners_ordered);
                         match.NewDetection(virtualObject);
-                        InstanceNewSemanticObject(virtualObject);
                     } else {
                         if (verbose > 2) {
                             Log("New object detected: " + virtualObject.ToString());
