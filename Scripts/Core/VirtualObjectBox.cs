@@ -98,12 +98,8 @@ public class VirtualObjectBox : MonoBehaviour
         Destroy(transform.parent.gameObject);
     }
 
-    public void NewDetection(SemanticObject newDetection, List<VirtualObjectBox> matches = null) {
-        semanticObject.NewDetection(newDetection, matches);
-        if (matches != null)
-        {
-            matches.ForEach(m => m.RemoveVirtualBox());
-        }
+    public void NewDetection(SemanticObject newDetection) {
+        semanticObject.NewDetection(newDetection);
         UpdateObject();
     }
 

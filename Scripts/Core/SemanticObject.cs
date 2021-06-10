@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
+using g3;
 
 public class SemanticObject {
     public Dictionary<string, float> Scores { get; private set; }
@@ -93,7 +94,7 @@ public class SemanticObject {
         }
     }
 
-    public void NewDetection(SemanticObject newDetection, List<VirtualObjectBox> matches = null) {
+    public void NewDetection(SemanticObject newDetection) {
 
         //if (NDetections > 1)
         //{
@@ -108,9 +109,26 @@ public class SemanticObject {
             for (int i = 0; i < Corners.Count; i++)
             {
 
-                Corners[i] = new Corner((Corners[i].position + newDetection.Corners[i].position) / 2, Corners[i].occluded);
+                if (DefinedObject()) {
+                    if (newDetection.DefinedObject()) {
+                        Corners[i] = new Corner((Corners[i].position + newDetection.Corners[i].position) / 2, Corners[i].occluded);
+                    }
+                }else {
 
+                    Vector3d[] points = new Vector3d[16];
+                    //for(int j=0;j<Corners.Count;j++){
+                    //    Vector3d position = (Vector3d)Corners[j].position;
+                    //    points[j] = position;
+                    //}
+
+                    //var orientedBB = new ContOrientedBox3(Vector3.zero);
+
+                Corners[i] = new Corner((Corners[i].position + newDetection.Corners[i].position) / 2, Corners[i].occluded);
             }
+
+
+
+        }
 
             // Update scores
             foreach (KeyValuePair<string, float> s in newDetection.Scores)
@@ -142,6 +160,12 @@ public class SemanticObject {
         //    OntologySystem.instance.AddNewDetectedObject(this);
         //}
 
+    }
+
+    public bool DefinedObject() {
+        return (!Corners[0].occluded && !Corners[1].occluded &&
+            (!Corners[7].occluded || !Corners[2].occluded || !Corners[4].occluded || !Corners[5].occluded) &&
+            (!Corners[4].occluded || !Corners[5].occluded || !Corners[6].occluded || !Corners[3].occluded)) ;
     }
 
     public string GetIdRoom() {
