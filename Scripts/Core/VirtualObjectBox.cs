@@ -10,7 +10,7 @@ public class VirtualObjectBox : MonoBehaviour
     public Vector2 heightCanvas;
 
     public SemanticObject semanticObject;
-    public Color boxColor { get; private set; }
+    public Color BoxColor { get; private set; }
 
     public CanvasLabelClass canvasLabel;
     private LineRenderer lineRender;
@@ -22,21 +22,21 @@ public class VirtualObjectBox : MonoBehaviour
         if (Application.isPlaying && this.enabled && verbose > 1) {
             for(int i=0;i<8;i++) {
 
-                if((semanticObject.fixed_corners & (1 << i)) > 0)
-                    Gizmos.color = Color.green;
-                else
+                if(semanticObject.Corners[i].occluded)
                     Gizmos.color = Color.red;
+                else
+                    Gizmos.color = Color.green;
 
-                //if (i == 0) Gizmos.color = Color.blue;
-                //if (i == 1) Gizmos.color = Color.magenta;
-                //if (i == 2) Gizmos.color = Color.gray;
-                //if (i == 3) Gizmos.color = Color.yellow;
-                //if (i == 4) Gizmos.color = Color.green;
-                //if (i == 5) Gizmos.color = Color.red;
-                //if (i == 6) Gizmos.color = Color.white;
-                //if (i == 7) Gizmos.color = Color.cyan;
+                if (i == 0) Gizmos.color = Color.blue;
+                if (i == 1) Gizmos.color = Color.magenta;
+                if (i == 2) Gizmos.color = Color.gray;
+                if (i == 3) Gizmos.color = Color.yellow;
+                if (i == 4) Gizmos.color = Color.green;
+                if (i == 5) Gizmos.color = Color.red;
+                if (i == 6) Gizmos.color = Color.white;
+                if (i == 7) Gizmos.color = Color.cyan;
 
-                Gizmos.DrawSphere(semanticObject.corners[i], 0.05f);
+                Gizmos.DrawSphere(semanticObject.Corners[i].position, 0.03f);
             }            
         }
     }
@@ -44,16 +44,16 @@ public class VirtualObjectBox : MonoBehaviour
 
 
     private void Start() {        
-        boxColor = VirtualObjectSystem.instance.GetColorObject(this);
-        Color transparentColor = new Color(boxColor.r, boxColor.g, boxColor.b,0.3f);
+        BoxColor = VirtualObjectSystem.instance.GetColorObject(this);
+        Color transparentColor = new Color(BoxColor.r, BoxColor.g, BoxColor.b,0.3f);
         Material material = new Material(Shader.Find("Standard"));
         GetComponent<Renderer>().materials[0] = material;
         GetComponent<Renderer>().material.SetFloat("_Mode", 2.0f);
         GetComponent<Renderer>().material.SetColor("_Color", transparentColor);
-        GetComponent<Renderer>().material.SetColor("_UnlitColor", boxColor);
+        GetComponent<Renderer>().material.SetColor("_UnlitColor", BoxColor);
         lineRender = GetComponentInParent<LineRenderer>();
-        lineRender.startColor = boxColor;
-        canvasLabel.SetColor(boxColor);
+        lineRender.startColor = BoxColor;
+        canvasLabel.SetColor(BoxColor);
         UpdateObject();
         semanticObject.SetRoom(GetRoom(transform.position));
     }
@@ -66,17 +66,17 @@ public class VirtualObjectBox : MonoBehaviour
     }
 
     public void UpdateObject() {
-        if (semanticObject.type == "Other") {
+        if (semanticObject.Type == "Other") {
             RemoveVirtualBox();
             return;
         }
 
-        transform.parent.name = semanticObject.nDetections + "_" + semanticObject.type + "_" + semanticObject.id;
+        transform.parent.name = semanticObject.NDetections + "_" + semanticObject.Type + "_" + semanticObject.Id;
 
         //Load Object
-        transform.parent.position = semanticObject.position;
-        transform.localScale = semanticObject.size;
-        transform.parent.rotation = semanticObject.rotation;
+        transform.parent.position = semanticObject.Position;
+        transform.localScale = semanticObject.Size;
+        transform.parent.rotation = semanticObject.Rotation;
 
         GetComponent<MeshRenderer>().enabled = true;
 
@@ -84,8 +84,8 @@ public class VirtualObjectBox : MonoBehaviour
         lineRender.enabled = true;
 
         //Load Canvas
-        canvasLabel.transform.position = semanticObject.position + new Vector3(0, UnityEngine.Random.Range(heightCanvas.x, heightCanvas.y), 0);
-        canvasLabel.LoadLabel(semanticObject.type, semanticObject.score);
+        canvasLabel.transform.position = semanticObject.Position + new Vector3(0, UnityEngine.Random.Range(heightCanvas.x, heightCanvas.y), 0);
+        canvasLabel.LoadLabel(semanticObject.Type, semanticObject.Score);
 
         lineRender.SetPosition(0, canvasLabel.transform.position - new Vector3(0, 0.2f, 0));
         lineRender.SetPosition(1, transform.parent.position);
@@ -94,7 +94,7 @@ public class VirtualObjectBox : MonoBehaviour
     public void RemoveVirtualBox()
     {
         //OntologySystem.instance.RemoveSemanticObject(semanticObject);
-        VirtualObjectSystem.instance.UnregisterColor(boxColor);
+        VirtualObjectSystem.instance.UnregisterColor(BoxColor);
         Destroy(transform.parent.gameObject);
     }
 

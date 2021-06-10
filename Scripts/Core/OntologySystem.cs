@@ -114,38 +114,38 @@ public class OntologySystem : MonoBehaviour {
     }
 
     public SemanticObject AddNewDetectedObject(SemanticObject obj) {
-        if (obj.id.Equals("")) {
-            string id = GetNewTimeID() + "_" + obj.type;
+        if (obj.Id.Equals("")) {
+            string id = GetNewTimeID() + "_" + obj.Type;
             obj.SetId(id);
         }
-        var newDetectedObject = new RDFOntologyFact(GetClassResource(obj.id));
+        var newDetectedObject = new RDFOntologyFact(GetClassResource(obj.Id));
         ontology.Data.AddFact(newDetectedObject);
-        ontology.Data.AddClassTypeRelation(newDetectedObject, new RDFOntologyClass(GetClassResource(obj.type)));
-        ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("position")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.position.ToString())));
-        ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("rotation")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.rotation.eulerAngles.ToString())));
-        ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("score")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.score.ToString())));
-        ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("nDetections")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.nDetections.ToString())));
-        ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("size")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.size.ToString())));
+        ontology.Data.AddClassTypeRelation(newDetectedObject, new RDFOntologyClass(GetClassResource(obj.Type)));
+        ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("position")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.Position.ToString())));
+        ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("rotation")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.Rotation.eulerAngles.ToString())));
+        ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("score")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.Score.ToString())));
+        ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("nDetections")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.NDetections.ToString())));
+        ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("size")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.Size.ToString())));
         ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyObjectProperty(GetResource("recordedIn")), raidFact);
 
         return obj;
     }
 
     public void RemoveSemanticObject(SemanticObject obj) {
-        var objectFact = ontology.Data.SelectFact(GetNameWithURI(obj.id));
-        ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("position")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.position.ToString())));
-        ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("rotation")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.rotation.eulerAngles.ToString())));
-        ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("score")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.score.ToString())));
-        ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("nDetections")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.nDetections.ToString())));
-        ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("size")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.size.ToString())));
+        var objectFact = ontology.Data.SelectFact(GetNameWithURI(obj.Id));
+        ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("position")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.Position.ToString())));
+        ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("rotation")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.Rotation.eulerAngles.ToString())));
+        ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("score")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.Score.ToString())));
+        ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("nDetections")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.NDetections.ToString())));
+        ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("size")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.Size.ToString())));
         ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyObjectProperty(GetResource("recordedIn")), raidFact);
-        if (obj.room != null)
-            ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("isIn")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.room.ToString())));
+        if (obj.Room != null)
+            ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("isIn")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.Room.ToString())));
         ontology.Data.RemoveFact(objectFact);
     }
 
     public void JoinSemanticObject(SemanticObject father, SemanticObject child) {
-        JoinSemanticObject(father.id, child.id);
+        JoinSemanticObject(father.Id, child.Id);
     }
 
     public void JoinSemanticObject(string father, string child)
@@ -157,58 +157,58 @@ public class OntologySystem : MonoBehaviour {
 
 
     public void RemoveSemanticObjectUnion(SemanticObject father, SemanticObject child) {
-        ontology.Data.RemoveAssertionRelation(new RDFOntologyFact(GetClassResource(child.id)),
+        ontology.Data.RemoveAssertionRelation(new RDFOntologyFact(GetClassResource(child.Id)),
                                             new RDFOntologyObjectProperty(GetResource("isPartOf")),
-                                            new RDFOntologyFact(GetClassResource(father.id)));
+                                            new RDFOntologyFact(GetClassResource(father.Id)));
     }
 
     public void UpdateObject(SemanticObject oldObj, SemanticObject newObj) {
-        var objectFact = new RDFOntologyFact(GetClassResource(oldObj.id));
+        var objectFact = new RDFOntologyFact(GetClassResource(oldObj.Id));
 
         //Update pose
         ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("position")),
-                                            new RDFOntologyLiteral(new RDFPlainLiteral(oldObj.position.ToString())));
+                                            new RDFOntologyLiteral(new RDFPlainLiteral(oldObj.Position.ToString())));
 
         ontology.Data.AddAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("position")),
-                                            new RDFOntologyLiteral(new RDFPlainLiteral(newObj.position.ToString())));
+                                            new RDFOntologyLiteral(new RDFPlainLiteral(newObj.Position.ToString())));
 
         //Update rotation
 
         ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("rotation")),
-                                            new RDFOntologyLiteral(new RDFPlainLiteral(oldObj.rotation.eulerAngles.ToString())));
+                                            new RDFOntologyLiteral(new RDFPlainLiteral(oldObj.Rotation.eulerAngles.ToString())));
 
         ontology.Data.AddAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("rotation")),
-                                            new RDFOntologyLiteral(new RDFPlainLiteral(newObj.rotation.eulerAngles.ToString())));
+                                            new RDFOntologyLiteral(new RDFPlainLiteral(newObj.Rotation.eulerAngles.ToString())));
 
         //Update size
 
         ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("size")),
-                                            new RDFOntologyLiteral(new RDFPlainLiteral(oldObj.size.ToString())));
+                                            new RDFOntologyLiteral(new RDFPlainLiteral(oldObj.Size.ToString())));
 
         ontology.Data.AddAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("size")),
-                                            new RDFOntologyLiteral(new RDFPlainLiteral(newObj.size.ToString())));
+                                            new RDFOntologyLiteral(new RDFPlainLiteral(newObj.Size.ToString())));
 
         //Update type
 
-        ontology.Data.RemoveClassTypeRelation(objectFact, new RDFOntologyClass(GetClassResource(oldObj.type)));
-        ontology.Data.AddClassTypeRelation(objectFact, new RDFOntologyClass(GetClassResource(newObj.type)));
+        ontology.Data.RemoveClassTypeRelation(objectFact, new RDFOntologyClass(GetClassResource(oldObj.Type)));
+        ontology.Data.AddClassTypeRelation(objectFact, new RDFOntologyClass(GetClassResource(newObj.Type)));
 
         //Update score
 
         ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("score")),
-                                            new RDFOntologyLiteral(new RDFPlainLiteral(oldObj.score.ToString())));
+                                            new RDFOntologyLiteral(new RDFPlainLiteral(oldObj.Score.ToString())));
 
         ontology.Data.AddAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("score")),
-                                            new RDFOntologyLiteral(new RDFPlainLiteral(newObj.score.ToString())));
+                                            new RDFOntologyLiteral(new RDFPlainLiteral(newObj.Score.ToString())));
 
 
         //Update nDetections
 
         ontology.Data.RemoveAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("nDetections")),
-                                            new RDFOntologyLiteral(new RDFPlainLiteral(oldObj.nDetections.ToString())));
+                                            new RDFOntologyLiteral(new RDFPlainLiteral(oldObj.NDetections.ToString())));
 
         ontology.Data.AddAssertionRelation(objectFact, new RDFOntologyDatatypeProperty(GetResource("nDetections")),
-                                            new RDFOntologyLiteral(new RDFPlainLiteral(newObj.nDetections.ToString())));
+                                            new RDFOntologyLiteral(new RDFPlainLiteral(newObj.NDetections.ToString())));
 
     }
 
@@ -332,8 +332,8 @@ public class OntologySystem : MonoBehaviour {
             var total = (objectClassInRooms.Count - 1) * 0.1f;
             float P1 = 0.1f / total;
 
-            if (classObject.Equals(detection.type)) {
-                P1 = (float)detection.score / total;
+            if (classObject.Equals(detection.Type)) {
+                P1 = (float)detection.Score / total;
             }
 
             float P2 = 0f;
@@ -356,7 +356,7 @@ public class OntologySystem : MonoBehaviour {
         foreach (KeyValuePair<string, Dictionary<string, float>> category in probabilityRoomByClass) {
             var probabilityByCategory = 1f;
             foreach (SemanticObject detection in previousClass) {
-                probabilityByCategory *= category.Value[GetNameWithURI(detection.type)];
+                probabilityByCategory *= category.Value[GetNameWithURI(detection.Type)];
             }
             probabilitytotal += probabilityByCategory;
             if (category.Key.Equals(categoryRoom))
@@ -371,9 +371,9 @@ public class OntologySystem : MonoBehaviour {
 
         result.Sort(
             delegate (SemanticObject p1, SemanticObject p2) {
-                int compareDate = p2.nDetections.CompareTo(p1.nDetections);
+                int compareDate = p2.NDetections.CompareTo(p1.NDetections);
                 if (compareDate == 0) {
-                    return p2.score.CompareTo(p1.score);
+                    return p2.Score.CompareTo(p1.Score);
                 }
                 return compareDate;
             }

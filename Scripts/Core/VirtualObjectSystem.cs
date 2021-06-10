@@ -1,19 +1,17 @@
 ﻿using UnityEngine;
 using ROSUnityCore.ROSBridgeLib.ViMantic_msgs;
-using ROSUnityCore.ROSBridgeLib.geometry_msgs;
-using System.Collections.Generic;
 using ROSUnityCore;
+using System.Linq;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 
 public class VirtualObjectSystem : MonoBehaviour {
     
     public static VirtualObjectSystem instance;
     public int verbose;
 
-    public float threshold_match = 0.8f;
-    private float wDistance = 0.35f;
-    private float wSize = 0.65f;
+    public float threshold_match = 1f;
 
     public GameObject prefDetectedObject;
     public Transform tfFrameForObjects;
@@ -64,6 +62,69 @@ public class VirtualObjectSystem : MonoBehaviour {
         if (boxColors.ContainsKey(color)) {
             boxColors.Remove(color);
         }
+    }
+
+    static List<SemanticObject.Corner> YNN(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation) {
+
+        Queue<SemanticObject.Corner> top = new Queue<SemanticObject.Corner>();
+        top.Enqueue(observation[2]);
+        top.Enqueue(observation[4]);
+        top.Enqueue(observation[5]);
+        top.Enqueue(observation[7]);
+        Queue<SemanticObject.Corner> bottom = new Queue<SemanticObject.Corner>();
+        bottom.Enqueue(observation[0]);
+        bottom.Enqueue(observation[1]);
+        bottom.Enqueue(observation[3]);
+        bottom.Enqueue(observation[6]);
+
+        int index = 0;
+        float best_distance = Vector3.Distance(reference[2].position, top.ElementAt(0).position) +
+                            Vector3.Distance(reference[4].position, top.ElementAt(1).position) +
+                            Vector3.Distance(reference[5].position, top.ElementAt(2).position) +
+                            Vector3.Distance(reference[7].position, top.ElementAt(3).position);
+
+        for (int i = 1; i < 4; i++) {
+            top.Enqueue(top.Dequeue());
+            float distance = Vector3.Distance(reference[2].position, top.ElementAt(0).position) +
+                                Vector3.Distance(reference[4].position, top.ElementAt(1).position) +
+                                Vector3.Distance(reference[5].position, top.ElementAt(2).position) +
+                                Vector3.Distance(reference[7].position, top.ElementAt(3).position);
+
+            if (best_distance > distance) {
+                index = i;
+                best_distance = distance;
+            }
+        }
+
+        top.Enqueue(top.Dequeue());
+
+        for (int i = 0; i < index; i++) {
+            top.Enqueue(top.Dequeue());
+            bottom.Enqueue(bottom.Dequeue());
+        }
+
+        List<SemanticObject.Corner> result = new List<SemanticObject.Corner> {
+            bottom.Dequeue(),
+            bottom.Dequeue(),
+            top.Dequeue(),
+            bottom.Dequeue(),
+            top.Dequeue(),
+            top.Dequeue(),
+            bottom.Dequeue(),
+            top.Dequeue()
+        };
+
+        return result;
+    }
+
+    static float CalculateCornerDistance(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation,bool onlyNonOccluded) {
+        float distance = 0;
+        for(int i = 0; i < reference.Count; i++) {
+            if (!observation[i].occluded || !onlyNonOccluded) {
+                distance += Vector3.Distance(reference[i].position, observation[i].position);
+            }
+        }
+        return distance;
     }
 
     #endregion
@@ -123,14 +184,13 @@ public class VirtualObjectSystem : MonoBehaviour {
                 foreach (DetectionMsg detection in _detections.detections) {
 
 
-
                     SemanticObject virtualObject = new SemanticObject(detection.GetScores(),
                                                                         detection.GetCorners(),
-                                                                        detection.fixed_corners); 
+                                                                        detection.occluded_corners); 
 
                     //Check the type object is in the ontology
-                    if (!OntologySystem.instance.CheckInteresObject(virtualObject.type)) {
-                        Log(virtualObject.type + " - detected but it is not in the ontology");
+                    if (!OntologySystem.instance.CheckInteresObject(virtualObject.Type)) {
+                        Log(virtualObject.Type + " - detected but it is not in the ontology");
                         continue;
                     }
 
@@ -138,42 +198,32 @@ public class VirtualObjectSystem : MonoBehaviour {
                     virtualObject = OntologySystem.instance.AddNewDetectedObject(virtualObject);
 
                     //Build Ranking
-                    List<VirtualObjectBox> matches = new List<VirtualObjectBox>();
+                    List<SemanticObject.Corner> match_corners_ordered = new List<SemanticObject.Corner>();
+                    VirtualObjectBox match = null;
+                    float match_distance = -1;
                     foreach (VirtualObjectBox vob in virtualObjectBoxInRange) {
-                        //"(1.2, 0.4, -7.3)"  "(0.4, 0.5, -8.5)"
-                        float distance = Mathf.Max(1 - Vector3.Distance(vob.semanticObject.position, virtualObject.position), 0);
-
-                        if (distance == 0) { continue; }
-
-                        float scoreSize = Mathf.Min(vob.semanticObject.size.x, virtualObject.size.x) / Mathf.Max(vob.semanticObject.size.x, virtualObject.size.x);
-                        scoreSize += Mathf.Min(vob.semanticObject.size.y, virtualObject.size.y) / Mathf.Max(vob.semanticObject.size.y, virtualObject.size.y);
-                        scoreSize += Mathf.Min(vob.semanticObject.size.z, virtualObject.size.z) / Mathf.Max(vob.semanticObject.size.z, virtualObject.size.z);
-                        scoreSize /= 3;
-
-                        float score = (wDistance * distance + wSize * scoreSize);
-
-                        if (score >= threshold_match) {
-                            matches.Add(vob);
+                        List<SemanticObject.Corner> order = YNN(vob.semanticObject.Corners, virtualObject.Corners);
+                        float distance = CalculateCornerDistance(vob.semanticObject.Corners, order, true);
+                        if (distance < threshold_match && (match_distance < 0 || match_distance > distance)) {
+                            match_corners_ordered = order;
+                            match_distance = distance;
+                            match = vob;
                         }
                     }
 
                     //Match process
-                    if (matches.Count > 0) {
-                        VirtualObjectBox vob = matches[0];
-                        matches.RemoveAt(0);
-                        //matches.Remove(vob);
-                        matches.ForEach(m => virtualObjectBoxInRange.Remove(m));
-                        detectedVirtualObjectBox.Add(vob);
-                        vob.NewDetection(virtualObject, matches);
+                    if (match != null) {
+                        virtualObject.SetNewCorners(match_corners_ordered);
+                        match.NewDetection(virtualObject);
+                        InstanceNewSemanticObject(virtualObject);
                     } else {
                         if (verbose > 2) {
                             Log("New object detected: " + virtualObject.ToString());
-                        }
-                        nDetections++;
+                        }                        
                         virtualSemanticMap.Add(virtualObject);
                         InstanceNewSemanticObject(virtualObject);
                     }
-
+                    nDetections++;
                 }
                 detectedVirtualObjectBox.ForEach(dvob => virtualObjectBoxInRange.Remove(dvob));
                 virtualObjectBoxInRange.ForEach(vob => vob.NewDetection(null));
@@ -196,7 +246,7 @@ public class VirtualObjectSystem : MonoBehaviour {
     }
 
     private void InstanceNewSemanticObject(SemanticObject _obj) {
-        Transform obj_inst = Instantiate(prefDetectedObject, _obj.position, _obj.rotation).transform;
+        Transform obj_inst = Instantiate(prefDetectedObject, _obj.Position, _obj.Rotation).transform;
         obj_inst.parent = tfFrameForObjects;
         obj_inst.GetComponentInChildren<VirtualObjectBox>().InitializeSemanticObject(_obj);
     }
