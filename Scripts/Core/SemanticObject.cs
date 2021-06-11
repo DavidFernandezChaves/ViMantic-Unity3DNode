@@ -111,19 +111,71 @@ public class SemanticObject {
 
                 if (DefinedObject()) {
                     if (newDetection.DefinedObject()) {
-                        Corners[i] = new Corner((Corners[i].position + newDetection.Corners[i].position) / 2, Corners[i].occluded);
+                        Corners[i] = new Corner((Corners[i].position + newDetection.Corners[i].position) / 2, Corners[i].occluded && newDetection.Corners[i].occluded);
                     }
                 }else {
+                    if (newDetection.DefinedObject())
+                    {
+                        Corners = newDetection.Corners;
+                    }
+                    else
+                    {
+                        Vector3d[] points = new Vector3d[16];
 
-                    Vector3d[] points = new Vector3d[16];
-                    //for(int j=0;j<Corners.Count;j++){
-                    //    Vector3d position = (Vector3d)Corners[j].position;
-                    //    points[j] = position;
-                    //}
+                        float maxZ = Corners[0].position.y;
+                        float minZ = Corners[0].position.y;
 
-                    //var orientedBB = new ContOrientedBox3(Vector3.zero);
+                        for (int k = 0; k < Corners.Count; k++)
+                        {
+                            if (Corners[k].position.y > maxZ) maxZ = Corners[k].position.y;
+                            if (Corners[k].position.y < minZ) minZ = Corners[k].position.y;
+                            if (newDetection.Corners[k].position.y > maxZ) maxZ = newDetection.Corners[k].position.y;
+                            if (newDetection.Corners[k].position.y < minZ) minZ = newDetection.Corners[k].position.y;
+                        }
 
-                Corners[i] = new Corner((Corners[i].position + newDetection.Corners[i].position) / 2, Corners[i].occluded);
+                        float middle = (maxZ - minZ) / 2.0f;
+                        for (int j = 0; j < Corners.Count; j++)
+                        {
+                            if (Corners[j].position.y > middle)
+                            {
+                                points[j] = new Vector3d(Corners[j].position.x, maxZ, Corners[j].position.z);
+                            }
+                            else
+                            {
+                                points[j] = new Vector3d(Corners[j].position.x, minZ, Corners[j].position.z);
+                            }
+
+                            if (newDetection.Corners[j].position.y > middle)
+                            {
+                                points[j + Corners.Count] = new Vector3d(newDetection.Corners[j].position.x, maxZ, newDetection.Corners[j].position.z);
+                            }
+                            else
+                            {
+                                points[j + Corners.Count] = new Vector3d(newDetection.Corners[j].position.x, minZ, newDetection.Corners[j].position.z);
+                            }
+
+                        }
+
+                        var orientedBB = new ContOrientedBox3(points);
+
+                        Vector3d[] newCorners = orientedBB.Box.ComputeVertices();
+
+                        Debug.Log("Axis X");
+                        Debug.Log(orientedBB.Box.AxisX);
+                        Debug.Log("Axis Y");
+                        Debug.Log(orientedBB.Box.AxisY);
+                        Debug.Log("Axis Z");
+                        Debug.Log(orientedBB.Box.AxisZ);
+
+                        for (int l = 0; l < 8; l++)
+                        {
+                            Debug.Log(newCorners[l]);
+                        }
+
+
+                        Corners[i] = new Corner((Corners[i].position + newDetection.Corners[i].position) / 2, Corners[i].occluded);
+                    }
+                    
             }
 
 
