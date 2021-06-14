@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using g3;
 
 
 public class VirtualObjectBox : MonoBehaviour
@@ -20,24 +21,24 @@ public class VirtualObjectBox : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos() {
         if (Application.isPlaying && this.enabled && verbose > 1) {
-            for(int i=0;i<8;i++) {
+            //for(int i=0;i<8;i++) {
 
-                if(semanticObject.Corners[i].occluded)
-                    Gizmos.color = Color.red;
-                else
-                    Gizmos.color = Color.green;
+            //    if(semanticObject.Corners[i].occluded)
+            //        Gizmos.color = Color.red;
+            //    else
+            //        Gizmos.color = Color.green;
 
-                //if (i == 0) Gizmos.color = Color.blue;
-                //if (i == 1) Gizmos.color = Color.magenta;
-                //if (i == 2) Gizmos.color = Color.gray;
-                //if (i == 3) Gizmos.color = Color.yellow;
-                //if (i == 4) Gizmos.color = Color.green;
-                //if (i == 5) Gizmos.color = Color.red;
-                //if (i == 6) Gizmos.color = Color.white;
-                //if (i == 7) Gizmos.color = Color.cyan;
+            //    //if (i == 0) Gizmos.color = Color.blue;
+            //    //if (i == 1) Gizmos.color = Color.magenta;
+            //    //if (i == 2) Gizmos.color = Color.gray;
+            //    //if (i == 3) Gizmos.color = Color.yellow;
+            //    //if (i == 4) Gizmos.color = Color.green;
+            //    //if (i == 5) Gizmos.color = Color.red;
+            //    //if (i == 6) Gizmos.color = Color.white;
+            //    //if (i == 7) Gizmos.color = Color.cyan;
 
-                Gizmos.DrawSphere(semanticObject.Corners[i].position, 0.03f);
-            }            
+            //    Gizmos.DrawSphere(semanticObject.Corners[i].position, 0.03f);
+            //}  
         }
     }
 #endif
@@ -89,6 +90,7 @@ public class VirtualObjectBox : MonoBehaviour
 
         lineRender.SetPosition(0, canvasLabel.transform.position - new Vector3(0, 0.2f, 0));
         lineRender.SetPosition(1, transform.parent.position);
+
     }
 
     public void RemoveVirtualBox()

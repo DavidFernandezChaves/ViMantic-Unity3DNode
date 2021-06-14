@@ -17,6 +17,9 @@ public class SemanticObject {
     public int NDetections { get; private set; }
     public int NNonOccluded { get; private set; }
     public SemanticRoom Room { get; private set; }
+    public bool Defined = false;
+
+    private int nOccludedDetecction = 0;
 
     public struct Corner {
         public Vector3 position;
@@ -92,6 +95,8 @@ public class SemanticObject {
         {
             if (c.occluded) NNonOccluded++;
         }
+
+        UpdateDefinedObject();
     }
 
     public void NewDetection(SemanticObject newDetection) {
@@ -103,85 +108,78 @@ public class SemanticObject {
 
         if (newDetection != null)
         {
-
-           
-            // Update corners
-            for (int i = 0; i < Corners.Count; i++)
-            {
-
-                if (DefinedObject()) {
-                    if (newDetection.DefinedObject()) {
-                        Corners[i] = new Corner((Corners[i].position + newDetection.Corners[i].position) / 2, Corners[i].occluded && newDetection.Corners[i].occluded);
+            if (Defined) {
+                if (newDetection.Defined) {
+                    nOccludedDetecction = 0;
+                    float nPreviousDetections = Mathf.Min(NDetections, 50f);
+                    for (int i = 0; i < Corners.Count; i++)
+                        Corners[i] = new Corner((nPreviousDetections * Corners[i].position + newDetection.Corners[i].position) / (nPreviousDetections + 1f), Corners[i].occluded && newDetection.Corners[i].occluded);
+                } else {
+                    nOccludedDetecction++;
+                    if (nOccludedDetecction > 20f) {
+                        nOccludedDetecction = 0;
+                        for (int i = 0; i < Corners.Count; i++)
+                            Corners[i] = new Corner(Corners[i].position, true);
                     }
-                }else {
-                    if (newDetection.DefinedObject())
-                    {
-                        Corners = newDetection.Corners;
+                }
+            } else {
+                if (Defined) {
+                    Corners = newDetection.Corners;
+                } else {
+
+                    float maxY = Mathf.Max(Corners[2].position.y, newDetection.Corners[2].position.y);
+                    float minY = Mathf.Min(Corners[0].position.y, newDetection.Corners[0].position.y);
+
+                    //Get Top Corners
+                    Vector3[] points = new Vector3[8] {
+                        Corners[2].position,
+                        Corners[4].position,
+                        Corners[5].position,
+                        Corners[7].position,
+                        newDetection.Corners[2].position,
+                        newDetection.Corners[4].position,
+                        newDetection.Corners[5].position,
+                        newDetection.Corners[7].position
+                    };
+
+                    //Get best angle with minimun area
+                    float[] rectangle = CalculateRectangleCorners(points);
+                    float[] best_rectangle = rectangle;
+                    float best_area = (rectangle[1] - rectangle[0]) * (rectangle[3] - rectangle[2]);
+                    float best_angle = 0;
+                    for (float angle = 1; angle < 90; angle += 1) {
+
+                        rectangle = CalculateRectangleCorners(points.Select(r => Quaternion.Euler(0,angle,0)*r).ToArray());
+                        float area = (rectangle[1] - rectangle[0]) * (rectangle[3] - rectangle[2]);
+
+                        if (area < best_area) {
+                            best_area = area;
+                            best_rectangle = rectangle;
+                            best_angle = angle;
+                        }
                     }
-                    else
-                    {
-                        Vector3d[] points = new Vector3d[16];
 
-                        float maxZ = Corners[0].position.y;
-                        float minZ = Corners[0].position.y;
+                    //min X, max X, min Y, max Y
+                    Vector3[] newBox = new Vector3[8] {
+                        new Vector3(best_rectangle[1],minY,best_rectangle[2]),
+                        new Vector3(best_rectangle[0],minY,best_rectangle[2]),
+                        new Vector3(best_rectangle[1],maxY,best_rectangle[2]),
+                        new Vector3(best_rectangle[1],minY,best_rectangle[3]),
+                        new Vector3(best_rectangle[0],maxY,best_rectangle[3]),
+                        new Vector3(best_rectangle[1],maxY,best_rectangle[3]),
+                        new Vector3(best_rectangle[0],minY,best_rectangle[3]),
+                        new Vector3(best_rectangle[0],maxY,best_rectangle[2])
+                    };
 
-                        for (int k = 0; k < Corners.Count; k++)
-                        {
-                            if (Corners[k].position.y > maxZ) maxZ = Corners[k].position.y;
-                            if (Corners[k].position.y < minZ) minZ = Corners[k].position.y;
-                            if (newDetection.Corners[k].position.y > maxZ) maxZ = newDetection.Corners[k].position.y;
-                            if (newDetection.Corners[k].position.y < minZ) minZ = newDetection.Corners[k].position.y;
-                        }
+                    newBox = newBox.Select(r => Quaternion.Euler(0, -best_angle, 0) * r).ToArray();
 
-                        float middle = (maxZ - minZ) / 2.0f;
-                        for (int j = 0; j < Corners.Count; j++)
-                        {
-                            if (Corners[j].position.y > middle)
-                            {
-                                points[j] = new Vector3d(Corners[j].position.x, maxZ, Corners[j].position.z);
-                            }
-                            else
-                            {
-                                points[j] = new Vector3d(Corners[j].position.x, minZ, Corners[j].position.z);
-                            }
+                    for(int i = 0; i < Corners.Count; i++) {
+                        Corners[i] = new Corner(newBox[i], false);
+                    }                   
 
-                            if (newDetection.Corners[j].position.y > middle)
-                            {
-                                points[j + Corners.Count] = new Vector3d(newDetection.Corners[j].position.x, maxZ, newDetection.Corners[j].position.z);
-                            }
-                            else
-                            {
-                                points[j + Corners.Count] = new Vector3d(newDetection.Corners[j].position.x, minZ, newDetection.Corners[j].position.z);
-                            }
+                }
 
-                        }
-
-                        var orientedBB = new ContOrientedBox3(points);
-
-                        Vector3d[] newCorners = orientedBB.Box.ComputeVertices();
-
-                        Debug.Log("Axis X");
-                        Debug.Log(orientedBB.Box.AxisX);
-                        Debug.Log("Axis Y");
-                        Debug.Log(orientedBB.Box.AxisY);
-                        Debug.Log("Axis Z");
-                        Debug.Log(orientedBB.Box.AxisZ);
-
-                        for (int l = 0; l < 8; l++)
-                        {
-                            Debug.Log(newCorners[l]);
-                        }
-
-
-                        Corners[i] = new Corner((Corners[i].position + newDetection.Corners[i].position) / 2, Corners[i].occluded);
-                    }
-                    
             }
-
-
-
-        }
-
             // Update scores
             foreach (KeyValuePair<string, float> s in newDetection.Scores)
             {
@@ -214,8 +212,8 @@ public class SemanticObject {
 
     }
 
-    public bool DefinedObject() {
-        return (!Corners[0].occluded && !Corners[1].occluded &&
+    public void UpdateDefinedObject() {
+        Defined =  (!Corners[0].occluded && !Corners[1].occluded &&
             (!Corners[7].occluded || !Corners[2].occluded || !Corners[4].occluded || !Corners[5].occluded) &&
             (!Corners[4].occluded || !Corners[5].occluded || !Corners[6].occluded || !Corners[3].occluded)) ;
     }
@@ -239,6 +237,22 @@ public class SemanticObject {
                         + ", pose=" + Position.ToString()
                         + ", nDetections=" + NDetections
                         + ", size=" + Size.ToString() + "]";
+    }
+
+    static float[] CalculateRectangleCorners(Vector3[] corners) {
+        //min X, max X, min Y, max Y
+
+        float[] rectangleCorners = new float[4] { corners[0].x, corners[1].x, corners[2].z, corners[3].z } ;
+
+        for (int i = 1; i < corners.Length; i++) {
+            if (corners[i].x < rectangleCorners[0]) rectangleCorners[0] = corners[i].x;
+            if (corners[i].x > rectangleCorners[1]) rectangleCorners[1] = corners[i].x;
+            if (corners[i].z < rectangleCorners[2]) rectangleCorners[2] = corners[i].z;
+            if (corners[i].z > rectangleCorners[3]) rectangleCorners[3] = corners[i].z;
+        }
+
+        return rectangleCorners;
+
     }
 
 }
