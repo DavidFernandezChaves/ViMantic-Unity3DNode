@@ -10,8 +10,9 @@ public class VirtualObjectSystem : MonoBehaviour {
     
     public static VirtualObjectSystem instance;
     public int verbose;
-
-    public float threshold_match = 0.25f;
+    
+    public float threshold_match = 1f;
+    public int minPixelsMask = 1000;
 
     public GameObject prefDetectedObject;
     public Transform tfFrameForObjects;
@@ -120,11 +121,19 @@ public class VirtualObjectSystem : MonoBehaviour {
     static float CalculateCornerDistance(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation,bool onlyNonOccluded) {
         float distance = 0;
         for(int i = 0; i < reference.Count; i++) {
-            if (!observation[i].occluded || !onlyNonOccluded) {
+            if ((!observation[i].occluded && !reference[i].occluded) || !onlyNonOccluded) {
                 distance += Vector3.Distance(reference[i].position, observation[i].position);
             }
         }
-        return distance;
+
+        if (distance == 0) {
+            for (int i = 0; i < reference.Count; i++)
+            {
+                distance += Vector3.Distance(reference[i].position, observation[i].position);
+            }
+        }
+
+        return distance == 0 ? 999:distance;
     }
 
     #endregion
@@ -149,9 +158,9 @@ public class VirtualObjectSystem : MonoBehaviour {
                 bbCamera.targetTexture = renderTextureMask;
 
                 HashSet<Color> colors = new HashSet<Color>();
-                List<VirtualObjectBox> virtualObjectBoxInRange = new List<VirtualObjectBox>();
+                Dictionary<VirtualObjectBox, int> virtualObjectBoxInRange = new Dictionary<VirtualObjectBox, int>();
 
-                do
+                while(true)
                 {
                     bbCamera.Render();
                     RenderTexture.active = renderTextureMask;
@@ -159,19 +168,28 @@ public class VirtualObjectSystem : MonoBehaviour {
                     image.ReadPixels(rect, 0, 0);
                     image.Apply();
 
-                    colors = new HashSet<Color>(image.GetPixels());
-                    colors.Remove(new Color(0, 0, 0, 1f));
-                    
-                    foreach (Color c in colors)
+                    var list = image.GetPixels();
+                    var q = from x in list
+                            group x by x into g
+                            let count = g.Count()
+                            //orderby count descending
+                            select new { Value = g.Key, Count = count };
+
+                    foreach (var x in q)
                     {
-                        VirtualObjectBox vob = GetObjectMatch(c);
-                        virtualObjectBoxInRange.Add(vob);
-                        vob.gameObject.SetActive(false);
+                        VirtualObjectBox vob = GetObjectMatch(x.Value);
+                        if (vob != null) {
+                            vob.gameObject.SetActive(false);
+                            virtualObjectBoxInRange.Add(vob, x.Count);
+                            //Debug.Log("Value: " + x.Value + " Count: " + x.Count);
+                        }
                     }
 
-                } while (colors.Count > 0);
+                    if (q.Count() == 1) break;
 
-                foreach (VirtualObjectBox vob in virtualObjectBoxInRange)
+                }
+
+                foreach (VirtualObjectBox vob in virtualObjectBoxInRange.Keys)
                 {
                     vob.gameObject.SetActive(true);
                 }
@@ -201,10 +219,11 @@ public class VirtualObjectSystem : MonoBehaviour {
                     List<SemanticObject.Corner> match_corners_ordered = new List<SemanticObject.Corner>();
                     VirtualObjectBox match = null;
                     float match_distance = -1;
-                    foreach (VirtualObjectBox vob in virtualObjectBoxInRange) {
+                    foreach (VirtualObjectBox vob in virtualObjectBoxInRange.Keys) {
                         List<SemanticObject.Corner> order = YNN(vob.semanticObject.Corners, virtualObject.Corners);
-                        float distance = CalculateCornerDistance(vob.semanticObject.Corners, order, true);
-                        if (distance < (threshold_match * virtualObject.NNonOccluded) && (match_distance < 0 || match_distance > distance)) {
+                        float distance = CalculateCornerDistance(vob.semanticObject.Corners, order, false);
+                        Debug.Log(distance);
+                        if (distance < (threshold_match)) {
                             match_corners_ordered = order;
                             match_distance = distance;
                             match = vob;
@@ -215,7 +234,9 @@ public class VirtualObjectSystem : MonoBehaviour {
                     if (match != null) {
                         virtualObject.SetNewCorners(match_corners_ordered);
                         match.NewDetection(virtualObject);
+                        Debug.Log("Union con Best Distance:" + match_distance);
                     } else {
+                        Debug.Log("No Union con Best Distance:" + match_distance);
                         if (verbose > 2) {
                             Log("New object detected: " + virtualObject.ToString());
                         }                        
@@ -225,7 +246,11 @@ public class VirtualObjectSystem : MonoBehaviour {
                     nDetections++;
                 }
                 detectedVirtualObjectBox.ForEach(dvob => virtualObjectBoxInRange.Remove(dvob));
-                virtualObjectBoxInRange.ForEach(vob => vob.NewDetection(null));
+
+                foreach (KeyValuePair<VirtualObjectBox, int> o in virtualObjectBoxInRange)
+                {
+                    if (o.Value > minPixelsMask) o.Key.NewDetection(null);
+                }
             }
 
             yield return new WaitForEndOfFrame();

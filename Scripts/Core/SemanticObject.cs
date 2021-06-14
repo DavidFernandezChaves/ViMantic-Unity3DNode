@@ -19,7 +19,7 @@ public class SemanticObject {
     public SemanticRoom Room { get; private set; }
     public bool Defined = false;
 
-    private int nOccludedDetecction = 0;
+    private int nOccludedDetection = 0;
 
     public struct Corner {
         public Vector3 position;
@@ -90,13 +90,21 @@ public class SemanticObject {
         Type = Scores.OrderByDescending(x => x.Value).FirstOrDefault().Key;
         Score = Scores[Type] / NDetections;
 
-        NNonOccluded = 0;
-        foreach (Corner c in Corners)
+        Defined = (!Corners[0].occluded &&
+                   !Corners[1].occluded &&
+                   (!Corners[7].occluded || !Corners[2].occluded || !Corners[4].occluded || !Corners[5].occluded) &&
+                   (!Corners[4].occluded || !Corners[5].occluded || !Corners[6].occluded || !Corners[3].occluded));
+
+        if (Defined)
         {
-            if (c.occluded) NNonOccluded++;
+            Corners.ForEach(c => c.occluded = false);
+            NNonOccluded = 8;
+        }
+        else
+        {
+            NNonOccluded = Corners.FindAll(c => !c.occluded).Count;
         }
 
-        UpdateDefinedObject();
     }
 
     public void NewDetection(SemanticObject newDetection) {
@@ -110,20 +118,20 @@ public class SemanticObject {
         {
             if (Defined) {
                 if (newDetection.Defined) {
-                    nOccludedDetecction = 0;
+                    nOccludedDetection = 0;
                     float nPreviousDetections = Mathf.Min(NDetections, 50f);
                     for (int i = 0; i < Corners.Count; i++)
-                        Corners[i] = new Corner((nPreviousDetections * Corners[i].position + newDetection.Corners[i].position) / (nPreviousDetections + 1f), Corners[i].occluded && newDetection.Corners[i].occluded);
+                        Corners[i] = new Corner((nPreviousDetections * Corners[i].position + newDetection.Corners[i].position) / (nPreviousDetections + 1f), false);
                 } else {
-                    nOccludedDetecction++;
-                    if (nOccludedDetecction > 20f) {
-                        nOccludedDetecction = 0;
+                    nOccludedDetection++;
+                    if (nOccludedDetection > 20f) {
+                        nOccludedDetection = 0;
                         for (int i = 0; i < Corners.Count; i++)
                             Corners[i] = new Corner(Corners[i].position, true);
                     }
                 }
             } else {
-                if (Defined) {
+                if (newDetection.Defined) {
                     Corners = newDetection.Corners;
                 } else {
 
@@ -174,7 +182,7 @@ public class SemanticObject {
                     newBox = newBox.Select(r => Quaternion.Euler(0, -best_angle, 0) * r).ToArray();
 
                     for(int i = 0; i < Corners.Count; i++) {
-                        Corners[i] = new Corner(newBox[i], false);
+                        Corners[i] = new Corner(newBox[i], Corners[i].occluded || newDetection.Corners[i].occluded);
                     }                   
 
                 }
@@ -187,14 +195,12 @@ public class SemanticObject {
             }
 
             OntologySystem.instance.JoinSemanticObject(this, newDetection);
-
+            NDetections++;
         }
         else
         {
             Scores["Other"] += 0.4f;
         }
-
-        NDetections++;
         UpdateProperties();
 
         // Update ontology
@@ -210,12 +216,6 @@ public class SemanticObject {
         //    OntologySystem.instance.AddNewDetectedObject(this);
         //}
 
-    }
-
-    public void UpdateDefinedObject() {
-        Defined =  (!Corners[0].occluded && !Corners[1].occluded &&
-            (!Corners[7].occluded || !Corners[2].occluded || !Corners[4].occluded || !Corners[5].occluded) &&
-            (!Corners[4].occluded || !Corners[5].occluded || !Corners[6].occluded || !Corners[3].occluded)) ;
     }
 
     public string GetIdRoom() {
