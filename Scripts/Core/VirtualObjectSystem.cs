@@ -50,16 +50,16 @@ public class VirtualObjectSystem : MonoBehaviour {
     }
         
 
-    public Color GetColorObject(VirtualObjectBox vob) {
-        Color newColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1f);
+    public Color32 GetColorObject(VirtualObjectBox vob) {
+        Color32 newColor = new Color32((byte)Random.Range(0f, 255f), (byte)Random.Range(0f, 255f), (byte)Random.Range(0f, 255f), 255);
         while (boxColors.ContainsKey(newColor)) {
-            newColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1f);
+            newColor = new Color32((byte)Random.Range(0f, 255f), (byte)Random.Range(0f, 255f), (byte)Random.Range(0f, 255f), 255);
         }
         boxColors[newColor]=vob;
         return newColor;
     }
 
-    public void UnregisterColor(Color color) {
+    public void UnregisterColor(Color32 color) {
         if (boxColors.ContainsKey(color)) {
             boxColors.Remove(color);
         }
@@ -86,7 +86,9 @@ public class VirtualObjectSystem : MonoBehaviour {
 
                 Dictionary<VirtualObjectBox, int> virtualObjectBoxInRange = new Dictionary<VirtualObjectBox, int>();
 
-                while(true)
+                int n = 0;
+
+                while(n < 50)
                 {
                     bbCamera.Render();
                     RenderTexture.active = renderTextureMask;
@@ -103,8 +105,11 @@ public class VirtualObjectSystem : MonoBehaviour {
 
                     foreach (var x in q)
                     {
-                        VirtualObjectBox vob = GetObjectMatch(x.Value);
-                        if (vob != null) {
+                        VirtualObjectBox vob = null;
+                        //VirtualObjectBox vob = GetObjectMatch(x.Value);
+                        if (boxColors.ContainsKey(x.Value))
+                        {
+                            vob = boxColors[x.Value];
                             vob.gameObject.SetActive(false);
                             virtualObjectBoxInRange.Add(vob, x.Count);
                             //Debug.Log("Value: " + x.Value + " Count: " + x.Count);
@@ -112,7 +117,7 @@ public class VirtualObjectSystem : MonoBehaviour {
                     }
 
                     if (q.Count() == 1) break;
-
+                    n++;
                 }
 
                 foreach (VirtualObjectBox vob in virtualObjectBoxInRange.Keys)
@@ -120,7 +125,7 @@ public class VirtualObjectSystem : MonoBehaviour {
                     vob.gameObject.SetActive(true);
                 }
 
-                bbCamera.targetTexture = null;
+                //bbCamera.targetTexture = null;
                 RenderTexture.active = null; //Clean
                 //Destroy(renderTextureMask); //Free memory
 
@@ -179,15 +184,15 @@ public class VirtualObjectSystem : MonoBehaviour {
                 }
             }
 
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
     }
 
-    private VirtualObjectBox GetObjectMatch(Color color) {
+    private VirtualObjectBox GetObjectMatch(Color32 color) {
         foreach(KeyValuePair<Color32, VirtualObjectBox> pair in boxColors) {
             if(Mathf.Abs(color.r-pair.Key.r) 
                 + Mathf.Abs(color.g - pair.Key.g)
-                + Mathf.Abs(color.b - pair.Key.b) < 0.05f) {
+                + Mathf.Abs(color.b - pair.Key.b) < 13f) {
                 return pair.Value.GetComponent<VirtualObjectBox>();
             }
         }
@@ -265,7 +270,7 @@ public class VirtualObjectSystem : MonoBehaviour {
         return result;
     }
 
-    static float CalculateCornerDistance(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation, bool onlyNonOccluded) {
+    static public float CalculateCornerDistance(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation, bool onlyNonOccluded) {
         float distance = 0;
         for (int i = 0; i < reference.Count; i++) {
             if ((!observation[i].occluded && !reference[i].occluded) || !onlyNonOccluded) {
