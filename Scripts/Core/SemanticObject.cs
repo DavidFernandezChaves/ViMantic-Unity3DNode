@@ -79,11 +79,39 @@ public class SemanticObject {
 
     public void UpdateProperties() {
         // Update bounding box
+        //Position = new Vector3(Corners.Average(p => p.position.x), Corners.Average(p => p.position.y), Corners.Average(p => p.position.z));
+        //Size = new Vector3(Mathf.Abs(Vector3.Distance(Corners[0].position, Corners[3].position)),
+        //                   Mathf.Abs(Vector3.Distance(Corners[0].position, Corners[2].position)),
+        //                   Mathf.Abs(Vector3.Distance(Corners[0].position, Corners[1].position)));
+        //Rotation = Quaternion.Euler(0, Mathf.Atan2(Corners[0].position.x - Corners[1].position.x, Corners[0].position.z - Corners[1].position.z) * Mathf.Rad2Deg, 0);
+
         Position = new Vector3(Corners.Average(p => p.position.x), Corners.Average(p => p.position.y), Corners.Average(p => p.position.z));
-        Size = new Vector3(Mathf.Abs(Vector3.Distance(Corners[0].position, Corners[3].position)),
-                           Mathf.Abs(Vector3.Distance(Corners[0].position, Corners[2].position)),
-                           Mathf.Abs(Vector3.Distance(Corners[0].position, Corners[1].position)));
-        Rotation = Quaternion.Euler(0, Mathf.Atan2(Corners[0].position.x - Corners[1].position.x, Corners[0].position.z - Corners[1].position.z) * Mathf.Rad2Deg, 0);
+
+        float heightAv = (Vector3.Distance(Corners[0].position, Corners[2].position)+
+                                    Vector3.Distance(Corners[1].position, Corners[7].position)+
+                                    Vector3.Distance(Corners[6].position, Corners[4].position)+
+                                    Vector3.Distance(Corners[3].position, Corners[5].position))/4;
+
+        float widthAv = (Vector3.Distance(Corners[0].position, Corners[1].position)+
+                                    Vector3.Distance(Corners[3].position, Corners[6].position)+
+                                    Vector3.Distance(Corners[2].position, Corners[7].position)+
+                                    Vector3.Distance(Corners[4].position, Corners[5].position))/4;
+
+        float deepAv = (Vector3.Distance(Corners[0].position, Corners[3].position)+
+                                    Vector3.Distance(Corners[1].position, Corners[6].position)+
+                                    Vector3.Distance(Corners[7].position, Corners[4].position)+
+                                    Vector3.Distance(Corners[2].position, Corners[5].position))/4;
+
+        Size = new Vector3(deepAv, heightAv,widthAv);
+
+        float angleAv = Mathf.Atan2(Corners[1].position.x - Corners[0].position.x, Corners[1].position.z - Corners[0].position.z) * Mathf.Rad2Deg +
+                        Mathf.Atan2(Corners[6].position.x - Corners[3].position.x, Corners[6].position.z - Corners[3].position.z) * Mathf.Rad2Deg +
+                        Mathf.Atan2(Corners[7].position.x - Corners[2].position.x, Corners[7].position.z - Corners[2].position.z) * Mathf.Rad2Deg +
+                        Mathf.Atan2(Corners[4].position.x - Corners[5].position.x, Corners[4].position.z - Corners[5].position.z) * Mathf.Rad2Deg;
+
+
+        Rotation = Quaternion.Euler(0, angleAv/4, 0);
+
 
         // Update type
         Type = Scores.OrderByDescending(x => x.Value).FirstOrDefault().Key;
@@ -133,57 +161,7 @@ public class SemanticObject {
                 if (newDetection.Defined) {
                     Corners = newDetection.Corners;
                 } else {
-
-                    float maxY = Mathf.Max(Corners[2].position.y, newDetection.Corners[2].position.y);
-                    float minY = Mathf.Min(Corners[0].position.y, newDetection.Corners[0].position.y);
-
-                    //Get Top Corners
-                    Vector3[] points = new Vector3[8] {
-                        Corners[2].position,
-                        Corners[4].position,
-                        Corners[5].position,
-                        Corners[7].position,
-                        newDetection.Corners[2].position,
-                        newDetection.Corners[4].position,
-                        newDetection.Corners[5].position,
-                        newDetection.Corners[7].position
-                    };
-
-                    //Get best angle with minimun area
-                    float[] rectangle = CalculateRectangleCorners(points);
-                    float[] best_rectangle = rectangle;
-                    float best_area = (rectangle[1] - rectangle[0]) * (rectangle[3] - rectangle[2]);
-                    float best_angle = 0;
-                    for (float angle = 1; angle < 90; angle += 1) {
-
-                        rectangle = CalculateRectangleCorners(points.Select(r => Quaternion.Euler(0,angle,0)*r).ToArray());
-                        float area = (rectangle[1] - rectangle[0]) * (rectangle[3] - rectangle[2]);
-
-                        if (area < best_area) {
-                            best_area = area;
-                            best_rectangle = rectangle;
-                            best_angle = angle;
-                        }
-                    }
-
-                    //min X, max X, min Y, max Y
-                    Vector3[] newBox = new Vector3[8] {
-                        new Vector3(best_rectangle[1],minY,best_rectangle[2]),
-                        new Vector3(best_rectangle[0],minY,best_rectangle[2]),
-                        new Vector3(best_rectangle[1],maxY,best_rectangle[2]),
-                        new Vector3(best_rectangle[1],minY,best_rectangle[3]),
-                        new Vector3(best_rectangle[0],maxY,best_rectangle[3]),
-                        new Vector3(best_rectangle[1],maxY,best_rectangle[3]),
-                        new Vector3(best_rectangle[0],minY,best_rectangle[3]),
-                        new Vector3(best_rectangle[0],maxY,best_rectangle[2])
-                    };
-
-                    newBox = newBox.Select(r => Quaternion.Euler(0, -best_angle, 0) * r).ToArray();
-
-                    for(int i = 0; i < Corners.Count; i++) {
-                        Corners[i] = new Corner(newBox[i], Corners[i].occluded || newDetection.Corners[i].occluded);
-                    }                   
-
+                    JointBB(newDetection.Corners);  
                 }
 
             }
@@ -215,6 +193,58 @@ public class SemanticObject {
         //    OntologySystem.instance.AddNewDetectedObject(this);
         //}
 
+    }
+
+    public void JointBB(List<Corner> newBB) {
+        float maxY = Mathf.Max(Corners[2].position.y, newBB[2].position.y);
+        float minY = Mathf.Min(Corners[0].position.y, newBB[0].position.y);
+
+        //Get Top Corners
+        Vector3[] points = new Vector3[8] {
+                        Corners[2].position,
+                        Corners[4].position,
+                        Corners[5].position,
+                        Corners[7].position,
+                        newBB[2].position,
+                        newBB[4].position,
+                        newBB[5].position,
+                        newBB[7].position
+                    };
+
+        //Get best angle with minimun area
+        float[] rectangle = CalculateRectangleCorners(points);
+        float[] best_rectangle = rectangle;
+        float best_area = (rectangle[1] - rectangle[0]) * (rectangle[3] - rectangle[2]);
+        float best_angle = 0;
+        for (float angle = 1; angle < 90; angle += 1) {
+
+            rectangle = CalculateRectangleCorners(points.Select(r => Quaternion.Euler(0, angle, 0) * r).ToArray());
+            float area = (rectangle[1] - rectangle[0]) * (rectangle[3] - rectangle[2]);
+
+            if (area < best_area) {
+                best_area = area;
+                best_rectangle = rectangle;
+                best_angle = angle;
+            }
+        }        
+
+        //min X, max X, min Y, max Y
+        Vector3[] newBox = new Vector3[8] {
+                        new Vector3(best_rectangle[1],minY,best_rectangle[2]),
+                        new Vector3(best_rectangle[0],minY,best_rectangle[2]),
+                        new Vector3(best_rectangle[1],maxY,best_rectangle[2]),
+                        new Vector3(best_rectangle[1],minY,best_rectangle[3]),
+                        new Vector3(best_rectangle[0],maxY,best_rectangle[3]),
+                        new Vector3(best_rectangle[1],maxY,best_rectangle[3]),
+                        new Vector3(best_rectangle[0],minY,best_rectangle[3]),
+                        new Vector3(best_rectangle[0],maxY,best_rectangle[2])
+                    };
+
+        newBox = newBox.Select(r => Quaternion.Euler(0, -best_angle, 0) * r).ToArray();
+
+        for (int i = 0; i < Corners.Count; i++) {
+            Corners[i] = new Corner(newBox[i], Corners[i].occluded || newBB[i].occluded);
+        }
     }
 
     public string GetIdRoom() {

@@ -70,64 +70,60 @@ public class VirtualObjectSystem : MonoBehaviour {
     private IEnumerator ProcessMsgs() {
 
         Rect rect = new Rect(0, 0, bbCamera.pixelWidth, bbCamera.pixelHeight);
-        RenderTexture renderTextureMask = new RenderTexture(bbCamera.pixelWidth, bbCamera.pixelHeight, 24);
         Texture2D image = new Texture2D(bbCamera.pixelWidth, bbCamera.pixelHeight, TextureFormat.RGB24, false);
-        bbCamera.targetTexture = renderTextureMask;
 
         while (Application.isPlaying) {
 
             if (processingQueue.Count > 0) {
-                   
+
                 DetectionArrayMsg _detections = processingQueue.Dequeue();
 
                 //Get view previous detections from bbCamera located in the origin
                 bbCamera.transform.position = _detections.origin.GetPositionUnity();
                 bbCamera.transform.rotation = _detections.origin.GetRotationUnity() * Quaternion.Euler(0f, 90f, 0f);
 
+                
+                
                 Dictionary<VirtualObjectBox, int> virtualObjectBoxInRange = new Dictionary<VirtualObjectBox, int>();
 
-                int n = 0;
 
-                while(n < 50)
-                {
+                int i = 0;
+                while (i<10) {
+
+                    RenderTexture renderTextureMask = new RenderTexture(bbCamera.pixelWidth, bbCamera.pixelHeight,0);
+                    bbCamera.targetTexture = renderTextureMask;
                     bbCamera.Render();
                     RenderTexture.active = renderTextureMask;
-
                     image.ReadPixels(rect, 0, 0);
                     image.Apply();
 
-                    var list = image.GetPixels32();
-                    var q = from x in list
+                    var q = from x in image.GetPixels()
                             group x by x into g
                             let count = g.Count()
-                            //orderby count descending
+                            orderby count descending
                             select new { Value = g.Key, Count = count };
 
-                    foreach (var x in q)
-                    {
-                        VirtualObjectBox vob = null;
-                        //VirtualObjectBox vob = GetObjectMatch(x.Value);
-                        if (boxColors.ContainsKey(x.Value))
-                        {
-                            vob = boxColors[x.Value];
+                    foreach (var xx in q) {
+
+                        if (boxColors.ContainsKey(xx.Value)) {
+                            var vob = boxColors[xx.Value];
                             vob.gameObject.SetActive(false);
-                            virtualObjectBoxInRange.Add(vob, x.Count);
-                            //Debug.Log("Value: " + x.Value + " Count: " + x.Count);
+                            virtualObjectBoxInRange.Add(vob, xx.Count);
+                            //Debug.Log("Value: " + xx.Value + " Count: " + xx.Count);
                         }
                     }
 
+                    bbCamera.targetTexture = null;
+                    RenderTexture.active = null; //Clean
+                    Destroy(renderTextureMask); //Free memory
                     if (q.Count() == 1) break;
-                    n++;
-                }
+                    i++;
+                }          
 
-                foreach (VirtualObjectBox vob in virtualObjectBoxInRange.Keys)
-                {
+                foreach (VirtualObjectBox vob in virtualObjectBoxInRange.Keys) {
                     vob.gameObject.SetActive(true);
+                    
                 }
-
-                //bbCamera.targetTexture = null;
-                RenderTexture.active = null; //Clean
-                //Destroy(renderTextureMask); //Free memory
 
                 List<VirtualObjectBox> detectedVirtualObjectBox = new List<VirtualObjectBox>();
                 foreach (DetectionMsg detection in _detections.detections) {
@@ -135,7 +131,7 @@ public class VirtualObjectSystem : MonoBehaviour {
 
                     SemanticObject virtualObject = new SemanticObject(detection.GetScores(),
                                                                         detection.GetCorners(),
-                                                                        detection.occluded_corners); 
+                                                                        detection.occluded_corners);
 
                     //Check the type object is in the ontology
                     if (!OntologySystem.instance.CheckInteresObject(virtualObject.Type)) {
@@ -147,39 +143,38 @@ public class VirtualObjectSystem : MonoBehaviour {
                     virtualObject = OntologySystem.instance.AddNewDetectedObject(virtualObject);
 
                     //Build Ranking
-                    List<SemanticObject.Corner> match_corners_ordered = new List<SemanticObject.Corner>();
                     VirtualObjectBox match = null;
-                    float match_distance = -1;
                     foreach (VirtualObjectBox vob in virtualObjectBoxInRange.Keys) {
-                        List<SemanticObject.Corner> order = YNN(vob.semanticObject.Corners, virtualObject.Corners);
+
+                        var order =  YNN(vob.semanticObject.Corners, virtualObject.Corners);                        
                         float distance = CalculateCornerDistance(vob.semanticObject.Corners, order, false);
-                        Debug.Log(distance);
-                        if (distance < (threshold_match)) {
-                            match_corners_ordered = order;
-                            match_distance = distance;
+                        
+                        if (distance < threshold_match) {
+                            virtualObject.SetNewCorners(order);
                             match = vob;
-                        }
+                            Debug.Log("Union: " + virtualObject.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + distance);
+                            break;
+                        } else { Debug.Log("NO Union: " + virtualObject.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + distance); }
                     }
 
                     //Match process
                     if (match != null) {
-                        virtualObject.SetNewCorners(match_corners_ordered);
                         match.NewDetection(virtualObject);
-                        Debug.Log("Union con Best Distance:" + match_distance);
+                        detectedVirtualObjectBox.Add(match);
                     } else {
-                        Debug.Log("No Union con Best Distance:" + match_distance);
                         if (verbose > 2) {
                             Log("New object detected: " + virtualObject.ToString());
-                        }                        
+                        }
                         virtualSemanticMap.Add(virtualObject);
-                        InstanceNewSemanticObject(virtualObject);
+                        VirtualObjectBox nvob = InstanceNewSemanticObject(virtualObject);
+                        virtualObjectBoxInRange.Add(nvob, minPixelsMask+1);
+                        detectedVirtualObjectBox.Add(nvob);
                     }
                     nDetections++;
                 }
                 detectedVirtualObjectBox.ForEach(dvob => virtualObjectBoxInRange.Remove(dvob));
 
-                foreach (KeyValuePair<VirtualObjectBox, int> o in virtualObjectBoxInRange)
-                {
+                foreach (KeyValuePair<VirtualObjectBox, int> o in virtualObjectBoxInRange) {
                     if (o.Value > minPixelsMask) o.Key.NewDetection(null);
                 }
             }
@@ -199,10 +194,12 @@ public class VirtualObjectSystem : MonoBehaviour {
         return null;
     }
 
-    private void InstanceNewSemanticObject(SemanticObject _obj) {
+    private VirtualObjectBox InstanceNewSemanticObject(SemanticObject _obj) {
         Transform obj_inst = Instantiate(prefDetectedObject, _obj.Position, _obj.Rotation).transform;
         obj_inst.parent = tfFrameForObjects;
-        obj_inst.GetComponentInChildren<VirtualObjectBox>().InitializeSemanticObject(_obj);
+        VirtualObjectBox result = obj_inst.GetComponentInChildren<VirtualObjectBox>();
+        result.InitializeSemanticObject(_obj);
+        return result;
     }
 
     private void Log(string _msg) {
@@ -217,18 +214,18 @@ public class VirtualObjectSystem : MonoBehaviour {
     #endregion
 
     #region Static Functions
-    static List<SemanticObject.Corner> YNN(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation) {
+    static public List<SemanticObject.Corner> YNN(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation) {
 
         Queue<SemanticObject.Corner> top = new Queue<SemanticObject.Corner>();
         top.Enqueue(observation[2]);
-        top.Enqueue(observation[4]);
         top.Enqueue(observation[5]);
+        top.Enqueue(observation[4]);
         top.Enqueue(observation[7]);
         Queue<SemanticObject.Corner> bottom = new Queue<SemanticObject.Corner>();
         bottom.Enqueue(observation[0]);
-        bottom.Enqueue(observation[1]);
         bottom.Enqueue(observation[3]);
         bottom.Enqueue(observation[6]);
+        bottom.Enqueue(observation[1]);
 
         int index = 0;
         float best_distance = Vector3.Distance(reference[2].position, top.ElementAt(0).position) +
@@ -257,14 +254,14 @@ public class VirtualObjectSystem : MonoBehaviour {
         }
 
         List<SemanticObject.Corner> result = new List<SemanticObject.Corner> {
-            bottom.Dequeue(),
-            bottom.Dequeue(),
-            top.Dequeue(),
-            bottom.Dequeue(),
-            top.Dequeue(),
-            top.Dequeue(),
-            bottom.Dequeue(),
-            top.Dequeue()
+            bottom.ElementAt(0),
+            bottom.ElementAt(3),
+            top.ElementAt(0),
+            bottom.ElementAt(1),
+            top.ElementAt(2),
+            top.ElementAt(1),
+            bottom.ElementAt(2),
+            top.ElementAt(3)
         };
 
         return result;
@@ -272,11 +269,11 @@ public class VirtualObjectSystem : MonoBehaviour {
 
     static public float CalculateCornerDistance(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation, bool onlyNonOccluded) {
         float distance = 0;
-        for (int i = 0; i < reference.Count; i++) {
-            if ((!observation[i].occluded && !reference[i].occluded) || !onlyNonOccluded) {
-                distance += Vector3.Distance(reference[i].position, observation[i].position);
-            }
-        }
+        //for (int i = 0; i < reference.Count; i++) {
+        //    if ((!observation[i].occluded && !reference[i].occluded) || !onlyNonOccluded) {
+        //        distance += Vector3.Distance(reference[i].position, observation[i].position);
+        //    }
+        //}
 
         if (distance == 0) {
             for (int i = 0; i < reference.Count; i++) {
