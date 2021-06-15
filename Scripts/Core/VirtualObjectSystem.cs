@@ -20,7 +20,7 @@ public class VirtualObjectSystem : MonoBehaviour {
 
     public int nDetections { get; private set; }
     public List<SemanticObject> virtualSemanticMap { get; private set; }
-    public Dictionary<Color, VirtualObjectBox> boxColors { get; private set; }
+    public Dictionary<Color32, VirtualObjectBox> boxColors { get; private set; }
 
     private Queue<DetectionArrayMsg> processingQueue;
 
@@ -34,7 +34,7 @@ public class VirtualObjectSystem : MonoBehaviour {
         }
 
         virtualSemanticMap = new List<SemanticObject>();
-        boxColors = new Dictionary<Color, VirtualObjectBox>();
+        boxColors = new Dictionary<Color32, VirtualObjectBox>();
         processingQueue = new Queue<DetectionArrayMsg>();
         StartCoroutine(ProcessMsgs());
     }
@@ -64,78 +64,6 @@ public class VirtualObjectSystem : MonoBehaviour {
             boxColors.Remove(color);
         }
     }
-
-    static List<SemanticObject.Corner> YNN(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation) {
-
-        Queue<SemanticObject.Corner> top = new Queue<SemanticObject.Corner>();
-        top.Enqueue(observation[2]);
-        top.Enqueue(observation[4]);
-        top.Enqueue(observation[5]);
-        top.Enqueue(observation[7]);
-        Queue<SemanticObject.Corner> bottom = new Queue<SemanticObject.Corner>();
-        bottom.Enqueue(observation[0]);
-        bottom.Enqueue(observation[1]);
-        bottom.Enqueue(observation[3]);
-        bottom.Enqueue(observation[6]);
-
-        int index = 0;
-        float best_distance = Vector3.Distance(reference[2].position, top.ElementAt(0).position) +
-                            Vector3.Distance(reference[4].position, top.ElementAt(1).position) +
-                            Vector3.Distance(reference[5].position, top.ElementAt(2).position) +
-                            Vector3.Distance(reference[7].position, top.ElementAt(3).position);
-
-        for (int i = 1; i < 4; i++) {
-            top.Enqueue(top.Dequeue());
-            float distance = Vector3.Distance(reference[2].position, top.ElementAt(0).position) +
-                                Vector3.Distance(reference[4].position, top.ElementAt(1).position) +
-                                Vector3.Distance(reference[5].position, top.ElementAt(2).position) +
-                                Vector3.Distance(reference[7].position, top.ElementAt(3).position);
-
-            if (best_distance > distance) {
-                index = i;
-                best_distance = distance;
-            }
-        }
-
-        top.Enqueue(top.Dequeue());
-
-        for (int i = 0; i < index; i++) {
-            top.Enqueue(top.Dequeue());
-            bottom.Enqueue(bottom.Dequeue());
-        }
-
-        List<SemanticObject.Corner> result = new List<SemanticObject.Corner> {
-            bottom.Dequeue(),
-            bottom.Dequeue(),
-            top.Dequeue(),
-            bottom.Dequeue(),
-            top.Dequeue(),
-            top.Dequeue(),
-            bottom.Dequeue(),
-            top.Dequeue()
-        };
-
-        return result;
-    }
-
-    static float CalculateCornerDistance(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation,bool onlyNonOccluded) {
-        float distance = 0;
-        for(int i = 0; i < reference.Count; i++) {
-            if ((!observation[i].occluded && !reference[i].occluded) || !onlyNonOccluded) {
-                distance += Vector3.Distance(reference[i].position, observation[i].position);
-            }
-        }
-
-        if (distance == 0) {
-            for (int i = 0; i < reference.Count; i++)
-            {
-                distance += Vector3.Distance(reference[i].position, observation[i].position);
-            }
-        }
-
-        return distance == 0 ? 999:distance;
-    }
-
     #endregion
 
     #region Private Functions
@@ -144,6 +72,7 @@ public class VirtualObjectSystem : MonoBehaviour {
         Rect rect = new Rect(0, 0, bbCamera.pixelWidth, bbCamera.pixelHeight);
         RenderTexture renderTextureMask = new RenderTexture(bbCamera.pixelWidth, bbCamera.pixelHeight, 24);
         Texture2D image = new Texture2D(bbCamera.pixelWidth, bbCamera.pixelHeight, TextureFormat.RGB24, false);
+        bbCamera.targetTexture = renderTextureMask;
 
         while (Application.isPlaying) {
 
@@ -155,9 +84,6 @@ public class VirtualObjectSystem : MonoBehaviour {
                 bbCamera.transform.position = _detections.origin.GetPositionUnity();
                 bbCamera.transform.rotation = _detections.origin.GetRotationUnity() * Quaternion.Euler(0f, 90f, 0f);
 
-                bbCamera.targetTexture = renderTextureMask;
-
-                HashSet<Color> colors = new HashSet<Color>();
                 Dictionary<VirtualObjectBox, int> virtualObjectBoxInRange = new Dictionary<VirtualObjectBox, int>();
 
                 while(true)
@@ -168,7 +94,7 @@ public class VirtualObjectSystem : MonoBehaviour {
                     image.ReadPixels(rect, 0, 0);
                     image.Apply();
 
-                    var list = image.GetPixels();
+                    var list = image.GetPixels32();
                     var q = from x in list
                             group x by x into g
                             let count = g.Count()
@@ -257,9 +183,8 @@ public class VirtualObjectSystem : MonoBehaviour {
         }
     }
 
-
     private VirtualObjectBox GetObjectMatch(Color color) {
-        foreach(KeyValuePair<Color, VirtualObjectBox> pair in boxColors) {
+        foreach(KeyValuePair<Color32, VirtualObjectBox> pair in boxColors) {
             if(Mathf.Abs(color.r-pair.Key.r) 
                 + Mathf.Abs(color.g - pair.Key.g)
                 + Mathf.Abs(color.b - pair.Key.b) < 0.05f) {
@@ -283,6 +208,78 @@ public class VirtualObjectSystem : MonoBehaviour {
     private void LogWarning(string _msg) {
         if (verbose > 0)
             Debug.LogWarning("[Object Manager]: " + _msg);
+    }
+    #endregion
+
+    #region Static Functions
+    static List<SemanticObject.Corner> YNN(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation) {
+
+        Queue<SemanticObject.Corner> top = new Queue<SemanticObject.Corner>();
+        top.Enqueue(observation[2]);
+        top.Enqueue(observation[4]);
+        top.Enqueue(observation[5]);
+        top.Enqueue(observation[7]);
+        Queue<SemanticObject.Corner> bottom = new Queue<SemanticObject.Corner>();
+        bottom.Enqueue(observation[0]);
+        bottom.Enqueue(observation[1]);
+        bottom.Enqueue(observation[3]);
+        bottom.Enqueue(observation[6]);
+
+        int index = 0;
+        float best_distance = Vector3.Distance(reference[2].position, top.ElementAt(0).position) +
+                            Vector3.Distance(reference[4].position, top.ElementAt(1).position) +
+                            Vector3.Distance(reference[5].position, top.ElementAt(2).position) +
+                            Vector3.Distance(reference[7].position, top.ElementAt(3).position);
+
+        for (int i = 1; i < 4; i++) {
+            top.Enqueue(top.Dequeue());
+            float distance = Vector3.Distance(reference[2].position, top.ElementAt(0).position) +
+                                Vector3.Distance(reference[4].position, top.ElementAt(1).position) +
+                                Vector3.Distance(reference[5].position, top.ElementAt(2).position) +
+                                Vector3.Distance(reference[7].position, top.ElementAt(3).position);
+
+            if (best_distance > distance) {
+                index = i;
+                best_distance = distance;
+            }
+        }
+
+        top.Enqueue(top.Dequeue());
+
+        for (int i = 0; i < index; i++) {
+            top.Enqueue(top.Dequeue());
+            bottom.Enqueue(bottom.Dequeue());
+        }
+
+        List<SemanticObject.Corner> result = new List<SemanticObject.Corner> {
+            bottom.Dequeue(),
+            bottom.Dequeue(),
+            top.Dequeue(),
+            bottom.Dequeue(),
+            top.Dequeue(),
+            top.Dequeue(),
+            bottom.Dequeue(),
+            top.Dequeue()
+        };
+
+        return result;
+    }
+
+    static float CalculateCornerDistance(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation, bool onlyNonOccluded) {
+        float distance = 0;
+        for (int i = 0; i < reference.Count; i++) {
+            if ((!observation[i].occluded && !reference[i].occluded) || !onlyNonOccluded) {
+                distance += Vector3.Distance(reference[i].position, observation[i].position);
+            }
+        }
+
+        if (distance == 0) {
+            for (int i = 0; i < reference.Count; i++) {
+                distance += Vector3.Distance(reference[i].position, observation[i].position);
+            }
+        }
+
+        return distance == 0 ? 999 : distance;
     }
     #endregion
 

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using g3;
 
 
 public class VirtualObjectBox : MonoBehaviour
