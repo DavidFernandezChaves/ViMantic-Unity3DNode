@@ -87,7 +87,7 @@ public class VirtualObjectSystem : MonoBehaviour {
                 
                 
                 Dictionary<VirtualObjectBox, int> virtualObjectBoxInRange = new Dictionary<VirtualObjectBox, int>();
-
+                List<VirtualObjectBox> visibleVirtualObjectBox = new List<VirtualObjectBox>();
 
                 int n = 0;
                 while (n<10) {
@@ -110,6 +110,7 @@ public class VirtualObjectSystem : MonoBehaviour {
                         if (boxColors.ContainsKey(xx.Value)) {
                             var vob = boxColors[xx.Value];
                             vob.gameObject.SetActive(false);
+                            visibleVirtualObjectBox.Add(vob);
                             var distance = Vector3.Distance(vob.semanticObject.Position, bbCamera.transform.position);
                             if (deepRange.y >= distance && distance >= deepRange.x )
                                 virtualObjectBoxInRange.Add(vob, xx.Count);
@@ -124,7 +125,7 @@ public class VirtualObjectSystem : MonoBehaviour {
                     n++;
                 }          
 
-                foreach (VirtualObjectBox vob in virtualObjectBoxInRange.Keys) {
+                foreach (VirtualObjectBox vob in visibleVirtualObjectBox) {
                     vob.gameObject.SetActive(true);                    
                 }
 
@@ -143,8 +144,8 @@ public class VirtualObjectSystem : MonoBehaviour {
                     }
 
                     var distance = Vector3.Distance(virtualObject.Position, bbCamera.transform.position);
-                    if (deepRange.y >= distance && distance >= deepRange.x) {
-                        Log(virtualObject.Type + " - detected but it is not in deep range");
+                    if (distance < deepRange.x || distance > deepRange.y) {
+                        Log(virtualObject.Type + " - detected but it is not in deep range. Distance: " + distance);
                         continue;
                     }
 

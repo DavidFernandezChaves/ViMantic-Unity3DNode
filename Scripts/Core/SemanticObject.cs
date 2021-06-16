@@ -170,7 +170,7 @@ public class SemanticObject {
         }
         else
         {
-            Scores["Other"] += 0.4f;
+            Scores["Other"] += 0.2f;
         }
         UpdateProperties();
 
@@ -237,7 +237,7 @@ public class SemanticObject {
         newBox = newBox.Select(r => Quaternion.Euler(0, -best_angle, 0) * r).ToArray();
 
         for (int i = 0; i < Corners.Count; i++) {
-            Corners[i] = new Corner(newBox[i], Corners[i].occluded || newBB[i].occluded);
+            Corners[i] = new Corner(newBox[i], true);
         }
     }
 
