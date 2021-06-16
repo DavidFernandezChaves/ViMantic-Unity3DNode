@@ -237,6 +237,7 @@ MonoBehaviour:
   verbose: 2
   heightCanvas: {x: 2, y: 5}
   canvasLabel: {fileID: 2766889848152880030}
+  lineRender: {fileID: 120497781960058800}
 --- !u!1001 &8390046263339180676
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -87,8 +87,8 @@ public class VirtualObjectSystem : MonoBehaviour {
                 Dictionary<VirtualObjectBox, int> virtualObjectBoxInRange = new Dictionary<VirtualObjectBox, int>();
 
 
-                int i = 0;
-                while (i<10) {
+                int n = 0;
+                while (n<10) {
 
                     RenderTexture renderTextureMask = new RenderTexture(bbCamera.pixelWidth, bbCamera.pixelHeight,0);
                     bbCamera.targetTexture = renderTextureMask;
@@ -117,7 +117,7 @@ public class VirtualObjectSystem : MonoBehaviour {
                     RenderTexture.active = null; //Clean
                     Destroy(renderTextureMask); //Free memory
                     if (q.Count() == 1) break;
-                    i++;
+                    n++;
                 }          
 
                 foreach (VirtualObjectBox vob in virtualObjectBoxInRange.Keys) {
@@ -143,19 +143,7 @@ public class VirtualObjectSystem : MonoBehaviour {
                     virtualObject = OntologySystem.instance.AddNewDetectedObject(virtualObject);
 
                     //Build Ranking
-                    VirtualObjectBox match = null;
-                    foreach (VirtualObjectBox vob in virtualObjectBoxInRange.Keys) {
-
-                        var order =  YNN(vob.semanticObject.Corners, virtualObject.Corners);                        
-                        float distance = CalculateCornerDistance(vob.semanticObject.Corners, order, false);
-                        
-                        if (distance < threshold_match) {
-                            virtualObject.SetNewCorners(order);
-                            match = vob;
-                            Debug.Log("Union: " + virtualObject.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + distance);
-                            break;
-                        } else { Debug.Log("NO Union: " + virtualObject.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + distance); }
-                    }
+                    VirtualObjectBox match = CheckMatch(virtualObject, virtualObjectBoxInRange.Keys);
 
                     //Match process
                     if (match != null) {
@@ -167,11 +155,23 @@ public class VirtualObjectSystem : MonoBehaviour {
                         }
                         virtualSemanticMap.Add(virtualObject);
                         VirtualObjectBox nvob = InstanceNewSemanticObject(virtualObject);
-                        virtualObjectBoxInRange.Add(nvob, minPixelsMask+1);
                         detectedVirtualObjectBox.Add(nvob);
                     }
                     nDetections++;
                 }
+
+                List<VirtualObjectBox> inRange = virtualObjectBoxInRange.Keys.ToList();
+                for(int i = 0;i< inRange.Count-1;i++) {
+                    if (inRange[i] != null) {
+                        VirtualObjectBox match = null;
+                        match = CheckMatch(inRange[i].semanticObject, inRange.GetRange(i+1, inRange.Count));
+                        if (match != null) {
+                            match.NewDetection(inRange[i].semanticObject);
+                            inRange[i].RemoveVirtualBox();
+                        }
+                    }
+                }
+
                 detectedVirtualObjectBox.ForEach(dvob => virtualObjectBoxInRange.Remove(dvob));
 
                 foreach (KeyValuePair<VirtualObjectBox, int> o in virtualObjectBoxInRange) {
@@ -183,15 +183,22 @@ public class VirtualObjectSystem : MonoBehaviour {
         }
     }
 
-    private VirtualObjectBox GetObjectMatch(Color32 color) {
-        foreach(KeyValuePair<Color32, VirtualObjectBox> pair in boxColors) {
-            if(Mathf.Abs(color.r-pair.Key.r) 
-                + Mathf.Abs(color.g - pair.Key.g)
-                + Mathf.Abs(color.b - pair.Key.b) < 13f) {
-                return pair.Value.GetComponent<VirtualObjectBox>();
-            }
+    private VirtualObjectBox CheckMatch(SemanticObject obj1, ICollection<VirtualObjectBox> listToCompare) {
+        VirtualObjectBox match = null;
+        float best_distance = 999;
+        foreach (VirtualObjectBox vob in listToCompare) {
+
+            List<SemanticObject.Corner> order = YNN(vob.semanticObject.Corners, obj1.Corners);
+            float distance = CalculateCornerDistance(vob.semanticObject.Corners, order, false);
+
+            if (distance < threshold_match && distance < best_distance) {
+                obj1.SetNewCorners(order);
+                match = vob;
+                best_distance = distance;
+                //Debug.Log("Union: " + virtualObject.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + distance);
+            }// else { Debug.Log("NO Union: " + virtualObject.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + distance); }
         }
-        return null;
+        return match;
     }
 
     private VirtualObjectBox InstanceNewSemanticObject(SemanticObject _obj) {
