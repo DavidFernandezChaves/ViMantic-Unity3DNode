@@ -11,8 +11,10 @@ public class VirtualObjectSystem : MonoBehaviour {
     public static VirtualObjectSystem instance;
     public int verbose;
     
-    public float threshold_match = 1f;
+    public float threshold_match_same_type = 4f;
+    public float threshold_match_diff_type = 2f;
     public int minPixelsMask = 1000;
+    public Vector2 deepRange;
 
     public GameObject prefDetectedObject;
     public Transform tfFrameForObjects;
@@ -108,7 +110,9 @@ public class VirtualObjectSystem : MonoBehaviour {
                         if (boxColors.ContainsKey(xx.Value)) {
                             var vob = boxColors[xx.Value];
                             vob.gameObject.SetActive(false);
-                            virtualObjectBoxInRange.Add(vob, xx.Count);
+                            var distance = Vector3.Distance(vob.semanticObject.Position, bbCamera.transform.position);
+                            if (deepRange.y >= distance && distance >= deepRange.x )
+                                virtualObjectBoxInRange.Add(vob, xx.Count);
                             //Debug.Log("Value: " + xx.Value + " Count: " + xx.Count);
                         }
                     }
@@ -121,8 +125,7 @@ public class VirtualObjectSystem : MonoBehaviour {
                 }          
 
                 foreach (VirtualObjectBox vob in virtualObjectBoxInRange.Keys) {
-                    vob.gameObject.SetActive(true);
-                    
+                    vob.gameObject.SetActive(true);                    
                 }
 
                 List<VirtualObjectBox> detectedVirtualObjectBox = new List<VirtualObjectBox>();
@@ -136,6 +139,12 @@ public class VirtualObjectSystem : MonoBehaviour {
                     //Check the type object is in the ontology
                     if (!OntologySystem.instance.CheckInteresObject(virtualObject.Type)) {
                         Log(virtualObject.Type + " - detected but it is not in the ontology");
+                        continue;
+                    }
+
+                    var distance = Vector3.Distance(virtualObject.Position, bbCamera.transform.position);
+                    if (deepRange.y >= distance && distance >= deepRange.x) {
+                        Log(virtualObject.Type + " - detected but it is not in deep range");
                         continue;
                     }
 
@@ -164,7 +173,7 @@ public class VirtualObjectSystem : MonoBehaviour {
                 for(int i = 0;i< inRange.Count-1;i++) {
                     if (inRange[i] != null) {
                         VirtualObjectBox match = null;
-                        match = CheckMatch(inRange[i].semanticObject, inRange.GetRange(i+1, inRange.Count));
+                        match = CheckMatch(inRange[i].semanticObject, inRange.GetRange(i+1, inRange.Count-i-1));
                         if (match != null) {
                             match.NewDetection(inRange[i].semanticObject);
                             inRange[i].RemoveVirtualBox();
@@ -189,9 +198,11 @@ public class VirtualObjectSystem : MonoBehaviour {
         foreach (VirtualObjectBox vob in listToCompare) {
 
             List<SemanticObject.Corner> order = YNN(vob.semanticObject.Corners, obj1.Corners);
-            float distance = CalculateCornerDistance(vob.semanticObject.Corners, order, false);
+            float distance = CalculateCornerDistance(vob.semanticObject.Corners, order);
 
-            if (distance < threshold_match && distance < best_distance) {
+
+            if (((distance < threshold_match_same_type && obj1.Type.Equals(vob.semanticObject.Type)) || 
+                (distance < threshold_match_diff_type && !obj1.Type.Equals(vob.semanticObject.Type))) && distance < best_distance) {
                 obj1.SetNewCorners(order);
                 match = vob;
                 best_distance = distance;
@@ -274,21 +285,12 @@ public class VirtualObjectSystem : MonoBehaviour {
         return result;
     }
 
-    static public float CalculateCornerDistance(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation, bool onlyNonOccluded) {
+    static public float CalculateCornerDistance(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation) {
         float distance = 0;
-        //for (int i = 0; i < reference.Count; i++) {
-        //    if ((!observation[i].occluded && !reference[i].occluded) || !onlyNonOccluded) {
-        //        distance += Vector3.Distance(reference[i].position, observation[i].position);
-        //    }
-        //}
-
-        if (distance == 0) {
-            for (int i = 0; i < reference.Count; i++) {
-                distance += Vector3.Distance(reference[i].position, observation[i].position);
-            }
+        for (int i = 0; i < reference.Count; i++) {
+            distance += Vector3.Distance(reference[i].position, observation[i].position);
         }
-
-        return distance == 0 ? 999 : distance;
+        return distance;
     }
     #endregion
 

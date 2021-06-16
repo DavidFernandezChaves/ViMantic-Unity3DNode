@@ -78,12 +78,6 @@ public class SemanticObject {
     }
 
     public void UpdateProperties() {
-        // Update bounding box
-        //Position = new Vector3(Corners.Average(p => p.position.x), Corners.Average(p => p.position.y), Corners.Average(p => p.position.z));
-        //Size = new Vector3(Mathf.Abs(Vector3.Distance(Corners[0].position, Corners[3].position)),
-        //                   Mathf.Abs(Vector3.Distance(Corners[0].position, Corners[2].position)),
-        //                   Mathf.Abs(Vector3.Distance(Corners[0].position, Corners[1].position)));
-        //Rotation = Quaternion.Euler(0, Mathf.Atan2(Corners[0].position.x - Corners[1].position.x, Corners[0].position.z - Corners[1].position.z) * Mathf.Rad2Deg, 0);
 
         Position = new Vector3(Corners.Average(p => p.position.x), Corners.Average(p => p.position.y), Corners.Average(p => p.position.z));
 
@@ -172,7 +166,7 @@ public class SemanticObject {
             }
 
             OntologySystem.instance.JoinSemanticObject(this, newDetection);
-            NDetections++;
+            NDetections += newDetection.NDetections;
         }
         else
         {
