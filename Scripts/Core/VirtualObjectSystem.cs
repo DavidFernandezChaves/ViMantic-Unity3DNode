@@ -248,15 +248,15 @@ public class VirtualObjectSystem : MonoBehaviour {
 
         int index = 0;
         float best_distance = Vector3.Distance(reference[2].position, top.ElementAt(0).position) +
-                            Vector3.Distance(reference[4].position, top.ElementAt(1).position) +
-                            Vector3.Distance(reference[5].position, top.ElementAt(2).position) +
+                            Vector3.Distance(reference[4].position, top.ElementAt(2).position) +
+                            Vector3.Distance(reference[5].position, top.ElementAt(1).position) +
                             Vector3.Distance(reference[7].position, top.ElementAt(3).position);
 
         for (int i = 1; i < 4; i++) {
             top.Enqueue(top.Dequeue());
             float distance = Vector3.Distance(reference[2].position, top.ElementAt(0).position) +
-                                Vector3.Distance(reference[4].position, top.ElementAt(1).position) +
-                                Vector3.Distance(reference[5].position, top.ElementAt(2).position) +
+                                Vector3.Distance(reference[4].position, top.ElementAt(2).position) +
+                                Vector3.Distance(reference[5].position, top.ElementAt(1).position) +
                                 Vector3.Distance(reference[7].position, top.ElementAt(3).position);
 
             if (best_distance > distance) {

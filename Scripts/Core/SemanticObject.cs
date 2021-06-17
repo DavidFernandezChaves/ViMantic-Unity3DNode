@@ -170,7 +170,7 @@ public class SemanticObject {
         }
         else
         {
-            Scores["Other"] += 0.2f;
+            Scores["Other"] += 0.4f;
         }
         UpdateProperties();
 
