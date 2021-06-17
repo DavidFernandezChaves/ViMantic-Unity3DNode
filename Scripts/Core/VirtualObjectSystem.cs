@@ -92,7 +92,7 @@ public class VirtualObjectSystem : MonoBehaviour {
                 int n = 0;
                 while (n<10) {
 
-                    RenderTexture renderTextureMask = new RenderTexture(bbCamera.pixelWidth, bbCamera.pixelHeight,0);
+                    RenderTexture renderTextureMask = new RenderTexture(bbCamera.pixelWidth, bbCamera.pixelHeight,16);
                     bbCamera.targetTexture = renderTextureMask;
                     bbCamera.Render();
                     RenderTexture.active = renderTextureMask;

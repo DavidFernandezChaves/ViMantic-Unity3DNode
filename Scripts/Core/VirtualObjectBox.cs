@@ -22,12 +22,12 @@ public class VirtualObjectBox : MonoBehaviour
         if (Application.isPlaying && this.enabled && verbose > 1) {
             for(int i=0;i<8;i++) {
 
-            if (semanticObject.Corners[i].occluded)
-                Gizmos.color = Color.red;
-            else
-                Gizmos.color = Color.green;
+                if (semanticObject.Corners[i].occluded)
+                    Gizmos.color = Color.red;
+                else
+                    Gizmos.color = Color.green;
 
-                //if (semanticObject.Defined) Gizmos.color = Color.blue;
+                if (semanticObject.Defined) Gizmos.color = Color.blue;
 
                 //if (i == 0) Gizmos.color = Color.blue;
                 //if (i == 1) Gizmos.color = Color.magenta;
@@ -38,7 +38,7 @@ public class VirtualObjectBox : MonoBehaviour
                 //if (i == 6) Gizmos.color = Color.white;
                 //if (i == 7) Gizmos.color = Color.cyan;
 
-                Gizmos.DrawSphere(semanticObject.Corners[i].position, 0.03f);
+                Gizmos.DrawSphere(semanticObject.Corners[i].position, 0.01f);
             }  
         }
     }

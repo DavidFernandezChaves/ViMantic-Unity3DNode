@@ -7,6 +7,8 @@ public class SemanticObject {
     public Dictionary<string, float> Scores { get; private set; }
     public List<Corner> Corners { get; private set; }
 
+    public float noDetectionProb = 0.4f;
+    public float erosion = 0.01f;
     public string Id { get; private set; }
     public string Type { get; private set; }
     public float Score { get; private set; }
@@ -22,10 +24,14 @@ public class SemanticObject {
 
     public struct Corner {
         public Vector3 position;
-        public bool occluded;
-        public Corner(Vector3 position, bool occluded) {
+        public bool occluded { get; private set; }
+    public Corner(Vector3 position, bool occluded) {
             this.position = position;
             this.occluded = occluded;
+        }
+        public void SetOccluded(bool mode)
+        {
+            occluded = mode;
         }
     }
     public SemanticObject(Dictionary<string, float> _scores, List<Vector3> _corners, byte _occluded_corners) {
@@ -114,11 +120,11 @@ public class SemanticObject {
         Defined = (!Corners[0].occluded &&
                    !Corners[1].occluded &&
                    (!Corners[7].occluded || !Corners[2].occluded || !Corners[4].occluded || !Corners[5].occluded) &&
-                   (!Corners[4].occluded || !Corners[5].occluded || !Corners[6].occluded || !Corners[3].occluded));
+                   (!Corners[4].occluded || !Corners[5].occluded || !Corners[6].occluded || !Corners[3].occluded)) || Defined;
 
         if (Defined)
         {
-            Corners.ForEach(c => c.occluded = false);
+            Corners.ForEach(c => c.SetOccluded(false));
             NNonOccluded = 8;
         }
         else
@@ -130,17 +136,17 @@ public class SemanticObject {
 
     public void NewDetection(SemanticObject newDetection) {
 
-        //if (NDetections > 1)
-        //{
-        //    OntologySystem.instance.RemoveSemanticObject(this);
-        //}
+        if (NDetections > 1)
+        {
+            OntologySystem.instance.RemoveSemanticObject(this);
+        }
 
         if (newDetection != null)
         {
             if (Defined) {
                 if (newDetection.Defined) {
                     nOccludedDetection = 0;
-                    float nPreviousDetections = Mathf.Min(NDetections, 50f);
+                    float nPreviousDetections = Mathf.Min(NDetections, 20f);
                     for (int i = 0; i < Corners.Count; i++)
                         Corners[i] = new Corner((nPreviousDetections * Corners[i].position + newDetection.Corners[i].position) / (nPreviousDetections + 1f), false);
                 } else {
@@ -167,25 +173,37 @@ public class SemanticObject {
 
             OntologySystem.instance.JoinSemanticObject(this, newDetection);
             NDetections += newDetection.NDetections;
+            UpdateProperties();
+
+            // Update ontology
+            if (NDetections == 2)
+            {
+                string oldId = Id;
+                Id = "";
+                Id = OntologySystem.instance.AddNewDetectedObject(this).Id;
+                OntologySystem.instance.JoinSemanticObject(Id, oldId);
+                OntologySystem.instance.JoinSemanticObject(Id, newDetection.Id);
+            }
+            else
+            {
+                OntologySystem.instance.AddNewDetectedObject(this);
+                OntologySystem.instance.JoinSemanticObject(Id, newDetection.Id);
+            }
         }
         else
         {
-            Scores["Other"] += 0.4f;
-        }
-        UpdateProperties();
+            Scores["Other"] += noDetectionProb;
+            float defaultValue = (1f - noDetectionProb) / (Scores.Count - 1);
+            foreach (string key in OntologySystem.instance.objectClassInOntology)
+            {   
+                Scores[CultureInfo.InvariantCulture.TextInfo.ToTitleCase(key).Replace(" ", "_")] += defaultValue;
+            }
+            NDetections++;
+            UpdateProperties();
 
-        // Update ontology
-        //if (NDetections == 2)
-        //{
-        //    string oldId = Id;
-        //    Id = "";
-        //    Id = OntologySystem.instance.AddNewDetectedObject(this).Id;
-        //    OntologySystem.instance.JoinSemanticObject(Id, oldId);
-        //}
-        //else
-        //{
-        //    OntologySystem.instance.AddNewDetectedObject(this);
-        //}
+            // Update ontology
+            OntologySystem.instance.AddNewDetectedObject(this);
+        }
 
     }
 
@@ -224,14 +242,14 @@ public class SemanticObject {
 
         //min X, max X, min Y, max Y
         Vector3[] newBox = new Vector3[8] {
-                        new Vector3(best_rectangle[1],minY,best_rectangle[2]),
-                        new Vector3(best_rectangle[0],minY,best_rectangle[2]),
-                        new Vector3(best_rectangle[1],maxY,best_rectangle[2]),
-                        new Vector3(best_rectangle[1],minY,best_rectangle[3]),
-                        new Vector3(best_rectangle[0],maxY,best_rectangle[3]),
-                        new Vector3(best_rectangle[1],maxY,best_rectangle[3]),
-                        new Vector3(best_rectangle[0],minY,best_rectangle[3]),
-                        new Vector3(best_rectangle[0],maxY,best_rectangle[2])
+                        new Vector3(best_rectangle[1] - erosion, minY + erosion, best_rectangle[2] + erosion),
+                        new Vector3(best_rectangle[0] + erosion, minY + erosion, best_rectangle[2] + erosion),
+                        new Vector3(best_rectangle[1] - erosion, maxY - erosion, best_rectangle[2] + erosion),
+                        new Vector3(best_rectangle[1] - erosion, minY + erosion, best_rectangle[3] - erosion),
+                        new Vector3(best_rectangle[0] + erosion, maxY - erosion, best_rectangle[3] - erosion),
+                        new Vector3(best_rectangle[1] - erosion, maxY - erosion, best_rectangle[3] - erosion),
+                        new Vector3(best_rectangle[0] + erosion, minY + erosion, best_rectangle[3] - erosion),
+                        new Vector3(best_rectangle[0] + erosion, maxY - erosion, best_rectangle[2] + erosion)
                     };
 
         newBox = newBox.Select(r => Quaternion.Euler(0, -best_angle, 0) * r).ToArray();
