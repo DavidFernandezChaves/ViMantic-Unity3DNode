@@ -38,7 +38,7 @@ public class VirtualObjectBox : MonoBehaviour
                 //if (i == 6) Gizmos.color = Color.white;
                 //if (i == 7) Gizmos.color = Color.cyan;
 
-                Gizmos.DrawSphere(semanticObject.Corners[i].position, 0.01f);
+                Gizmos.DrawSphere(semanticObject.Corners[i].position, 0.02f);
             }  
         }
     }
