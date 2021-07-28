@@ -14,6 +14,9 @@ ViMantic is a distributed architecture for semantic mapping of environments usin
 ## Requirements
 - [ViMantic - Client](https://github.com/DavidFernandezChaves/ViMantic-Client)
 
+## Method of use:
+Download and embed in your Unity project.
+
 ## Example
 Result obtained using [Robot@VirtualHome](https://github.com/DavidFernandezChaves/RobotAtVirtualHome):
 <div align="center">
