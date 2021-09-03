@@ -356,7 +356,9 @@ public class OntologySystem : MonoBehaviour {
         foreach (KeyValuePair<string, Dictionary<string, float>> category in probabilityRoomByClass) {
             var probabilityByCategory = 1f;
             foreach (SemanticObject detection in previousClass) {
-                probabilityByCategory *= category.Value[GetNameWithURI(detection.Type)];
+                if (category.Value.ContainsKey(GetNameWithURI(detection.Type))) { 
+                    probabilityByCategory *= category.Value[GetNameWithURI(detection.Type)];
+                }
             }
             probabilitytotal += probabilityByCategory;
             if (category.Key.Equals(categoryRoom))

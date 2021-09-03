@@ -14,6 +14,8 @@ public class SemanticRoomManager : MonoBehaviour
     public static SemanticRoomManager instance;
     public int verbose;
 
+    public List<ROS> clients { get; private set; }
+
     //Setting
     public int nObservationsToConsider = 5;
     public float rate = 2;
@@ -29,7 +31,6 @@ public class SemanticRoomManager : MonoBehaviour
 
     //Private
     public Transform robot;
-    private ROS ros;
     private List<Image> _bars;
     private List<Text> _probabilities, _categories;
 
@@ -41,6 +42,7 @@ public class SemanticRoomManager : MonoBehaviour
         } else {
             Destroy(gameObject);
         }
+        clients = new List<ROS>();
     }
     #endregion
 
@@ -72,6 +74,20 @@ public class SemanticRoomManager : MonoBehaviour
         }
     }
 
+    public void Connected(ROS ros)
+    {
+        if (robot == null) robot = ros.transform;
+        clients.Add(ros);
+        ros.RegisterPubPackage("RoomScores_pub");
+        ros.RegisterPubPackage("ObjectsInRoom_pub");
+    }
+
+
+    public void Disconnected(ROS ros)
+    {
+        clients.Remove(ros);
+    }
+
     public void UpdateRoom() {
         if(robot != null) {
 
@@ -99,7 +115,7 @@ public class SemanticRoomManager : MonoBehaviour
             }
             
         } else {
-            FindRobot();
+            //FindRobot();
         }
     }
 
@@ -132,18 +148,21 @@ public class SemanticRoomManager : MonoBehaviour
         }        
     }
 
-    private void FindRobot() {
-        //ros = FindObjectOfType<ROS>();
-        //if(ros != null) {            
-        //    robot = ros.transform;
+    //private void FindRobot()
+    //{
+    //    ros = FindObjectOfType<ROS>();
+    //    if (ros != null)
+    //    {
+    //        robot = ros.transform;
 
-        //    if (sendResultsToROS) {
-        //        ros.RegisterPubPackage("RoomScores_pub");
-        //        ros.RegisterPubPackage("ObjectsInRoom_pub");
-        //    }
-        //}
-                   
-    }
+    //        if (sendResultsToROS)
+    //        {
+    //            ros.RegisterPubPackage("RoomScores_pub");
+    //            ros.RegisterPubPackage("ObjectsInRoom_pub");
+    //        }
+    //    }
+
+    //}
 
     public SemanticRoom GetCurrentRoom() {
         RaycastHit hit;
@@ -192,27 +211,30 @@ public class SemanticRoomManager : MonoBehaviour
     }
 
     private void PublishResult(List<SemanticObject> detectedObjectsInside) {
-        //if (ros.IsConnected()) {
-        //    HeaderMsg _head = new HeaderMsg(0, new TimeMsg(DateTime.Now.Second, 0), currentRoom.ToString());
-        //    List<SemanticRoomScoreMsg> probabilities = new List<SemanticRoomScoreMsg>();
+        foreach(ROS client in clients){
+            HeaderMsg _head = new HeaderMsg(0, new TimeMsg(DateTime.Now.Second, 0), currentRoom.ToString());
+            List<SemanticRoomScoreMsg> probabilities = new List<SemanticRoomScoreMsg>();
 
-        //    foreach (KeyValuePair<string, float> result in semantic_rooms[currentRoom]) {
-        //        probabilities.Add(new SemanticRoomScoreMsg(result.Key, result.Value));
-        //    }
+            foreach (KeyValuePair<string, float> result in semantic_rooms[currentRoom])
+            {
+                probabilities.Add(new SemanticRoomScoreMsg(result.Key, result.Value));
+            }
 
-        //    SemanticRoomMsg msg = new SemanticRoomMsg(_head, currentRoom, probabilities.ToArray());
-        //    ros.Publish(RoomScores_pub.GetMessageTopic(), msg);
+            SemanticRoomMsg msg = new SemanticRoomMsg(_head, currentRoom, probabilities.ToArray());
+            client.Publish(RoomScores_pub.GetMessageTopic(), msg);
 
-        //    if (detectedObjectsInside.Count > 0) {
-        //        List<SemanticObjectMsg> obj_msg = new List<SemanticObjectMsg>();
-        //        foreach (var obj in detectedObjectsInside) {
-        //            obj_msg.Add(new SemanticObjectMsg(obj));
-        //        }
-                
-        //        SemanticObjectArrayMsg msg2 = new SemanticObjectArrayMsg(_head, obj_msg.ToArray());
-        //        ros.Publish(ObjectsInRoom_pub.GetMessageTopic(), msg2);
-        //    }
-        //}
+            if (detectedObjectsInside.Count > 0)
+            {
+                List<SemanticObjectMsg> obj_msg = new List<SemanticObjectMsg>();
+                foreach (var obj in detectedObjectsInside)
+                {
+                    obj_msg.Add(new SemanticObjectMsg(obj));
+                }
+
+                SemanticObjectArrayMsg msg2 = new SemanticObjectArrayMsg(_head, obj_msg.ToArray());
+                client.Publish(ObjectsInRoom_pub.GetMessageTopic(), msg2);
+            }
+        }
     }
 
     private void Log(string _msg) {
