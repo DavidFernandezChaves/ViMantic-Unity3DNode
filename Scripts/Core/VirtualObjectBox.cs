@@ -57,7 +57,12 @@ public class VirtualObjectBox : MonoBehaviour
         lineRender.endColor = BoxColor;
         canvasLabel.SetColor(BoxColor);
         UpdateObject();
-        semanticObject.SetRoom(GetRoom(transform.position));
+        var room = GetRoom(transform.position);
+        if (room != null)
+            semanticObject.SetRoom(room);
+        else
+            RemoveVirtualBox();
+
     }
     #endregion
 
