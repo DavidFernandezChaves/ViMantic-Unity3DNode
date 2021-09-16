@@ -1,0 +1,850 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:autoNS1="http://mapir.isa.uma.es/" xml:base="http://mapir.isa.uma.es/">
+  <rdf:Description rdf:nodeID="bnode:A10">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A104">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A106">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A107">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bathroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A109">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A11">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A14">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A15">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A18">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A19">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A2">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A22">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A24">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A25">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A26">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A27">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A29">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A3">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A30">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A31">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Dressing_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A32">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A33">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A35">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bathroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A36">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A37">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A38">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A39">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Dressing_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A4">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/recordedIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Raid" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A40">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A41">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A44">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Dressing_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A45">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A46">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A47">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A5">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isPartOf" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/House" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A50">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Dressing_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A51">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A53">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A54">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A55">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A56">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A57">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A58">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A59">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A6">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isFormedBy" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A60">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A61">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A62">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Dressing_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A63">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A64">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A65">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Dressing_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A66">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bathroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A67">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A68">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A69">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A7">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A70">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A71">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A72">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A73">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A76">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/recordedIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Raid" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A77">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A78">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A79">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A8">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A80">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A82">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A83">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bathroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A84">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A85">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bathroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A86">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A88">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A89">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bathroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A9">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A92">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Living_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A94">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Dressing_Room" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A95">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/recordedIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Raid" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A96">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Kitchen" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A97">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bathroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A98">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="bnode:A99">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction" />
+    <owl:onProperty rdf:resource="http://mapir.isa.uma.es/isIn" />
+    <owl:someValuesFrom rdf:resource="http://mapir.isa.uma.es/Bedroom" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Ontology" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/20210130105546935">
+    <rdf:type rdf:resource="http://mapir.isa.uma.es/Raid" />
+    <autoNS1:recordedIn rdf:resource="http://mapir.isa.uma.es/Anto" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Anto">
+    <rdf:type rdf:resource="http://mapir.isa.uma.es/House" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Apple">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Food" />
+    <rdfs:label xml:lang="EN">Apple</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Appliance">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Object" />
+    <rdfs:label>Appliance</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Backpack">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A63" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A56" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A44" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A64" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Backpack</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Banana">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Food" />
+    <rdfs:label xml:lang="EN">Banana</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Bathroom">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Room" />
+    <rdfs:label xml:lang="EN">Bathroom</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Bed">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A36" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Furniture" />
+    <rdfs:label xml:lang="EN">Bed</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Bedroom">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Room" />
+    <rdfs:label xml:lang="EN">Bedroom</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Bench">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A3" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A62" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A55" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Furniture" />
+    <rdfs:label xml:lang="EN">Bench</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Book">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A2" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A84" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Book</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Bottle">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A96" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A97" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Bottle</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Bowl">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A60" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A61" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Broccoli">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Food" />
+    <rdfs:label xml:lang="EN">Broccoli</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Cake">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Food" />
+    <rdfs:label xml:lang="EN">Cake</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Carrot">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Food" />
+    <rdfs:label xml:lang="EN">Carrot</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Cell_Phone">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A53" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A54" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Cell_Phone</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Chair">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A79" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A70" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A65" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A99" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Furniture" />
+    <rdfs:label xml:lang="EN">Chair</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Clock">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A37" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A38" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A39" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A22" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Clock</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Common_Object">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Object" />
+    <rdfs:label xml:lang="EN">Common_Object</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Corridor">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Room" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Couch">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A92" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A94" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A27" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Furniture" />
+    <rdfs:label xml:lang="EN">Couch</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Sofa">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A92" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A94" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A27" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Furniture" />
+    <rdfs:label xml:lang="EN">Sofa</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Cup">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A18" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A19" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Cup</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Dining_Table">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A106" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A46" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Furniture" />
+    <rdfs:label xml:lang="EN">Dining_Table</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/DiningTable">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A106" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A46" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Furniture" />
+    <rdfs:label xml:lang="EN">DiningTable</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Donut">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Food" />
+    <rdfs:label xml:lang="EN">Donut</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Dressing_Room">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Room" />
+    <rdfs:label>Dressing_Room</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Food">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A69" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Object" />
+    <rdfs:label xml:lang="EN">Food</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Fork">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A67" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A45" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Fork</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Furniture">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Object" />
+    <rdfs:label xml:lang="EN">Furniture</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Hair_Drier">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A85" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Hair_Drier</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Handbag">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A29" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A30" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A31" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A32" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label>Handbag</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Hot_dog">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Food" />
+    <rdfs:label xml:lang="EN">Hot_dog</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/House">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A95" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A6" />
+    <rdfs:label xml:lang="EN">House</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/isFormedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty" />
+    <rdfs:domain rdf:resource="http://mapir.isa.uma.es/House" />
+    <rdfs:range rdf:resource="http://mapir.isa.uma.es/Room" />
+    <owl:inverseOf rdf:resource="http://mapir.isa.uma.es/isPartOf" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/isIn">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty" />
+    <rdfs:domain rdf:resource="http://mapir.isa.uma.es/Object" />
+    <rdfs:range rdf:resource="http://mapir.isa.uma.es/Room" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/isPartOf">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty" />
+    <rdfs:domain rdf:resource="http://mapir.isa.uma.es/Room" />
+    <rdfs:range rdf:resource="http://mapir.isa.uma.es/House" />
+    <owl:inverseOf rdf:resource="http://mapir.isa.uma.es/isFormedBy" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Keyboard">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A25" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A26" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Keyboard</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Kitchen">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Room" />
+    <rdfs:label xml:lang="EN">Kitchen</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Knife">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A58" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A59" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Knife</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Laptop">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A40" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A41" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Laptop</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Living_Room">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Room" />
+    <rdfs:label>Living_Room</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Microwave">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A24" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Appliance" />
+    <rdfs:label>Microwave</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Mouse">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A78" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A98" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Mouse</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/nDetections">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Object">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A76" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A77" />
+    <rdfs:label>Object</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Orange">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Food" />
+    <rdfs:label xml:lang="EN">Orange</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Oven">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A33" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Appliance" />
+    <rdfs:label xml:lang="EN">Oven</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Pizza">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Food" />
+    <rdfs:label xml:lang="EN">Pizza</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/position">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Potted_Plant">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A47" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A71" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A50" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A109" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A107" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Potted_Plant</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Pottedplant">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A47" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A71" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A50" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A109" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A107" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Pottedplant</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Raid">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/recordedIn">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty" />
+    <rdfs:domain rdf:resource="http://mapir.isa.uma.es/House" />
+    <rdfs:range rdf:resource="http://mapir.isa.uma.es/Raid" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Remote">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A9" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A10" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A11" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Remote</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Room">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A4" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A5" />
+    <rdfs:label xml:lang="EN">Room</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/rotation">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Sandwich">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Food" />
+    <rdfs:label xml:lang="EN">Sandwich</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Scissors">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A88" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A8" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Scissors</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/score">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Sink">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A104" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A66" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Furniture" />
+    <rdfs:label xml:lang="EN">Sink</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/size">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Spoon">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A14" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A15" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Teddy_Bear">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A68" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Teddy_Bear</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Toaster">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A86" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Appliance" />
+    <rdfs:label xml:lang="EN">Toaster</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Toilet">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A35" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Furniture" />
+    <rdfs:label xml:lang="EN">Toilet</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Toothbrush">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A89" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Toothbrush</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Tv">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A72" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A73" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A7" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Appliance" />
+    <rdfs:label xml:lang="EN">Tv</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Tvmonitor">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A72" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A73" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A7" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Appliance" />
+    <rdfs:label xml:lang="EN">Tvmonitor</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Vase">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A57" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A82" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A83" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Vase</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://mapir.isa.uma.es/Wine_Glass">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A51" />
+    <rdfs:subClassOf rdf:nodeID="bnode:A80" />
+    <rdfs:subClassOf rdf:resource="http://mapir.isa.uma.es/Common_Object" />
+    <rdfs:label xml:lang="EN">Wine_Glass</rdfs:label>
+  </rdf:Description>
+</rdf:RDF>

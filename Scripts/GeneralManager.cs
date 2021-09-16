@@ -42,7 +42,7 @@ namespace Vimantic {
             //_semanticMapping.minimunConfidenceScore = PlayerPrefs.GetFloat("minimunConfidenceScore", 0.5f);
             //_InFiSetting0.text = _semanticMapping.minimunConfidenceScore.ToString();
             _ontologyManager = GetComponent<OntologySystem>();
-            _ontologyManager.path = PlayerPrefs.GetString("pathToSave", Application.dataPath);
+            //_ontologyManager.path = PlayerPrefs.GetString("pathToSave", Application.dataPath);
             _InFiSetting3.text = _ontologyManager.path;
             _semanticRoomManager = GetComponent<SemanticRoomManager>();
             _ontologyManager.LoadOntology();
@@ -111,7 +111,7 @@ namespace Vimantic {
 
         public void SaveSetting() {
             //_semanticMapping.minimunConfidenceScore = float.Parse(_InFiSetting0.text);
-            _ontologyManager.path = _InFiSetting3.text;
+            //_ontologyManager.path = _InFiSetting3.text;
             //PlayerPrefs.SetFloat("minimunConfidenceScore", _semanticMapping.minimunConfidenceScore);
             PlayerPrefs.SetString("pathToSave", _InFiSetting3.text);
             PlayerPrefs.Save();

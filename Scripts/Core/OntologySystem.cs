@@ -18,11 +18,11 @@ public class OntologySystem : MonoBehaviour {
     public int verbose;
     public bool saveOntology;
     public string prefix = "MAPIR";
-    public string masterURI = "http://mapir.isa.uma.es/";
-    public string path = @"D:\SemanticMap";
+    public string masterURI = "http://mapir.isa.uma.es/";   
 
     public List<string> objectClassInOntology { get; private set; }
     public string raidID { get; private set; }
+    public string path { get; private set; }
 
     private RDFNamespace nameSpace;
     private RDFOntology ontology;
@@ -35,7 +35,7 @@ public class OntologySystem : MonoBehaviour {
 
     #region Unity Functions
     private void Awake() {
-        path = PlayerPrefs.GetString("ontoloyPath", path);
+        path = Application.dataPath + @"/ViMantic/SemanticMap.owl";
         if (!instance) {
             instance = this;
             DontDestroyOnLoad(gameObject);
@@ -46,11 +46,10 @@ public class OntologySystem : MonoBehaviour {
 
     private void Start() {
         semanticMapping = GetComponent<VirtualObjectSystem>();
+        
     }
 
     private void OnDestroy() {
-        PlayerPrefs.SetString("ontoloyPath", path);
-        PlayerPrefs.Save();
         if (saveOntology) {
             SaveOntology();
         }
