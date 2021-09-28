@@ -22,3 +22,16 @@ Result obtained using [Robot@VirtualHome](https://github.com/DavidFernandezChave
 <div align="center">
   <img src="https://github.com/DavidFernandezChaves/ViMantic-Unity3DNode/blob/master/Resources/example.png?raw=true"/>
 </div>
+
+## Reference
+If you use ViMantic in your research, use the following BibTeX entry.
+
+```
+@article{fernandez2021vimantic,
+  title={ViMantic, a distributed robotic architecture for semantic mapping in indoor environments},
+  author={Fernandez-Chaves, D and Ruiz-Sarmiento, JR and Petkov, N and Gonzalez-Jimenez, J},
+  journal={Knowledge-Based Systems},
+  pages={107440},
+  year={2021},
+  publisher={Elsevier}
+}
