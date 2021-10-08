@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a83d7a1acd709824692c7c423d920570, type: 2}
+  - {fileID: 2100000, guid: 1fe9762145d5e714ead7b8a70b2fd7b9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -92,13 +92,13 @@ GameObject:
   m_Component:
   - component: {fileID: 7092804192935383847}
   - component: {fileID: 3191276089016577551}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: User
-  m_TagString: Robot
-  m_Icon: {fileID: 0}
+  m_TagString: Player
+  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7092804192935383847
 Transform:
   m_ObjectHideFlags: 0
@@ -128,10 +128,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43fd79ec806b99545a23c8d3ff329821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainSpeed: 10
-  shiftAdd: 10
-  maxShift: 100
-  camSens: 0.2
+  MyTextArea: 'Use keys: W,A,S,D,C,Space, to move
+
+    Use keys: Q,E,Shift,Control,
+    to rotate'
+  moveSpeed: 1.5
+  rotationSpeed: 30
 --- !u!1 &2479949751358426927
 GameObject:
   m_ObjectHideFlags: 0
@@ -191,7 +193,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: bfbf81091d202da41b736fe4162ef3b2, type: 2}
+  - {fileID: 2100000, guid: 34db31f7f9366734db4c5e47c002800a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -223,9 +225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1001661237469881884}
   - component: {fileID: 6516590272571110660}
-  - component: {fileID: 3381851840827889875}
-  - component: {fileID: 8207743787702349200}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -255,7 +255,7 @@ Camera:
   m_GameObject: {fileID: 4312386063924985119}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0, g: 0.4666667, b: 0.73333335, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -289,22 +289,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!124 &3381851840827889875
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4312386063924985119}
-  m_Enabled: 1
---- !u!81 &8207743787702349200
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4312386063924985119}
-  m_Enabled: 1
 --- !u!1 &8003025246073422202
 GameObject:
   m_ObjectHideFlags: 0
@@ -364,7 +348,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 170103c77c3be414b828e6090c766138, type: 2}
+  - {fileID: 2100000, guid: 86acc77aedf719549a48a88557792944, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
