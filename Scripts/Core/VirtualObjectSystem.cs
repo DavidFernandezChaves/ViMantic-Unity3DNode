@@ -123,7 +123,7 @@ namespace ViMantic
                     List<VirtualObjectBox> visibleVirtualObjectBox = new List<VirtualObjectBox>();
 
                     int n = 0;
-                    while (n < 10)
+                    while (n < 5)
                     {
 
                         RenderTexture renderTextureMask = new RenderTexture(bbCamera.pixelWidth, bbCamera.pixelHeight, 16);
@@ -203,7 +203,7 @@ namespace ViMantic
                         }
                         else
                         {
-                            Log("New object detected: " + virtualObject.ToString(),LogLevel.Normal);
+                            Log("New object detected: " + virtualObject.ToString(),LogLevel.Developer);
                             virtualSemanticMap.Add(virtualObject);
                             VirtualObjectBox nvob = InstanceNewSemanticObject(virtualObject);
                             detectedVirtualObjectBox.Add(nvob);
