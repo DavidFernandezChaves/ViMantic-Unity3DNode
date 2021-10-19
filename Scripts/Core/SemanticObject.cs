@@ -5,8 +5,7 @@ using System.Globalization;
 
 
 namespace ViMantic
-{
-
+{    
     public class SemanticObject
     {
         public Dictionary<string, float> Scores { get; private set; }
@@ -14,15 +13,43 @@ namespace ViMantic
 
         public float noDetectionProb = 0.4f;
         public float erosion = 0.01f;
-        public string Id { get; private set; }
-        public string Type { get; private set; }
-        public float Score { get; private set; }
-        public Vector3 Position { get; private set; }
-        public Vector3 Size { get; private set; }
-        public Quaternion Rotation { get; private set; }
-        public int NDetections { get; private set; }
-        public int NNonOccluded { get; private set; }
-        public SemanticRoom Room { get; private set; }
+
+        public string Id { get { return id; } private set { id = value; } }
+        [SerializeField]
+        private string id;
+
+        public string ObjectClass { get { return objectClass; } private set { objectClass = value; } }
+        [SerializeField]
+        private string objectClass;
+
+        public float Score { get { return score; } private set { score = value; } }
+        [SerializeField]
+        private float score;
+
+        public Vector3 Position { get { return position; } private set { position = value; } }
+        [SerializeField]
+        private Vector3 position;
+
+        public Vector3 Size { get { return size; } private set { size = value; } }
+        [SerializeField]
+        private Vector3 size;
+
+        public Quaternion Rotation { get { return rotation; } private set { rotation = value; } }
+        [SerializeField]
+        private Quaternion rotation;
+
+        public int NDetections { get { return nDetections; } private set { nDetections = value; } }
+        [SerializeField]
+        private int nDetections;
+
+        public int NNonOccluded { get { return nNonOccluded; } private set { nNonOccluded = value; } }
+        [SerializeField]
+        private int nNonOccluded;
+
+        public SemanticRoom Room { get { return room; } private set { room = value; } }
+        [SerializeField]
+        private SemanticRoom room;
+
         public bool Defined = false;
 
         private int nOccludedDetection = 0;
@@ -129,9 +156,9 @@ namespace ViMantic
             Rotation = Quaternion.Euler(0, angleAv / 4, 0);
 
 
-            // Update type
-            Type = Scores.OrderByDescending(x => x.Value).FirstOrDefault().Key;
-            Score = Scores[Type] / NDetections;
+            // Update ObjectClass
+            ObjectClass = Scores.OrderByDescending(x => x.Value).FirstOrDefault().Key;
+            Score = Scores[ObjectClass] / NDetections;
 
             Defined = (!Corners[0].occluded &&
                        !Corners[1].occluded &&

@@ -130,12 +130,12 @@ namespace ViMantic
         {
             if (obj.Id.Equals(""))
             {
-                string id = GetNewTimeID() + "_" + obj.Type;
+                string id = GetNewTimeID() + "_" + obj.ObjectClass;
                 obj.SetId(id);
             }
             var newDetectedObject = new RDFOntologyFact(GetClassResource(obj.Id));
             ontology.Data.AddFact(newDetectedObject);
-            ontology.Data.AddClassTypeRelation(newDetectedObject, new RDFOntologyClass(GetClassResource(obj.Type)));
+            ontology.Data.AddClassTypeRelation(newDetectedObject, new RDFOntologyClass(GetClassResource(obj.ObjectClass)));
             ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("position")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.Position.ToString())));
             ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("rotation")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.Rotation.eulerAngles.ToString())));
             ontology.Data.AddAssertionRelation(newDetectedObject, new RDFOntologyDatatypeProperty(GetResource("score")), new RDFOntologyLiteral(new RDFPlainLiteral(obj.Score.ToString())));
@@ -209,8 +209,8 @@ namespace ViMantic
 
             //Update type
 
-            ontology.Data.RemoveClassTypeRelation(objectFact, new RDFOntologyClass(GetClassResource(oldObj.Type)));
-            ontology.Data.AddClassTypeRelation(objectFact, new RDFOntologyClass(GetClassResource(newObj.Type)));
+            ontology.Data.RemoveClassTypeRelation(objectFact, new RDFOntologyClass(GetClassResource(oldObj.ObjectClass)));
+            ontology.Data.AddClassTypeRelation(objectFact, new RDFOntologyClass(GetClassResource(newObj.ObjectClass)));
 
             //Update score
 
@@ -370,7 +370,7 @@ namespace ViMantic
                 var total = (objectClassInRooms.Count - 1) * 0.1f;
                 float P1 = 0.1f / total;
 
-                if (classObject.Equals(detection.Type))
+                if (classObject.Equals(detection.ObjectClass))
                 {
                     P1 = (float)detection.Score / total;
                 }
@@ -401,9 +401,9 @@ namespace ViMantic
                 var probabilityByCategory = 1f;
                 foreach (SemanticObject detection in previousClass)
                 {
-                    if (category.Value.ContainsKey(GetNameWithURI(detection.Type)))
+                    if (category.Value.ContainsKey(GetNameWithURI(detection.ObjectClass)))
                     {
-                        probabilityByCategory *= category.Value[GetNameWithURI(detection.Type)];
+                        probabilityByCategory *= category.Value[GetNameWithURI(detection.ObjectClass)];
                     }
                 }
                 probabilitytotal += probabilityByCategory;
@@ -416,7 +416,7 @@ namespace ViMantic
         public List<SemanticObject> GetPreviousDetections(string room)
         {
 
-            List<SemanticObject> result = semanticMapping.virtualSemanticMap.FindAll(obj => obj.GetIdRoom().Equals(room));
+            List<SemanticObject> result = semanticMapping.m_objectDetected.FindAll(obj => obj.GetIdRoom().Equals(room));
 
             result.Sort(
                 delegate (SemanticObject p1, SemanticObject p2)

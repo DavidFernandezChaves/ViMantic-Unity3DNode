@@ -41,7 +41,7 @@ namespace ViMantic
         public Camera bbCamera;
 
         public int nDetections { get; private set; }
-        public List<SemanticObject> virtualSemanticMap { get; private set; }
+        public List<SemanticObject> m_objectDetected { get; private set; }
         public Dictionary<Color32, VirtualObjectBox> boxColors { get; private set; }
 
         private Queue<DetectionArrayMsg> processingQueue;
@@ -59,7 +59,7 @@ namespace ViMantic
                 Destroy(gameObject);
             }
 
-            virtualSemanticMap = new List<SemanticObject>();
+            m_objectDetected = new List<SemanticObject>();
             boxColors = new Dictionary<Color32, VirtualObjectBox>();
             processingQueue = new Queue<DetectionArrayMsg>();
             StartCoroutine(ProcessMsgs());
@@ -168,24 +168,22 @@ namespace ViMantic
 
                     List<VirtualObjectBox> detectedVirtualObjectBox = new List<VirtualObjectBox>();
                     foreach (DetectionMsg detection in _detections.detections)
-                    {
-
-
+                    {                        
                         SemanticObject virtualObject = new SemanticObject(detection.GetScores(),
                                                                             detection.GetCorners(),
                                                                             detection.occluded_corners);
 
                         //Check the type object is in the ontology
-                        if (!OntologySystem.instance.CheckInteresObject(virtualObject.Type))
+                        if (!OntologySystem.instance.CheckInteresObject(virtualObject.ObjectClass))
                         {
-                            Log(virtualObject.Type + " - detected but it is not in the ontology",LogLevel.Error,true);
+                            Log(virtualObject.ObjectClass + " - detected but it is not in the ontology",LogLevel.Error,true);
                             continue;
                         }
 
                         var distance = Vector3.Distance(virtualObject.Position, bbCamera.transform.position);
                         if (distance < deepRange.x || distance > deepRange.y)
                         {
-                            Log(virtualObject.Type + " - detected but it is not in deep range. Distance: " + distance,LogLevel.Normal,true);
+                            Log(virtualObject.ObjectClass + " - detected but it is not in deep range. Distance: " + distance,LogLevel.Normal,true);
                             continue;
                         }
 
@@ -204,7 +202,7 @@ namespace ViMantic
                         else
                         {
                             Log("New object detected: " + virtualObject.ToString(),LogLevel.Developer);
-                            virtualSemanticMap.Add(virtualObject);
+                            m_objectDetected.Add(virtualObject);
                             VirtualObjectBox nvob = InstanceNewSemanticObject(virtualObject);
                             detectedVirtualObjectBox.Add(nvob);
                         }
@@ -249,8 +247,8 @@ namespace ViMantic
                 float distance = CalculateCornerDistance(vob.semanticObject.Corners, order);
 
 
-                if (((distance < thresholdMatchSameSype && obj1.Type.Equals(vob.semanticObject.Type)) ||
-                    (distance < thresholdMatchDiffType && !obj1.Type.Equals(vob.semanticObject.Type))) && distance < best_distance)
+                if (((distance < thresholdMatchSameSype && obj1.ObjectClass.Equals(vob.semanticObject.ObjectClass)) ||
+                    (distance < thresholdMatchDiffType && !obj1.ObjectClass.Equals(vob.semanticObject.ObjectClass))) && distance < best_distance)
                 {
                     obj1.SetNewCorners(order);
                     match = vob;

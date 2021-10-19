@@ -13,6 +13,7 @@ namespace ViMantic
 
         public Vector2 heightCanvas;
 
+        [SerializeReference]
         public SemanticObject semanticObject;
         public Color BoxColor { get; private set; }
 
@@ -82,13 +83,13 @@ namespace ViMantic
 
         public void UpdateObject()
         {
-            if (semanticObject.Type == "Other")
+            if (semanticObject.ObjectClass == "Other")
             {
                 RemoveVirtualBox();
                 return;
             }
 
-            transform.parent.name = semanticObject.NDetections + "_" + semanticObject.Type + "_" + semanticObject.Id;
+            transform.parent.name = semanticObject.NDetections + "_" + semanticObject.ObjectClass + "_" + semanticObject.Id;
 
             //Load Object
             transform.parent.position = semanticObject.Position;
@@ -102,7 +103,7 @@ namespace ViMantic
 
             //Load Canvas
             canvasLabel.transform.position = semanticObject.Position + new Vector3(0, UnityEngine.Random.Range(heightCanvas.x, heightCanvas.y), 0);
-            canvasLabel.LoadLabel(semanticObject.Type, semanticObject.Score);
+            canvasLabel.LoadLabel(semanticObject.ObjectClass, semanticObject.Score);
 
             lineRender.SetPosition(0, canvasLabel.transform.position - new Vector3(0, 0.2f, 0));
             lineRender.SetPosition(1, transform.parent.position);
