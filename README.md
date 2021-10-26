@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/DavidFernandezChaves/ViMantic-Unity3DNode/blob/master/Resources/Vimantic.gif?raw=true" alt="ViMantic" width="400" height="200"/>
+  <img src="https://github.com/DavidFernandezChaves/ViMantic-Unity3DNode/blob/master/Textures/Vimantic.gif?raw=true" alt="ViMantic" width="400" height="200"/>
 </div>
 
 # ViMantic Server (Unity)
@@ -20,7 +20,7 @@ Download and embed in your Unity project.
 ## Example
 Result obtained using [Robot@VirtualHome](https://github.com/DavidFernandezChaves/RobotAtVirtualHome):
 <div align="center">
-  <img src="https://github.com/DavidFernandezChaves/ViMantic-Unity3DNode/blob/master/Resources/example.png?raw=true"/>
+  <img src="https://github.com/DavidFernandezChaves/ViMantic-Unity3DNode/blob/master/Textures/example.png?raw=true"/>
 </div>
 
 ## Reference
