@@ -254,7 +254,7 @@ namespace ViMantic
                     match = vob;
                     best_distance = distance;
                     //Debug.Log("Union: " + virtualObject.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + distance);
-                }// else { Debug.Log("NO Union: " + virtualObject.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + distance); }
+                } //else { Debug.Log("NO Union: " + obj1.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + distance); }
             }
             return match;
         }

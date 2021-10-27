@@ -234,10 +234,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9fc526eacd3cfc49939ac547d6ed52e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verbose: 2
+  LogLevel: 1
   heightCanvas: {x: 2, y: 5}
+  semanticObject:
+    id: 0
   canvasLabel: {fileID: 2766889848152880030}
   lineRender: {fileID: 120497781960058800}
+  references:
+    version: 1
+    00000000:
+      type: {class: , ns: , asm: }
 --- !u!1001 &8390046263339180676
 PrefabInstance:
   m_ObjectHideFlags: 0
