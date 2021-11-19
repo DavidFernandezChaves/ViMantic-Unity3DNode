@@ -42,10 +42,6 @@ namespace ViMantic
         [SerializeField]
         private int nDetections;
 
-        public int NNonOccluded { get { return nNonOccluded; } private set { nNonOccluded = value; } }
-        [SerializeField]
-        private int nNonOccluded;
-
         public SemanticRoom Room { get { return room; } private set { room = value; } }
         [SerializeField]
         private SemanticRoom room;
@@ -168,11 +164,6 @@ namespace ViMantic
             if (Defined)
             {
                 Corners.ForEach(c => c.SetOccluded(false));
-                NNonOccluded = 8;
-            }
-            else
-            {
-                NNonOccluded = Corners.FindAll(c => !c.occluded).Count;
             }
 
         }

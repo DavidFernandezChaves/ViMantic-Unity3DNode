@@ -35,7 +35,7 @@ namespace ViMantic
                     else
                         Gizmos.color = Color.green;
 
-                    if (semanticObject.Defined) Gizmos.color = Color.blue;
+                    //if (semanticObject.Defined) Gizmos.color = Color.blue;
 
                     //if (i == 0) Gizmos.color = Color.blue;
                     //if (i == 1) Gizmos.color = Color.magenta;
@@ -56,12 +56,19 @@ namespace ViMantic
         private void Start()
         {
             BoxColor = VirtualObjectSystem.instance.GetColorObject(this);
-            Color transparentColor = new Color(BoxColor.r, BoxColor.g, BoxColor.b, 0.3f);
             Material material = new Material(Shader.Find("Standard"));
             GetComponent<Renderer>().materials[0] = material;
-            GetComponent<Renderer>().material.SetFloat("_Mode", 2.0f);
-            GetComponent<Renderer>().material.SetColor("_Color", transparentColor);
+            GetComponent<Renderer>().material.SetFloat("_Mode", 2.0f);            
             GetComponent<Renderer>().material.SetColor("_UnlitColor", BoxColor);
+            if (LogLevel == LogLevel.Developer && !semanticObject.Defined)
+            {
+                GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 0, 0, 0.1f));
+            }
+            else
+            {
+                GetComponent<Renderer>().material.SetColor("_Color", new Color(BoxColor.r, BoxColor.g, BoxColor.b, 0.3f));
+            }
+
             lineRender.startColor = BoxColor;
             lineRender.endColor = BoxColor;
             canvasLabel.SetColor(BoxColor);
@@ -108,6 +115,15 @@ namespace ViMantic
             lineRender.SetPosition(0, canvasLabel.transform.position - new Vector3(0, 0.2f, 0));
             lineRender.SetPosition(1, transform.parent.position);
 
+
+            if (LogLevel == LogLevel.Developer && !semanticObject.Defined)
+            {
+                GetComponent<Renderer>().material.SetColor("_Color", new Color(1, 0, 0, 0.1f));
+            }
+            else
+            {
+                GetComponent<Renderer>().material.SetColor("_Color", new Color(BoxColor.r, BoxColor.g, BoxColor.b, 0.3f));
+            }
         }
 
         public void RemoveVirtualBox()

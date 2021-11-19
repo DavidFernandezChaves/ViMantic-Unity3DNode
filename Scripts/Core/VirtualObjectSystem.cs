@@ -25,11 +25,11 @@ namespace ViMantic
 
         [Header("Similarity of objects")]
         [Tooltip("Distance to be taken into account to consider that two observations of the same type belong to the same object.")]
-        [Range(0.5f, 10f)]
-        public float thresholdMatchSameSype = 4f;
+        [Range(0.1f, 10f)]
+        public float thresholdMatchSameSype = 1f;
 
         [Tooltip("Distance to be taken into account to consider that two observations of different types belong to the same object.")]
-        [Range(0.5f,10f)]
+        [Range(0.1f,10f)]
         public float thresholdMatchDiffType = 2f;
 
         [Header("Reference objects")]
@@ -102,9 +102,9 @@ namespace ViMantic
         private IEnumerator ProcessMsgs()
         {
 
-            Rect rect = new Rect(0, 0, bbCamera.pixelWidth, bbCamera.pixelHeight);
-            Texture2D image = new Texture2D(bbCamera.pixelWidth, bbCamera.pixelHeight, TextureFormat.RGB24, false);
-
+            Rect rect = new Rect(0, 0, 640, 480);
+            Texture2D image = new Texture2D(640, 480, TextureFormat.RGB24, false);
+            RenderTexture renderTextureMask = new RenderTexture(640, 480, 24);
             while (Application.isPlaying)
             {
 
@@ -122,11 +122,11 @@ namespace ViMantic
                     Dictionary<VirtualObjectBox, int> virtualObjectBoxInRange = new Dictionary<VirtualObjectBox, int>();
                     List<VirtualObjectBox> visibleVirtualObjectBox = new List<VirtualObjectBox>();
 
-                    int n = 0;
-                    while (n < 5)
+                    //int n = 0;
+                    bool newIteration = true;
+                    while (newIteration)
                     {
-
-                        RenderTexture renderTextureMask = new RenderTexture(bbCamera.pixelWidth, bbCamera.pixelHeight, 16);
+                        newIteration = false;
                         bbCamera.targetTexture = renderTextureMask;
                         bbCamera.Render();
                         RenderTexture.active = renderTextureMask;
@@ -150,15 +150,16 @@ namespace ViMantic
                                 var distance = Vector3.Distance(vob.semanticObject.Position, bbCamera.transform.position);
                                 if (deepRange.y >= distance && distance >= deepRange.x)
                                     virtualObjectBoxInRange.Add(vob, xx.Count);
+                                newIteration = true;
                                 //Debug.Log("Value: " + xx.Value + " Count: " + xx.Count);
                             }
                         }
 
                         bbCamera.targetTexture = null;
                         RenderTexture.active = null; //Clean
-                        Destroy(renderTextureMask); //Free memory
+                        //Destroy(renderTextureMask); //Free memory
                         if (q.Count() == 1) break;
-                        n++;
+                        //n++;
                     }
 
                     foreach (VirtualObjectBox vob in visibleVirtualObjectBox)
@@ -180,6 +181,7 @@ namespace ViMantic
                             continue;
                         }
 
+                        //Checks the distance to the object
                         var distance = Vector3.Distance(virtualObject.Position, bbCamera.transform.position);
                         if (distance < deepRange.x || distance > deepRange.y)
                         {
@@ -190,8 +192,8 @@ namespace ViMantic
                         //Insertion detection into the ontology
                         virtualObject = OntologySystem.instance.AddNewDetectedObject(virtualObject);
 
-                        //Build Ranking
-                        VirtualObjectBox match = CheckMatch(virtualObject, virtualObjectBoxInRange.Keys);
+                        //Try to get a match
+                        VirtualObjectBox match = Matching(virtualObject, virtualObjectBoxInRange.Keys);
 
                         //Match process
                         if (match != null)
@@ -215,7 +217,7 @@ namespace ViMantic
                         if (inRange[i] != null)
                         {
                             VirtualObjectBox match = null;
-                            match = CheckMatch(inRange[i].semanticObject, inRange.GetRange(i + 1, inRange.Count - i - 1));
+                            match = Matching(inRange[i].semanticObject, inRange.GetRange(i + 1, inRange.Count - i - 1));
                             if (match != null)
                             {
                                 match.NewDetection(inRange[i].semanticObject);
@@ -236,25 +238,24 @@ namespace ViMantic
             }
         }
 
-        private VirtualObjectBox CheckMatch(SemanticObject obj1, ICollection<VirtualObjectBox> listToCompare)
+        private VirtualObjectBox Matching(SemanticObject obj1, ICollection<VirtualObjectBox> listToCompare)
         {
             VirtualObjectBox match = null;
-            float best_distance = 999;
+            float best_score = 999;
             foreach (VirtualObjectBox vob in listToCompare)
             {
 
                 List<SemanticObject.Corner> order = YNN(vob.semanticObject.Corners, obj1.Corners);
-                float distance = CalculateCornerDistance(vob.semanticObject.Corners, order);
+                float score = CalculateMatchingScore(vob.semanticObject.Corners, order);
 
+                if (((score < thresholdMatchSameSype && obj1.ObjectClass.Equals(vob.semanticObject.ObjectClass)) ||
+                    (score < thresholdMatchDiffType && !obj1.ObjectClass.Equals(vob.semanticObject.ObjectClass))) && score < best_score) {
 
-                if (((distance < thresholdMatchSameSype && obj1.ObjectClass.Equals(vob.semanticObject.ObjectClass)) ||
-                    (distance < thresholdMatchDiffType && !obj1.ObjectClass.Equals(vob.semanticObject.ObjectClass))) && distance < best_distance)
-                {
                     obj1.SetNewCorners(order);
                     match = vob;
-                    best_distance = distance;
-                    //Debug.Log("Union: " + virtualObject.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + distance);
-                } //else { Debug.Log("NO Union: " + obj1.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + distance); }
+                    best_score = score;
+                    //Debug.Log("Union: " + obj1.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + score);
+                }//else { Debug.Log("NO Union: " + obj1.Id+ " con: " + vob.semanticObject.Id + ", por distancia: " + score); }
             }
             return match;
         }
@@ -341,14 +342,15 @@ namespace ViMantic
             return result;
         }
 
-        static public float CalculateCornerDistance(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation)
+        static public float CalculateMatchingScore(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation)
         {
-            float distance = 0;
+            float score = 0;
             for (int i = 0; i < reference.Count; i++)
             {
-                distance += Vector3.Distance(reference[i].position, observation[i].position);
+                score += Vector3.Distance(reference[i].position, observation[i].position);
             }
-            return distance;
+
+            return score / 8;
         }
         #endregion
 

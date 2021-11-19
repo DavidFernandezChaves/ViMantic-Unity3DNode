@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4113027701314146}
   - component: {fileID: 120497781960058800}
   m_Layer: 1
-  m_Name: SemanticObject
+  m_Name: VirtualObjectBox
   m_TagString: Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -234,7 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9fc526eacd3cfc49939ac547d6ed52e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LogLevel: 1
+  LogLevel: 0
   heightCanvas: {x: 2, y: 5}
   semanticObject:
     id: 0
@@ -420,6 +420,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5292092929152952793, guid: 8f5da884668cd7d4a902664e77b80f5d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7319635023572874762, guid: 8f5da884668cd7d4a902664e77b80f5d,
         type: 3}

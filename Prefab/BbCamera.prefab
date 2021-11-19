@@ -46,9 +46,9 @@ Camera:
   m_projectionMatrixMode: 2
   m_GateFitMode: 2
   m_FOVAxisMode: 0
-  m_SensorSize: {x: 21, y: 15.2}
+  m_SensorSize: {x: 4.8, y: 3.5}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 18
+  m_FocalLength: 2.2806444
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -57,7 +57,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 1000
-  field of view: 45.781105
+  field of view: 75
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -66,7 +66,7 @@ Camera:
     m_Bits: 3072
   m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 3
+  m_TargetDisplay: 7
   m_TargetEye: 3
   m_HDR: 0
   m_AllowMSAA: 0
