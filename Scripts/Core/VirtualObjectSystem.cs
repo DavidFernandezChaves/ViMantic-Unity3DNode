@@ -344,13 +344,26 @@ namespace ViMantic
 
         static public float CalculateMatchingScore(List<SemanticObject.Corner> reference, List<SemanticObject.Corner> observation)
         {
-            float score = 0;
+            int cornerPairs = 0;
+            float score1 = 0, score2 = 0;
             for (int i = 0; i < reference.Count; i++)
             {
-                score += Vector3.Distance(reference[i].position, observation[i].position);
+                if(!reference[i].occluded && !observation[i].occluded)
+                {
+                    cornerPairs++;
+                    score2 += Vector3.Distance(reference[i].position, observation[i].position);
+                }
+                score1 += Vector3.Distance(reference[i].position, observation[i].position);
             }
 
-            return score / 8;
+            if(cornerPairs >= 3)
+            {
+                return score2 / cornerPairs;
+            }
+            else
+            {
+                return score1 / 8;
+            }            
         }
         #endregion
 

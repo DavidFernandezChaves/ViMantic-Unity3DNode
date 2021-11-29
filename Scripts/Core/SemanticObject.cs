@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
-
+using System;
 
 namespace ViMantic
-{    
+{
+    [Serializable]
     public class SemanticObject
     {
-        public Dictionary<string, float> Scores { get; private set; }
-        public List<Corner> Corners { get; private set; }
-
         public float noDetectionProb = 0.4f;
         public float erosion = 0.01f;
+
+        public Dictionary<string, float> Scores { get { return scores; } private set { scores = value; } }
+        [SerializeField]
+        private Dictionary<string, float> scores;
+
+        public List<Corner> Corners { get { return corners; } private set { corners = value; } }
+        [SerializeField]
+        private List<Corner> corners;
 
         public string Id { get { return id; } private set { id = value; } }
         [SerializeField]
@@ -50,6 +56,7 @@ namespace ViMantic
 
         private int nOccludedDetection = 0;
 
+        [Serializable]
         public struct Corner
         {
             public Vector3 position;
