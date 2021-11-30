@@ -201,7 +201,7 @@ namespace ViMantic
                         {
                             nOccludedDetection = 0;
                             for (int i = 0; i < Corners.Count; i++)
-                                Corners[i] = new Corner(Corners[i].position, true);
+                                Corners[i] = new Corner((Corners[i].position + newDetection.Corners[i].position)/2, newDetection.Corners[i].occluded);
                         }
                     }
                 }
