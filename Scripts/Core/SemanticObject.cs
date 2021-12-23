@@ -9,7 +9,7 @@ namespace ViMantic
     [Serializable]
     public class SemanticObject
     {
-        public float noDetectionProb = 0.4f;
+        public float noDetectionProb = 0.5f;
         public float erosion = 0.01f;
 
         public Dictionary<string, float> Scores { get { return scores; } private set { scores = value; } }
